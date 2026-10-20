@@ -1,9 +1,9 @@
 name: Validate Gradle Wrapper
 on:
   push:
-    branches: [master-1.10.2]
+    branches: [master-1.12.2]
   pull_request:
-    branches: [master-1.10.2]
+    branches: [master-1.12.2]
 permissions:
   contents: read
 jobs:

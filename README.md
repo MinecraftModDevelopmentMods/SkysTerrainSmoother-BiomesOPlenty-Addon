@@ -1,7 +1,7 @@
 # Sky's Terrain Smoother - Biomes O Plenty
 
-For Minecraft 1.10.2, Forge 12.18.3.2511 and Java 8.
-Requires Biomes O Plenty 5.0, Sky's Grass Slabs 1.1 and Sky's Terrain Smoother 0.1
+For Minecraft 1.12.2, Forge 14.23.5.2859 and Java 8.
+Requires Biomes O Plenty 7.0.1, Sky's Grass Slabs 1.1 and Sky's Terrain Smoother 0.1
 (which also requires Sky's Building Pieces 0.3).
 
 Adds matching slabs, steps and corners for BOP grass and soil surfaces. New
