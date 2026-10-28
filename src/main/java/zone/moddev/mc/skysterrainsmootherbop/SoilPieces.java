@@ -50,6 +50,11 @@ public final class SoilPieces {
         if (BLOCKS.size() != 16) {
             throw new IllegalStateException("BOP terrain block budget changed");
         }
+        SoilPaths.create();
+        for (SoilPathBlock path : SoilPaths.BLOCKS) {
+            GameRegistry.register(path);
+            GameRegistry.register(new SoilPieceItem(path).setRegistryName(path.getRegistryName()));
+        }
     }
 
     public static IBlockState state(boolean grass, int material, Shape shape, int orientation) {
@@ -210,6 +215,7 @@ public final class SoilPieces {
 
         Block block = state.getBlock();
         int meta = block instanceof SoilPieceBlock ? ((SoilPieceBlock) block).canonical(state)
+                : block instanceof SoilPathBlock ? ((SoilPathBlock) block).canonical(state)
                 : block == ModBlocks.DIRT_SLAB || block == ModBlocks.GRASS_SLAB ? 0 : block.damageDropped(state);
 
         return new ItemStack(Item.getItemFromBlock(block), count, meta);

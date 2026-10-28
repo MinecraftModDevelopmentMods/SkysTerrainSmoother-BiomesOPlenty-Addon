@@ -8,6 +8,10 @@ public final class SoilRecipes {
     }
 
     public static void register() {
+        net.minecraftforge.oredict.RecipeSorter.register("skysterrainsmootherbop:soil_recombination",
+                SoilRecombinationRecipe.class, net.minecraftforge.oredict.RecipeSorter.Category.SHAPED,
+                "after:minecraft:shaped");
+
         for (boolean grass : new boolean[] { false, true }) {
             for (int material = 0; material < (grass ? 8 : 6); material++) {
                 net.minecraft.block.state.IBlockState full = NativeSoils.full(grass, material);
@@ -26,6 +30,11 @@ public final class SoilRecipes {
                 steps.stackSize = 4;
                 GameRegistry.addShapedRecipe(steps, "X ", " X", 'X', slab);
                 GameRegistry.addShapedRecipe(corners, "XX", 'X', step);
+                // Vertical pairs leave the side-by-side cutting recipes available.
+                GameRegistry.addRecipe(new SoilRecombinationRecipe(
+                        SoilPieces.state(grass, material, SoilPieces.Shape.CORNER, 0), step));
+                GameRegistry.addRecipe(new SoilRecombinationRecipe(
+                        SoilPieces.state(grass, material, SoilPieces.Shape.STEP, 0), slab));
             }
         }
     }

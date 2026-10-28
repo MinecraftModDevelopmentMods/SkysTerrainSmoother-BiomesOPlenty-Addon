@@ -44,7 +44,7 @@ class ResourceContractTest {
             }
         }
 
-        assertEquals(16, palettes);
+        assertEquals(21, palettes);
         assertTrue(states >= 504);
 
         Set<String> registryIds = new TreeSet<>();
@@ -57,6 +57,10 @@ class ResourceContractTest {
                     registryIds.add(group + "_" + shape + "_0" + n + ".json");
                 }
             }
+        }
+        for (String name : Arrays.asList("path_slab_00", "path_step_00", "path_step_01",
+                "path_corner_00", "path_corner_01")) {
+            registryIds.add(name + ".json");
         }
         try (java.util.stream.Stream<Path> files = Files.list(ROOT.resolve("blockstates"))) {
             assertEquals(registryIds, files.map(path -> path.getFileName().toString())
