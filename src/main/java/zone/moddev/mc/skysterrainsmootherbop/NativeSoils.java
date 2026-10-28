@@ -7,14 +7,14 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.ResourceLocation;
 
-/** Calls the installed BOP soil rules rather than reimplementing its grass-family decisions. */
+/** Uses the installed BOP rules to keep each grass type paired with its native soil. */
 public final class NativeSoils {
     public static final String[] GRASS_NAMES = { "spectral_moss", "overgrown_stone", "loamy", "sandy", "silty",
             "origin", "overgrown_netherrack", "daisy" };
     public static final String[] DIRT_NAMES = { "loamy", "sandy", "silty", "coarse_loamy", "coarse_sandy",
             "coarse_silty" };
     private static Method dirt, spread;
-    public static Block grassBlock, dirtBlock;
+    public static Block grassBlock, dirtBlock, pathBlock;
 
     private NativeSoils() {
     }
@@ -22,6 +22,7 @@ public final class NativeSoils {
     public static void initialize() {
         grassBlock = required("grass");
         dirtBlock = required("dirt");
+        pathBlock = required("grass_path");
 
         try {
             Class<?> type = Class.forName("biomesoplenty.common.block.BlockBOPGrass");
@@ -41,6 +42,13 @@ public final class NativeSoils {
         }
 
         return block;
+    }
+
+    public static IBlockState path(int material) {
+        if (material < 0 || material > 2) {
+            throw new IllegalArgumentException("Only ordinary loamy, sandy and silty soils have native BOP paths");
+        }
+        return pathBlock.getStateFromMeta(material);
     }
 
     public static IBlockState full(boolean grass, int material) {
@@ -83,7 +91,7 @@ public final class NativeSoils {
         return source.getBlock() == grassBlock ? invoke(spread, source, target) : null;
     }
 
-    /** Moss and overgrown rock are decorative surfaces, not ordinary spreading grass. */
+    /** Moss and overgrown rock keep their decorative behaviour without grass spreading. */
     public static boolean spreads(int index) {
         return index != 0 && index != 1 && index != 6;
     }

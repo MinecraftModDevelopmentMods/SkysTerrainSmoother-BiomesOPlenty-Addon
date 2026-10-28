@@ -20,4 +20,12 @@ A failed step prevents the later publication steps. Check the public downloads
 before announcing a release.
 
 Content mods must be released before add-ons that require them. Keep dependency
-source pins up to date when preparing a coordinated release.
+release file IDs and checksums up to date when preparing a coordinated release.
+
+CurseForge uploads use one attempt. A timeout or server error may happen after
+an upload was accepted. Check the project file list and reconcile the file and
+checksum before considering another upload; do not blindly rerun publication.
+
+Declare Terrain Smoother, Grass Slabs, Building Pieces, the Building Pieces BOP
+add-on and Biomes O' Plenty as required CurseForge dependencies. The release
+workflow supplies these relationships so launchers can install the complete set.

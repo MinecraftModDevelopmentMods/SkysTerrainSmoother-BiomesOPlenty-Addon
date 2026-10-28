@@ -17,7 +17,8 @@ public final class SoilLifecycle {
     public static void repairSupport(World world, BlockPos pos, IBlockState state) {
         SoilPieceBlock block = (SoilPieceBlock) state.getBlock();
 
-        if (world.isRemote || !block.grass || !world.isBlockLoaded(pos.down())) {
+        if (world.isRemote || !block.grass || !world.isBlockLoaded(pos.down())
+                || !GrassSlabsApi.coversSupport(state, world, pos)) {
             return;
         }
 
@@ -54,7 +55,7 @@ public final class SoilLifecycle {
             for (int attempt = 0; attempt < 4; attempt++) {
                 BlockPos target = pos.add(random.nextInt(3) - 1, random.nextInt(5) - 3, random.nextInt(3) - 1);
 
-                if (!target.equals(pos.down())) {
+                if (!target.equals(pos.down()) || !GrassSlabsApi.coversSupport(state, world, pos)) {
                     grow(world, target, block.full(state));
                 }
             }
@@ -141,13 +142,16 @@ public final class SoilLifecycle {
         }
 
         IBlockState cover = world.getBlockState(pos.up());
+        IBlockState target = world.getBlockState(pos);
 
-        if (cover.getBlock() == ModBlocks.TURF || GrassSlabsApi.isGrassForm(cover)
+        // Native full ground can remain exposed beside a step; covered dirt pieces still cannot regrow.
+        if (cover.getBlock() == ModBlocks.TURF
+                || GrassSlabsApi.isGrassForm(cover)
+                        && (!target.isFullCube() || GrassSlabsApi.coversSupport(cover, world, pos.up()))
                 || world.getLightFromNeighbors(pos.up()) < 4 || cover.getLightOpacity(world, pos.up()) > 2) {
             return false;
         }
 
-        IBlockState target = world.getBlockState(pos);
         IBlockState full = target;
         IBlockState result;
 

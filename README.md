@@ -18,8 +18,13 @@ floors. Existing chunks aren't changed; explore new terrain to see the results.
 You can build with the pieces yourself too. Three matching full blocks in a
 row make six slabs; two slabs side by side make a full block again. Two slabs
 placed diagonally make four steps, and two steps side by side make four corners.
-Matching pieces can also join in the world. The
-[gameplay guide](docs/GAMEPLAY.md) covers plant support and snow.
+Stack two matching corners vertically in the grid to recover one step, or two
+matching steps to recover one slab.
+Matching pieces can also join in the world. Use a shovel on grass or ordinary
+soil pieces to make paths with the same shape. Loamy, sandy and silty paths
+keep their native BOP dirt sides. Flattening a grass step or corner also
+flattens compatible grass directly underneath in the same shovel action.
+The [gameplay guide](docs/GAMEPLAY.md) covers plant support and snow.
 
 ## Installation
 
@@ -28,15 +33,15 @@ this add-on together with:
 
 - **Biomes O' Plenty 5.0.0.2236**.
 - **Sky's Terrain Smoother 0.1.0.110021**.
-- **Sky's Grass Slabs 1.1.0.110021**.
-- **Sky's Building Pieces 0.3.6.110021**.
+- **Sky's Grass Slabs 1.1.1.110021**.
+- **Sky's Building Pieces 0.3.7.110021**.
+- **[Sky's Building Pieces BOP add-on](https://github.com/MinecraftModDevelopmentMods/SkysBuildingPieces-BiomesOPlenty-Addon) 0.1.3.110021**.
 
-All five main jars are needed on both the client and server.
+All six main jars are needed on both the client and server.
 
-The [Building Pieces BOP add-on](https://github.com/MinecraftModDevelopmentMods/SkysBuildingPieces-BiomesOPlenty-Addon)
-is optional. It supplies building pieces for BOP woods, stones and gems;
-when present, this terrain add-on also uses its available natural rock pieces.
-You don't need it for BOP grass and soil smoothing.
+The Building Pieces BOP add-on supplies the natural rock pieces used to smooth
+supported BOP stone terrain, alongside this add-on's grass and soil pieces.
+Install both add-ons for the complete BOP smoothing support.
 
 ## Existing worlds
 

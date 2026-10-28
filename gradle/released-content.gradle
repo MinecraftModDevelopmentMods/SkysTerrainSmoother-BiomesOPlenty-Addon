@@ -1,0 +1,67 @@
+import java.nio.file.Files
+import java.security.MessageDigest
+
+def lock = project.ext.contentDependencyLock
+def developmentJars = project.ext.contentDevelopmentJars
+def releases = [:]
+
+developmentJars.each { name, destination ->
+    String coordinate = lock.getProperty(name + '.coordinate')
+    String checksum = lock.getProperty(name + '.sha256')
+    if (!(coordinate ==~ /curse\.maven:[a-z0-9-]+-[0-9]+:[0-9]+/) ||
+            !(checksum ==~ /[A-F0-9]{64}/)) {
+        throw new GradleException("Missing published dependency identity or checksum: ${name}")
+    }
+    def configuration = configurations.create(name + 'PublishedRelease') {
+        transitive = false
+    }
+    dependencies.add(configuration.name, coordinate)
+    releases[name] = configuration.singleFile
+}
+
+def verify = {
+    releases.each { name, jar ->
+        String actual = MessageDigest.getInstance('SHA-256')
+                .digest(Files.readAllBytes(jar.toPath())).encodeHex().toString().toUpperCase(Locale.ROOT)
+        if (actual != lock.getProperty(name + '.sha256')) {
+            throw new GradleException("Published dependency checksum mismatch: ${name}")
+        }
+    }
+}
+verify()
+project.ext.verifyReleasedContent = verify
+project.ext.publishedContentJars = releases
+
+// Map the published jars to development names for Eclipse.
+def remapTasks = developmentJars.collect { name, destination ->
+    renamer.classes('deobfuscate' + name.capitalize() + 'Release') {
+        dependsOn 'verifyContentDependencies'
+        input.set(releases[name])
+        map.from minecraft.dependency.toSrgFile
+        reverse.set(true)
+        libraries.setFrom(provider {
+            sourceSets.main.compileClasspath.files.findAll { !it.name.endsWith('-deobf.jar') }
+        }, releases.values())
+        output.set(destination)
+    }
+}
+
+tasks.register('prepareContentDependencies') {
+    group = 'build setup'
+    description = 'Verifies published jars and prepares their development mappings.'
+    dependsOn remapTasks
+}
+
+tasks.register('prepareManualTestMods', Sync) {
+    group = 'verification'
+    description = 'Collects this add-on and its published dependencies for manual testing.'
+    dependsOn 'assemble'
+    releases.each { name, jar ->
+        from(jar) {
+            rename { lock.getProperty(name + '.artifact') + '-' + lock.getProperty(name + '.version') + '.jar' }
+        }
+    }
+    from configurations.bopRelease
+    from layout.buildDirectory.file("libs/${base.archivesName.get()}-${project.version}.jar")
+    into layout.buildDirectory.dir('manual-test/mods')
+}

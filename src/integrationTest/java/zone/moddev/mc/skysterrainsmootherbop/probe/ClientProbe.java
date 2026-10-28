@@ -80,7 +80,28 @@ public final class ClientProbe extends ProbeProxy {
             }
         }
 
+        for (SoilPathBlock block : SoilPaths.BLOCKS) {
+            for (IBlockState state : block.getBlockState().getValidStates()) {
+                if (state.getValue(SoilPieceBlock.META) / block.shape.states >= block.count) {
+                    continue;
+                }
+                model(minecraft, state);
+                RuntimeProbe.require(minecraft.getBlockColors().colorMultiplier(state, null, null, 0) == -1,
+                        "BOP path surfaces remain untinted");
+                models++;
+            }
+            for (int slot = 0; slot < block.count; slot++) {
+                ItemStack stack = new ItemStack(block, 1, slot * block.shape.states);
+                RuntimeProbe.require(minecraft.getRenderItem().getItemModelMesher().getItemModel(stack)
+                        != minecraft.getBlockRendererDispatcher().getBlockModelShapes().getModelManager().getMissingModel(),
+                        "BOP path item model");
+                RuntimeProbe.require(!stack.getDisplayName().contains("pieces.")
+                        && !stack.getDisplayName().contains("tile."), "BOP path item name");
+                items++;
+            }
+        }
         System.out.println("BOP_TERRAIN_CLIENT_PASS models=" + models + " items=" + items);
+        MineralogyProbe.run();
 
         try (Writer writer = new FileWriter(new File(minecraft.mcDataDir, "bop-terrain-client-pass.txt"))) {
             writer.write("BOP_TERRAIN_CLIENT_PASS\n");
