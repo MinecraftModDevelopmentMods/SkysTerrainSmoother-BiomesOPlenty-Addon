@@ -13,6 +13,10 @@ public final class SoilRecipes {
     }
 
     public static void register(IForgeRegistry<IRecipe> registry) {
+        net.minecraftforge.oredict.RecipeSorter.register("skysterrainsmootherbop:soil_recombination",
+                SoilRecombinationRecipe.class, net.minecraftforge.oredict.RecipeSorter.Category.SHAPED,
+                "after:minecraft:shaped");
+
         for (boolean grass : new boolean[] { false, true }) {
             for (int material = 0; material < (grass ? 8 : 6); material++) {
                 net.minecraft.block.state.IBlockState full = NativeSoils.full(grass, material);
@@ -33,6 +37,13 @@ public final class SoilRecipes {
                 steps.setCount(4);
                 register(registry, materialName + "/step", steps, slab, "X ", " X");
                 register(registry, materialName + "/corner", corners, step, "XX");
+                // Vertical pairs leave the side-by-side cutting recipes available.
+                registry.register(new SoilRecombinationRecipe(
+                        SoilPieces.state(grass, material, SoilPieces.Shape.CORNER, 0), step)
+                        .setRegistryName(SkysTerrainSmootherBop.ID, materialName + "/step_from_corners"));
+                registry.register(new SoilRecombinationRecipe(
+                        SoilPieces.state(grass, material, SoilPieces.Shape.STEP, 0), slab)
+                        .setRegistryName(SkysTerrainSmootherBop.ID, materialName + "/slab_from_steps"));
             }
         }
     }
@@ -50,7 +61,7 @@ public final class SoilRecipes {
             }
         }
 
-        registry.register(new ShapedRecipes(SkysTerrainSmootherBop.ID, width, rows.length, ingredients, output)
+        registry.register(new ShapedRecipes(SkysTerrainSmootherBop.ID + "/" + name.substring(name.lastIndexOf('/') + 1), width, rows.length, ingredients, output)
                 .setRegistryName(new ResourceLocation(SkysTerrainSmootherBop.ID, name)));
     }
 }

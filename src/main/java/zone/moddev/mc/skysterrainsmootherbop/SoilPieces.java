@@ -52,6 +52,7 @@ public final class SoilPieces {
         if (BLOCKS.size() != 16) {
             throw new IllegalStateException("BOP terrain block budget changed");
         }
+        SoilPaths.create();
     }
 
     @SubscribeEvent(
@@ -62,11 +63,17 @@ public final class SoilPieces {
         for (SoilPieceBlock block : BLOCKS) {
             event.getRegistry().register(block);
         }
+        for (SoilPathBlock block : SoilPaths.BLOCKS) {
+            event.getRegistry().register(block);
+        }
     }
 
     @SubscribeEvent
     public static void items(RegistryEvent.Register<Item> event) {
         for (SoilPieceBlock block : BLOCKS) {
+            event.getRegistry().register(new SoilPieceItem(block).setRegistryName(block.getRegistryName()));
+        }
+        for (SoilPathBlock block : SoilPaths.BLOCKS) {
             event.getRegistry().register(new SoilPieceItem(block).setRegistryName(block.getRegistryName()));
         }
     }
@@ -233,6 +240,7 @@ public final class SoilPieces {
 
         Block block = state.getBlock();
         int meta = block instanceof SoilPieceBlock ? ((SoilPieceBlock) block).canonical(state)
+                : block instanceof SoilPathBlock ? ((SoilPathBlock) block).canonical(state)
                 : block == ModBlocks.DIRT_SLAB || block == ModBlocks.GRASS_SLAB ? 0 : block.damageDropped(state);
 
         return new ItemStack(Item.getItemFromBlock(block), count, meta);

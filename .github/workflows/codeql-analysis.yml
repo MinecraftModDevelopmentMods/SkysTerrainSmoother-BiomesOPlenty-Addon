@@ -60,6 +60,9 @@ jobs:
           terrain="$(sed -n 's/^terrain.commit=//p' gradle/content-dependencies.properties)"
           [[ "$terrain" =~ ^[0-9a-f]{40}$ ]]
           echo "terrain=$terrain" >> "$GITHUB_OUTPUT"
+          bopPieces="$(sed -n 's/^bopPieces.commit=//p' gradle/content-dependencies.properties)"
+          [[ "$bopPieces" =~ ^[0-9a-f]{40}$ ]]
+          echo "bopPieces=$bopPieces" >> "$GITHUB_OUTPUT"
       - name: Check out SkysGrassSlabs
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -78,6 +81,12 @@ jobs:
           repository: SkyBlade1978/SkysTerrainSmoother
           ref: ${{ steps.content.outputs.terrain }}
           path: dependencies/terrain
+      - name: Check out SkysBuildingPieces BOP
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          repository: SkyBlade1978/SkysBuildingPieces-BiomesOPlenty-Addon
+          ref: ${{ steps.content.outputs.bopPieces }}
+          path: dependencies/bopPieces
       - name: Build development dependencies
         run: |
           set -euo pipefail
@@ -85,6 +94,7 @@ jobs:
           (cd dependencies/grass && ./gradlew jar --no-daemon --stacktrace)
           (cd dependencies/pieces && ./gradlew jar --no-daemon --stacktrace)
           (cd dependencies/terrain && ./gradlew jar -PgrassSlabsDirectory=../grass -PbuildingPiecesDirectory=../pieces --no-daemon --stacktrace)
+          (cd dependencies/bopPieces && ./gradlew jar -PbuildingPiecesCoreDir=../pieces --no-daemon --stacktrace)
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@db488ddef3bf6cb639b32c2e9a7c0a7ea8271d28 # v4
@@ -94,7 +104,7 @@ jobs:
       - name: Compile production code
         run: |
           chmod +x ./gradlew
-          ./gradlew clean classes -PgrassSlabsDirectory=dependencies/grass -PbuildingPiecesDirectory=dependencies/pieces -PterrainDirectory=dependencies/terrain --rerun-tasks --no-daemon --stacktrace
+          ./gradlew clean classes -PgrassSlabsDirectory=dependencies/grass -PbuildingPiecesDirectory=dependencies/pieces -PterrainDirectory=dependencies/terrain -PbuildingPiecesBopDirectory=dependencies/bopPieces --rerun-tasks --no-daemon --stacktrace
 
       - name: Analyze
         uses: github/codeql-action/analyze@db488ddef3bf6cb639b32c2e9a7c0a7ea8271d28 # v4

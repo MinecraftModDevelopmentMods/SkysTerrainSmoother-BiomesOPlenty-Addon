@@ -309,6 +309,9 @@ jobs:
           terrain="$(sed -n 's/^terrain.commit=//p' gradle/content-dependencies.properties)"
           [[ "$terrain" =~ ^[0-9a-f]{40}$ ]]
           echo "terrain=$terrain" >> "$GITHUB_OUTPUT"
+          bopPieces="$(sed -n 's/^bopPieces.commit=//p' gradle/content-dependencies.properties)"
+          [[ "$bopPieces" =~ ^[0-9a-f]{40}$ ]]
+          echo "bopPieces=$bopPieces" >> "$GITHUB_OUTPUT"
       - name: Check out SkysGrassSlabs
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -327,6 +330,12 @@ jobs:
           repository: SkyBlade1978/SkysTerrainSmoother
           ref: ${{ steps.content.outputs.terrain }}
           path: dependencies/terrain
+      - name: Check out SkysBuildingPieces BOP
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          repository: SkyBlade1978/SkysBuildingPieces-BiomesOPlenty-Addon
+          ref: ${{ steps.content.outputs.bopPieces }}
+          path: dependencies/bopPieces
       - name: Build development dependencies
         run: |
           set -euo pipefail
@@ -334,6 +343,7 @@ jobs:
           (cd dependencies/grass && ./gradlew jar --no-daemon --stacktrace)
           (cd dependencies/pieces && ./gradlew jar --no-daemon --stacktrace)
           (cd dependencies/terrain && ./gradlew jar -PgrassSlabsDirectory=../grass -PbuildingPiecesDirectory=../pieces --no-daemon --stacktrace)
+          (cd dependencies/bopPieces && ./gradlew jar -PbuildingPiecesCoreDir=../pieces --no-daemon --stacktrace)
 
       - name: Build, test, and audit once
         env:
@@ -349,7 +359,7 @@ jobs:
               --no-daemon --stacktrace --max-workers=2
           else
             # Preserve the established Forge release lifecycle.
-            ./gradlew clean check build javadoc -PgrassSlabsDirectory=dependencies/grass -PbuildingPiecesDirectory=dependencies/pieces -PterrainDirectory=dependencies/terrain verifyReleaseArtifacts writeReleaseChecksums \
+            ./gradlew clean check build javadoc -PgrassSlabsDirectory=dependencies/grass -PbuildingPiecesDirectory=dependencies/pieces -PterrainDirectory=dependencies/terrain -PbuildingPiecesBopDirectory=dependencies/bopPieces verifyReleaseArtifacts writeReleaseChecksums \
               --no-daemon --stacktrace
           fi
 
@@ -516,6 +526,9 @@ jobs:
           terrain="$(sed -n 's/^terrain.commit=//p' gradle/content-dependencies.properties)"
           [[ "$terrain" =~ ^[0-9a-f]{40}$ ]]
           echo "terrain=$terrain" >> "$GITHUB_OUTPUT"
+          bopPieces="$(sed -n 's/^bopPieces.commit=//p' gradle/content-dependencies.properties)"
+          [[ "$bopPieces" =~ ^[0-9a-f]{40}$ ]]
+          echo "bopPieces=$bopPieces" >> "$GITHUB_OUTPUT"
       - name: Check out SkysGrassSlabs
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -534,6 +547,12 @@ jobs:
           repository: SkyBlade1978/SkysTerrainSmoother
           ref: ${{ steps.content.outputs.terrain }}
           path: dependencies/terrain
+      - name: Check out SkysBuildingPieces BOP
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          repository: SkyBlade1978/SkysBuildingPieces-BiomesOPlenty-Addon
+          ref: ${{ steps.content.outputs.bopPieces }}
+          path: dependencies/bopPieces
       - name: Build development dependencies
         run: |
           set -euo pipefail
@@ -541,6 +560,7 @@ jobs:
           (cd dependencies/grass && ./gradlew jar --no-daemon --stacktrace)
           (cd dependencies/pieces && ./gradlew jar --no-daemon --stacktrace)
           (cd dependencies/terrain && ./gradlew jar -PgrassSlabsDirectory=../grass -PbuildingPiecesDirectory=../pieces --no-daemon --stacktrace)
+          (cd dependencies/bopPieces && ./gradlew jar -PbuildingPiecesCoreDir=../pieces --no-daemon --stacktrace)
 
       - name: Download immutable release artifact
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
@@ -573,7 +593,7 @@ jobs:
         run: |
           chmod +x ./gradlew
           ./gradlew publishMavenJavaPublicationToReleaseRepository \
-            -PpreparedReleaseDir="$RUNNER_TEMP/release-input" -PgrassSlabsDirectory=dependencies/grass -PbuildingPiecesDirectory=dependencies/pieces -PterrainDirectory=dependencies/terrain \
+            -PpreparedReleaseDir="$RUNNER_TEMP/release-input" -PgrassSlabsDirectory=dependencies/grass -PbuildingPiecesDirectory=dependencies/pieces -PterrainDirectory=dependencies/terrain -PbuildingPiecesBopDirectory=dependencies/bopPieces \
             --no-daemon --stacktrace
 
   publish_curseforge:
@@ -608,6 +628,14 @@ jobs:
         with:
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
           curseforge-id: ${{ needs.preflight.outputs.curseforge_project_id }}
+          # A timeout can follow an accepted upload. Check the file before retrying.
+          curseforge-retry-attempts: 1
+          curseforge-dependencies: |
+            1768953(required)
+            1677588(required)
+            1754162(required)
+            1755976(required)
+            220318(required)
           name: Sky's Terrain Smoother - Biomes O Plenty ${{ needs.preflight.outputs.release_version }} for Minecraft ${{ needs.preflight.outputs.minecraft_version }} (${{ needs.preflight.outputs.loader_display }})
           version: ${{ needs.preflight.outputs.release_version }}
           version-type: ${{ inputs.curseforge_release_level }}
