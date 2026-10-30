@@ -1,0 +1,1626 @@
+[
+  {
+    "recipe": "skysterrainsmootherbop:dirt/coarse_loamy/corner",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:dirt_step_01",
+        "data": 8
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:dirt/coarse_loamy/full_block",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:dirt_slab_00",
+        "data": 6
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:dirt/coarse_loamy/slab",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "biomesoplenty:dirt",
+        "data": 8
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:dirt/coarse_loamy/slab_from_steps",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:dirt_step_01",
+        "data": 8
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_01",
+        "data": 9
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_01",
+        "data": 10
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_01",
+        "data": 11
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_01",
+        "data": 12
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_01",
+        "data": 13
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_01",
+        "data": 14
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_01",
+        "data": 15
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:dirt/coarse_loamy/step",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:dirt_slab_00",
+        "data": 6
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:dirt/coarse_loamy/step_from_corners",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_01",
+        "data": 8
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_01",
+        "data": 9
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_01",
+        "data": 10
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_01",
+        "data": 11
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_01",
+        "data": 12
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_01",
+        "data": 13
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_01",
+        "data": 14
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_01",
+        "data": 15
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:dirt/coarse_sandy/corner",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:dirt_step_02",
+        "data": 0
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:dirt/coarse_sandy/full_block",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:dirt_slab_00",
+        "data": 8
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:dirt/coarse_sandy/slab",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "biomesoplenty:dirt",
+        "data": 9
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:dirt/coarse_sandy/slab_from_steps",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:dirt_step_02",
+        "data": 0
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_02",
+        "data": 1
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_02",
+        "data": 2
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_02",
+        "data": 3
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_02",
+        "data": 4
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_02",
+        "data": 5
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_02",
+        "data": 6
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_02",
+        "data": 7
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:dirt/coarse_sandy/step",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:dirt_slab_00",
+        "data": 8
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:dirt/coarse_sandy/step_from_corners",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_02",
+        "data": 0
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_02",
+        "data": 1
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_02",
+        "data": 2
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_02",
+        "data": 3
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_02",
+        "data": 4
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_02",
+        "data": 5
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_02",
+        "data": 6
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_02",
+        "data": 7
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:dirt/coarse_silty/corner",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:dirt_step_02",
+        "data": 8
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:dirt/coarse_silty/full_block",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:dirt_slab_00",
+        "data": 10
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:dirt/coarse_silty/slab",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "biomesoplenty:dirt",
+        "data": 10
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:dirt/coarse_silty/slab_from_steps",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:dirt_step_02",
+        "data": 8
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_02",
+        "data": 9
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_02",
+        "data": 10
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_02",
+        "data": 11
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_02",
+        "data": 12
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_02",
+        "data": 13
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_02",
+        "data": 14
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_02",
+        "data": 15
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:dirt/coarse_silty/step",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:dirt_slab_00",
+        "data": 10
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:dirt/coarse_silty/step_from_corners",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_02",
+        "data": 8
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_02",
+        "data": 9
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_02",
+        "data": 10
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_02",
+        "data": 11
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_02",
+        "data": 12
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_02",
+        "data": 13
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_02",
+        "data": 14
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_02",
+        "data": 15
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:dirt/loamy/corner",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:dirt_step_00",
+        "data": 0
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:dirt/loamy/full_block",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:dirt_slab_00",
+        "data": 0
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:dirt/loamy/slab",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "biomesoplenty:dirt",
+        "data": 0
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:dirt/loamy/slab_from_steps",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:dirt_step_00",
+        "data": 0
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_00",
+        "data": 1
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_00",
+        "data": 2
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_00",
+        "data": 3
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_00",
+        "data": 4
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_00",
+        "data": 5
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_00",
+        "data": 6
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_00",
+        "data": 7
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:dirt/loamy/step",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:dirt_slab_00",
+        "data": 0
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:dirt/loamy/step_from_corners",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_00",
+        "data": 0
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_00",
+        "data": 1
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_00",
+        "data": 2
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_00",
+        "data": 3
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_00",
+        "data": 4
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_00",
+        "data": 5
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_00",
+        "data": 6
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_00",
+        "data": 7
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:dirt/sandy/corner",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:dirt_step_00",
+        "data": 8
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:dirt/sandy/full_block",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:dirt_slab_00",
+        "data": 2
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:dirt/sandy/slab",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "biomesoplenty:dirt",
+        "data": 1
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:dirt/sandy/slab_from_steps",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:dirt_step_00",
+        "data": 8
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_00",
+        "data": 9
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_00",
+        "data": 10
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_00",
+        "data": 11
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_00",
+        "data": 12
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_00",
+        "data": 13
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_00",
+        "data": 14
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_00",
+        "data": 15
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:dirt/sandy/step",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:dirt_slab_00",
+        "data": 2
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:dirt/sandy/step_from_corners",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_00",
+        "data": 8
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_00",
+        "data": 9
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_00",
+        "data": 10
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_00",
+        "data": 11
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_00",
+        "data": 12
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_00",
+        "data": 13
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_00",
+        "data": 14
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_00",
+        "data": 15
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:dirt/silty/corner",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:dirt_step_01",
+        "data": 0
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:dirt/silty/full_block",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:dirt_slab_00",
+        "data": 4
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:dirt/silty/slab",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "biomesoplenty:dirt",
+        "data": 2
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:dirt/silty/slab_from_steps",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:dirt_step_01",
+        "data": 0
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_01",
+        "data": 1
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_01",
+        "data": 2
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_01",
+        "data": 3
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_01",
+        "data": 4
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_01",
+        "data": 5
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_01",
+        "data": 6
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_step_01",
+        "data": 7
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:dirt/silty/step",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:dirt_slab_00",
+        "data": 4
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:dirt/silty/step_from_corners",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_01",
+        "data": 0
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_01",
+        "data": 1
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_01",
+        "data": 2
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_01",
+        "data": 3
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_01",
+        "data": 4
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_01",
+        "data": 5
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_01",
+        "data": 6
+      },
+      {
+        "item": "skysterrainsmootherbop:dirt_corner_01",
+        "data": 7
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/daisy/corner",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:grass_step_03",
+        "data": 8
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/daisy/full_block",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:grass_slab_00",
+        "data": 14
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/daisy/slab",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "biomesoplenty:grass",
+        "data": 7
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/daisy/slab_from_steps",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:grass_step_03",
+        "data": 8
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_03",
+        "data": 9
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_03",
+        "data": 10
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_03",
+        "data": 11
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_03",
+        "data": 12
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_03",
+        "data": 13
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_03",
+        "data": 14
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_03",
+        "data": 15
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/daisy/step",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:grass_slab_00",
+        "data": 14
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/daisy/step_from_corners",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:grass_corner_03",
+        "data": 8
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_03",
+        "data": 9
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_03",
+        "data": 10
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_03",
+        "data": 11
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_03",
+        "data": 12
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_03",
+        "data": 13
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_03",
+        "data": 14
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_03",
+        "data": 15
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/loamy/corner",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:grass_step_01",
+        "data": 0
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/loamy/full_block",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:grass_slab_00",
+        "data": 4
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/loamy/slab",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "biomesoplenty:grass",
+        "data": 2
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/loamy/slab_from_steps",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:grass_step_01",
+        "data": 0
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_01",
+        "data": 1
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_01",
+        "data": 2
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_01",
+        "data": 3
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_01",
+        "data": 4
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_01",
+        "data": 5
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_01",
+        "data": 6
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_01",
+        "data": 7
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/loamy/step",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:grass_slab_00",
+        "data": 4
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/loamy/step_from_corners",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:grass_corner_01",
+        "data": 0
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_01",
+        "data": 1
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_01",
+        "data": 2
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_01",
+        "data": 3
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_01",
+        "data": 4
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_01",
+        "data": 5
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_01",
+        "data": 6
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_01",
+        "data": 7
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/origin/corner",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:grass_step_02",
+        "data": 8
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/origin/full_block",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:grass_slab_00",
+        "data": 10
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/origin/slab",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "biomesoplenty:grass",
+        "data": 5
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/origin/slab_from_steps",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:grass_step_02",
+        "data": 8
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_02",
+        "data": 9
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_02",
+        "data": 10
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_02",
+        "data": 11
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_02",
+        "data": 12
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_02",
+        "data": 13
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_02",
+        "data": 14
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_02",
+        "data": 15
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/origin/step",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:grass_slab_00",
+        "data": 10
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/origin/step_from_corners",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:grass_corner_02",
+        "data": 8
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_02",
+        "data": 9
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_02",
+        "data": 10
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_02",
+        "data": 11
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_02",
+        "data": 12
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_02",
+        "data": 13
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_02",
+        "data": 14
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_02",
+        "data": 15
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/overgrown_netherrack/corner",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:grass_step_03",
+        "data": 0
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/overgrown_netherrack/full_block",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:grass_slab_00",
+        "data": 12
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/overgrown_netherrack/slab",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "biomesoplenty:grass",
+        "data": 6
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/overgrown_netherrack/slab_from_steps",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:grass_step_03",
+        "data": 0
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_03",
+        "data": 1
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_03",
+        "data": 2
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_03",
+        "data": 3
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_03",
+        "data": 4
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_03",
+        "data": 5
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_03",
+        "data": 6
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_03",
+        "data": 7
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/overgrown_netherrack/step",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:grass_slab_00",
+        "data": 12
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/overgrown_netherrack/step_from_corners",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:grass_corner_03",
+        "data": 0
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_03",
+        "data": 1
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_03",
+        "data": 2
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_03",
+        "data": 3
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_03",
+        "data": 4
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_03",
+        "data": 5
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_03",
+        "data": 6
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_03",
+        "data": 7
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/overgrown_stone/corner",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:grass_step_00",
+        "data": 8
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/overgrown_stone/full_block",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:grass_slab_00",
+        "data": 2
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/overgrown_stone/slab",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "biomesoplenty:grass",
+        "data": 1
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/overgrown_stone/slab_from_steps",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:grass_step_00",
+        "data": 8
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_00",
+        "data": 9
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_00",
+        "data": 10
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_00",
+        "data": 11
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_00",
+        "data": 12
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_00",
+        "data": 13
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_00",
+        "data": 14
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_00",
+        "data": 15
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/overgrown_stone/step",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:grass_slab_00",
+        "data": 2
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/overgrown_stone/step_from_corners",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:grass_corner_00",
+        "data": 8
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_00",
+        "data": 9
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_00",
+        "data": 10
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_00",
+        "data": 11
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_00",
+        "data": 12
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_00",
+        "data": 13
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_00",
+        "data": 14
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_00",
+        "data": 15
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/sandy/corner",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:grass_step_01",
+        "data": 8
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/sandy/full_block",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:grass_slab_00",
+        "data": 6
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/sandy/slab",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "biomesoplenty:grass",
+        "data": 3
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/sandy/slab_from_steps",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:grass_step_01",
+        "data": 8
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_01",
+        "data": 9
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_01",
+        "data": 10
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_01",
+        "data": 11
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_01",
+        "data": 12
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_01",
+        "data": 13
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_01",
+        "data": 14
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_01",
+        "data": 15
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/sandy/step",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:grass_slab_00",
+        "data": 6
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/sandy/step_from_corners",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:grass_corner_01",
+        "data": 8
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_01",
+        "data": 9
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_01",
+        "data": 10
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_01",
+        "data": 11
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_01",
+        "data": 12
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_01",
+        "data": 13
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_01",
+        "data": 14
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_01",
+        "data": 15
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/silty/corner",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:grass_step_02",
+        "data": 0
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/silty/full_block",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:grass_slab_00",
+        "data": 8
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/silty/slab",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "biomesoplenty:grass",
+        "data": 4
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/silty/slab_from_steps",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:grass_step_02",
+        "data": 0
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_02",
+        "data": 1
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_02",
+        "data": 2
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_02",
+        "data": 3
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_02",
+        "data": 4
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_02",
+        "data": 5
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_02",
+        "data": 6
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_02",
+        "data": 7
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/silty/step",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:grass_slab_00",
+        "data": 8
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/silty/step_from_corners",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:grass_corner_02",
+        "data": 0
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_02",
+        "data": 1
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_02",
+        "data": 2
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_02",
+        "data": 3
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_02",
+        "data": 4
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_02",
+        "data": 5
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_02",
+        "data": 6
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_02",
+        "data": 7
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/spectral_moss/corner",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:grass_step_00",
+        "data": 0
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/spectral_moss/full_block",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:grass_slab_00",
+        "data": 0
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/spectral_moss/slab",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "biomesoplenty:grass",
+        "data": 0
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/spectral_moss/slab_from_steps",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:grass_step_00",
+        "data": 0
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_00",
+        "data": 1
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_00",
+        "data": 2
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_00",
+        "data": 3
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_00",
+        "data": 4
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_00",
+        "data": 5
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_00",
+        "data": 6
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_step_00",
+        "data": 7
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/spectral_moss/step",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:grass_slab_00",
+        "data": 0
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/spectral_moss/step_from_corners",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "item": "skysterrainsmootherbop:grass_corner_00",
+        "data": 0
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_00",
+        "data": 1
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_00",
+        "data": 2
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_00",
+        "data": 3
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_00",
+        "data": 4
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_00",
+        "data": 5
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_00",
+        "data": 6
+      },
+      {
+        "item": "skysterrainsmootherbop:grass_corner_00",
+        "data": 7
+      }
+    ]
+  }
+]

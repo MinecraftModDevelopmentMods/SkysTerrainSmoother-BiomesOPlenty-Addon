@@ -8,7 +8,7 @@ import net.minecraftforge.fml.common.event.*;
         name = "Sky's Terrain Smoother - Biomes O Plenty",
         version = SkysTerrainSmootherBop.VERSION,
         acceptedMinecraftVersions = "[1.12.2]",
-        dependencies = "required-after:skysterrainsmoother@[0.1.0.112021,0.2);required-after:skysgrassslabs@[1.1.0.112021,2);required-after:skysbuildingpieces@[0.3.0.112021,0.4);required-after:biomesoplenty@[7.0.1,8);after:skysbuildingpiecesbop")
+        dependencies = "required-after:skysterrainsmoother@[0.1.0.112021,0.2);required-after:skysgrassslabs@[1.1.0.112021,2);required-after:skysbuildingpieces@[0.3.8.112021,0.4);required-after:biomesoplenty@[7.0.1,8);required-after:skysbuildingpiecesbop")
 public final class SkysTerrainSmootherBop {
     public static final String ID = "skysterrainsmootherbop", VERSION = "0.1.0.112021";
     @SidedProxy(
@@ -25,6 +25,7 @@ public final class SkysTerrainSmootherBop {
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         SoilPieces.initialize();
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.register(new SoilPaths());
         proxy.init();
     }
 }

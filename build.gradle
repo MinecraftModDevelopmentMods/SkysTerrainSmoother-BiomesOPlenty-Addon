@@ -59,30 +59,69 @@ tasks.withType(JavaCompile).configureEach {
     }
 }
 
-def terrainDirectory=file(providers.gradleProperty('terrainDirectory').getOrElse('../../SkysTerrainSmoother112/SkysTerrainSmoother'))
-def grassDirectory=file(providers.gradleProperty('grassSlabsDirectory').getOrElse('../../SkysGrassSlabs112/SkysGrassSlabs'))
-def piecesDirectory=file(providers.gradleProperty('buildingPiecesDirectory').getOrElse('../../SkysBuildingPieces112/SkysBuildingPieces'))
-def grassSlabsDevelopmentJar=new File(grassDirectory,'build/libs-dev/SkysGrassSlabs-1.1.0.112021-deobf.jar')
+// Eclipse's import wizard can replace project arguments before its first sync.
+// Keep an explicitly selected local candidate independent of those preferences.
+def localContentFile = file('.gradle/local-content.properties')
+def localContent = new Properties()
+if (localContentFile.isFile()) {
+    if (System.getenv('CI') != null) {
+        throw new GradleException('Local content overrides are not allowed in CI.')
+    }
+    localContentFile.withInputStream { localContent.load(it) }
+}
+def contentProperty = { String name ->
+    providers.gradleProperty(name).orElse(providers.provider { localContent.getProperty(name) })
+}
+
+def terrainDirectory=file(contentProperty('terrainDirectory').getOrElse('../../SkysTerrainSmoother112/SkysTerrainSmoother'))
+def grassDirectory=file(contentProperty('grassSlabsDirectory').getOrElse('../../SkysGrassSlabs112/SkysGrassSlabs'))
+def piecesDirectory=file(contentProperty('buildingPiecesDirectory').getOrElse('../../SkysBuildingPieces112/SkysBuildingPieces'))
+
 def contentLock = new Properties()
 file('gradle/content-dependencies.properties').withInputStream { contentLock.load(it) }
 
-def localPiecesVersion = providers.gradleProperty('buildingPiecesCoreVersion')
+def localGrassVersion = contentProperty('grassSlabsVersion')
+if (localGrassVersion.isPresent() &&
+        (System.getenv('CI') != null || !contentProperty('grassSlabsDirectory').isPresent())) {
+    throw new GradleException('A local grass-version override needs an explicit directory and is not allowed in CI.')
+}
+def grassVersion = localGrassVersion.getOrElse(contentLock.getProperty('grass.version'))
+
+def grassSlabsDevelopmentJar = new File(grassDirectory, "build/libs-dev/SkysGrassSlabs-${grassVersion}-deobf.jar")
+
+
+def localPiecesVersion = contentProperty('buildingPiecesCoreVersion')
 if (localPiecesVersion.isPresent() &&
-        (System.getenv('CI') != null || !providers.gradleProperty('buildingPiecesDirectory').isPresent())) {
+        (System.getenv('CI') != null || !contentProperty('buildingPiecesDirectory').isPresent())) {
     throw new GradleException('A local core-version override needs an explicit core directory and is not allowed in CI.')
 }
 def piecesVersion = localPiecesVersion.getOrElse(contentLock.getProperty('pieces.version'))
 def buildingPiecesDevelopmentJar = new File(piecesDirectory,
         "build/libs-dev/SkysBuildingPieces-${piecesVersion}-deobf.jar")
 def terrainDevelopmentJar=new File(terrainDirectory,'build/libs-dev/SkysTerrainSmoother-0.1.0.112021-deobf.jar')
+def bopPiecesDirectory = file(contentProperty('buildingPiecesBopDirectory')
+        .getOrElse('../../SkysBuildingPiecesBOP112/SkysBuildingPieces-BiomesOPlenty-Addon'))
+def localBopVersion = contentProperty('buildingPiecesBopVersion')
+if (localBopVersion.isPresent() &&
+        (System.getenv('CI') != null || !contentProperty('buildingPiecesBopDirectory').isPresent())) {
+    throw new GradleException('A local BOP-version override needs an explicit directory and is not allowed in CI.')
+}
+def bopPiecesVersion = localBopVersion.getOrElse(contentLock.getProperty('bopPieces.version'))
+
+def bopPiecesDevelopmentJar = new File(bopPiecesDirectory,
+        "build/libs-dev/SkysBuildingPieces-BiomesOPlenty-Addon-${bopPiecesVersion}-deobf.jar")
+
 tasks.register('verifyContentDependencies') {
     doLast {
-        [grass:grassDirectory, pieces:piecesDirectory, terrain:terrainDirectory].each { name, directory ->
+        [grass:grassDirectory, pieces:piecesDirectory, terrain:terrainDirectory, bopPieces:bopPiecesDirectory].each { name, directory ->
             Properties metadata = new Properties()
             new File(directory, 'gradle.properties').withInputStream { metadata.load(it) }
-            String expectedVersion = name == 'pieces' ? piecesVersion : contentLock.getProperty(name + '.version')
-            if (metadata.mod_version != expectedVersion)
-                throw new GradleException('Dependency version does not match its source pin: ' + name)
+            String expectedVersion = name == 'grass' ? grassVersion : name == 'pieces' ? piecesVersion : name == 'bopPieces' ? bopPiecesVersion : contentLock.getProperty(name + '.version')
+            if (metadata.mod_version != expectedVersion) {
+                throw new GradleException("Dependency version does not match its source pin: ${name}" +
+                        " (expected ${expectedVersion}, found ${metadata.mod_version})." +
+                        ' For a local candidate, regenerate the Eclipse runs with the overrides in docs/BUILDING.md.')
+            }
             if (System.getenv('CI') != null) {
                 Process git = new ProcessBuilder('git', '-C', directory.path, 'rev-parse', 'HEAD').start()
                 String sha = git.inputStream.getText('UTF-8').trim()
@@ -93,10 +132,10 @@ tasks.register('verifyContentDependencies') {
     }
 }
 tasks.named('compileJava') { dependsOn 'verifyContentDependencies' }
-tasks.named('compileJava') { doFirst { [grassSlabsDevelopmentJar,buildingPiecesDevelopmentJar,terrainDevelopmentJar].each {
+tasks.named('compileJava') { doFirst { [grassSlabsDevelopmentJar,buildingPiecesDevelopmentJar,terrainDevelopmentJar,bopPiecesDevelopmentJar].each {
     if(!it.isFile())throw new GradleException('Build the coordinated content and terrain dependencies first.')
 } } }
-dependencies { implementation files(terrainDevelopmentJar) }
+dependencies { implementation files(terrainDevelopmentJar, bopPiecesDevelopmentJar) }
 tasks.named('compileTestJava', JavaCompile) {
     options.compilerArgs.add('-proc:none')
 }
@@ -144,6 +183,7 @@ minecraft {
     runs {
         configureEach {
             workingDir.convention layout.projectDirectory.dir(developmentRunDirectory)
+            environment 'MC_VERSION', project.minecraft_version.toString()
             systemProperty 'forge.logging.console.level', 'debug'
             systemProperty 'fml.coreMods.load', 'zone.moddev.mc.skysbuildingpieces.legacy.LoaderPlugin'
         }
@@ -294,8 +334,11 @@ new ZipFile(bopJar).withCloseable { archive ->
     }
     bopAccessRules.parentFile.mkdirs();bopAccessRules.setText(rules,'UTF-8')
 }
+ext.optionalDevelopmentAccessRules = files()
 dependencies {
-    implementation minecraft.dependency("net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}") { accessTransformers.from(bopAccessRules) }
+    implementation minecraft.dependency("net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}") {
+        accessTransformers.from(bopAccessRules, project.ext.optionalDevelopmentAccessRules)
+    }
 }
 tasks.register('prepareDevelopmentDependencies') {
     doLast { copy { from bopJar; into "${developmentRunDirectory}/mods" } }
@@ -622,6 +665,7 @@ ext.releaseFiles = releaseFiles
 ext.releaseJar = releaseJar
 apply from: 'gradle/release.gradle'
 
+
 // Keep the old entry point disabled until publication is configured.
 tasks.register('publishRelease') {
     doLast { throw new GradleException('Publication is disabled for the local beta.') }
@@ -660,6 +704,33 @@ def configureEclipseBuildship = tasks.register('configureEclipseBuildship') {
                 'gradle.user.home': gradle.gradleUserHomeDir.canonicalPath,
                 'override.workspace.settings': 'true'
         ].each { key, value -> preferences.setProperty(key, value) }
+        List<String> arguments = preferences.getProperty('arguments', '').tokenize(' ')
+        arguments.removeAll { argument ->
+            ['grassSlabsDirectory', 'grassSlabsVersion', 'buildingPiecesDirectory', 'buildingPiecesCoreVersion',
+             'buildingPiecesBopDirectory', 'buildingPiecesBopVersion', 'terrainDirectory'].any {
+                argument.startsWith('-P' + it + '=')
+            }
+        }
+        arguments.add('-PgrassSlabsDirectory=' + relativePath(grassDirectory))
+        arguments.add('-PbuildingPiecesDirectory=' + relativePath(piecesDirectory))
+        arguments.add('-PbuildingPiecesBopDirectory=' + relativePath(bopPiecesDirectory))
+        arguments.add('-PterrainDirectory=' + relativePath(terrainDirectory))
+        if (localGrassVersion.isPresent()) arguments.add('-PgrassSlabsVersion=' + grassVersion)
+        if (localPiecesVersion.isPresent()) arguments.add('-PbuildingPiecesCoreVersion=' + piecesVersion)
+        if (localBopVersion.isPresent()) arguments.add('-PbuildingPiecesBopVersion=' + bopPiecesVersion)
+        if (localGrassVersion.isPresent() || localPiecesVersion.isPresent() || localBopVersion.isPresent()) {
+            Properties selection = new Properties()
+            [grassSlabsDirectory: grassDirectory, buildingPiecesDirectory: piecesDirectory,
+             buildingPiecesBopDirectory: bopPiecesDirectory, terrainDirectory: terrainDirectory].each { name, directory ->
+                selection.setProperty(name, relativePath(directory))
+            }
+            if (localGrassVersion.isPresent()) selection.setProperty('grassSlabsVersion', grassVersion)
+            if (localPiecesVersion.isPresent()) selection.setProperty('buildingPiecesCoreVersion', piecesVersion)
+            if (localBopVersion.isPresent()) selection.setProperty('buildingPiecesBopVersion', bopPiecesVersion)
+            localContentFile.parentFile.mkdirs()
+            localContentFile.withOutputStream { selection.store(it, 'Local content selection for Eclipse and Gradle.') }
+        }
+        preferences.setProperty('arguments', arguments.join(' '))
         preferencesFile.parentFile.mkdirs()
         preferencesFile.withOutputStream { preferences.store(it, 'Generated Buildship configuration.') }
     }
@@ -673,6 +744,7 @@ tasks.register('isolateEclipseProductionRuns') {
             File launch = file(name)
             if (!launch.isFile()) throw new GradleException("ForgeGradle did not generate ${name}")
             String contents = launch.getText('UTF-8')
+            contents = contents.replace('${MC_VERSION}', project.minecraft_version.toString())
             boolean production = name in ['runClient.launch', 'runServer.launch']
             if (production && !contents.contains('org.eclipse.jdt.launching.ATTR_EXCLUDE_TEST_CODE')) {
                 contents = contents.replace('</launchConfiguration>',
@@ -752,3 +824,10 @@ tasks.register('integrationClientReloadProcess', JavaExec) {
         if(!marker.isFile() || !marker.text.contains('reload_complete=true')) throw new GradleException('Integrated reload client did not complete')
     }
 }
+
+ext.configureMineralogyVerificationRun = configureFromForgeRun
+ext.mineralogyProfileProbeId = 'skysterrainsmootherbop'
+ext.mineralogyProfileAdditionalMods = files(bopJar)
+apply from: 'gradle/mineralogy-runs.gradle'
+
+apply from: 'gradle/recipe-advancements.gradle'

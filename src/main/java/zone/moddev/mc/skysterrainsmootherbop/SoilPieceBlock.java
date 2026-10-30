@@ -127,7 +127,10 @@ public final class SoilPieceBlock extends Block implements IGrowable {
 
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos) {
-        int orientation = orientation(state);
+        return bounds(shape, orientation(state));
+    }
+
+    static AxisAlignedBB bounds(SoilPieces.Shape shape, int orientation) {
         int direction = orientation & 3;
 
         double minX = 0;
@@ -214,6 +217,13 @@ public final class SoilPieceBlock extends Block implements IGrowable {
     @Override
     public Item getItemDropped(IBlockState state, Random random, int fortune) {
         return getDrops(null, BlockPos.ORIGIN, state, fortune).get(0).getItem();
+    }
+
+    @Override
+    public boolean onBlockActivated(World world, BlockPos position, IBlockState state,
+            net.minecraft.entity.player.EntityPlayer player, EnumHand hand,
+            EnumFacing face, float hitX, float hitY, float hitZ) {
+        return SoilPaths.activate(world, position, player, player.getHeldItem(hand), face);
     }
 
     @Override

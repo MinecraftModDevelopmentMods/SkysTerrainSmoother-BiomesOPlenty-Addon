@@ -23,12 +23,25 @@ public final class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public static void models(ModelRegistryEvent event) {
+        registerPathModels();
         for (SoilPieceBlock block : SoilPieces.BLOCKS) {
             for (int slot = 0; slot < block.count; slot++) {
                 ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block), slot * block.shape.states,
                         new ModelResourceLocation(block.getRegistryName(),
                                 "meta=" + (slot * block.shape.states + (block.shape == SoilPieces.Shape.SLAB ? 1 : 4))
                                         + ",snowy=false"));
+            }
+        }
+    }
+
+    private static void registerPathModels() {
+        for (SoilPathBlock block : SoilPaths.BLOCKS) {
+            for (int slot = 0; slot < block.count; slot++) {
+                int metadata = slot * block.shape.states;
+                ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block), metadata,
+                        new ModelResourceLocation(block.getRegistryName(),
+                                "lowered_support=false,meta=" + (metadata
+                                        + (block.shape == SoilPieces.Shape.SLAB ? 1 : 4))));
             }
         }
     }

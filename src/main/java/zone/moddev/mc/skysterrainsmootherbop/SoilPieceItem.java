@@ -10,12 +10,48 @@ import net.minecraft.world.World;
 
 public final class SoilPieceItem extends ItemBlock {
     private final SoilPieceBlock piece;
+    private final SoilPathBlock path;
+    private final SoilPieces.Shape shape;
 
     public SoilPieceItem(SoilPieceBlock block) {
         super(block);
         piece = block;
+        path = null;
+        shape = block.shape;
         setHasSubtypes(true);
         setMaxDamage(0);
+    }
+
+    public SoilPieceItem(SoilPathBlock block) {
+        super(block);
+        piece = null;
+        path = block;
+        shape = block.shape;
+        setHasSubtypes(true);
+        setMaxDamage(0);
+    }
+
+    private int material(IBlockState state) {
+        return path == null ? piece.material(state) : path.material(state);
+    }
+
+    private IBlockState full(IBlockState state) {
+        return path == null ? piece.full(state) : path.full(state);
+    }
+
+    private IBlockState state(int material, SoilPieces.Shape shape, int orientation) {
+        return path == null ? SoilPieces.state(piece.grass, material, shape, orientation)
+                : SoilPaths.state(material, shape, orientation);
+    }
+
+    private boolean matches(IBlockState other, int material) {
+        if (path != null) {
+            return other.getBlock() instanceof SoilPathBlock
+                    && ((SoilPathBlock) other.getBlock()).material(other) == material;
+        }
+        return other.getBlock() instanceof SoilPieceBlock
+                && ((SoilPieceBlock) other.getBlock()).grass == piece.grass
+                && ((SoilPieceBlock) other.getBlock()).material(other) == material;
     }
 
     @Override
@@ -31,11 +67,11 @@ public final class SoilPieceItem extends ItemBlock {
 
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
-        IBlockState full = piece.full(piece.getStateFromMeta(stack.getItemDamage()));
+        IBlockState full = full(block.getStateFromMeta(stack.getItemDamage()));
         String name = new ItemStack(full.getBlock(), 1, full.getBlock().getMetaFromState(full)).getDisplayName();
 
         return I18n.translateToLocalFormatted(
-                "pieces.skysterrainsmootherbop." + piece.shape.name().toLowerCase(java.util.Locale.ROOT), name);
+                "pieces.skysterrainsmootherbop." + shape.name().toLowerCase(java.util.Locale.ROOT), name);
     }
 
     @Override
@@ -47,7 +83,7 @@ public final class SoilPieceItem extends ItemBlock {
             return EnumActionResult.FAIL;
         }
 
-        int material = piece.material(piece.getStateFromMeta(stack.getItemDamage()));
+        int material = material(block.getStateFromMeta(stack.getItemDamage()));
         IBlockState existingState = world.getBlockState(pos);
 
         if (!existingState.getBlock().isReplaceable(world, pos)) {
@@ -71,11 +107,11 @@ public final class SoilPieceItem extends ItemBlock {
         }
 
         boolean isTopHalf = face == EnumFacing.DOWN || face.getAxis() != EnumFacing.Axis.Y && hitY > .5;
-        int orientation = piece.shape == SoilPieces.Shape.SLAB ? (isTopHalf ? 0 : 1)
-                : (piece.shape == SoilPieces.Shape.STEP ? edge(hitX, hitZ) : corner(hitX, hitZ)) + (isTopHalf ? 0 : 4);
-        IBlockState target = SoilPieces.state(piece.grass, material, piece.shape, orientation);
+        int orientation = shape == SoilPieces.Shape.SLAB ? (isTopHalf ? 0 : 1)
+                : (shape == SoilPieces.Shape.STEP ? edge(hitX, hitZ) : corner(hitX, hitZ)) + (isTopHalf ? 0 : 4);
+        IBlockState target = state(material, shape, orientation);
 
-        if (!world.mayPlace(piece, pos, true, face, player)
+        if (!world.mayPlace(block, pos, true, face, player)
                 || !world.checkNoEntityCollision(target.getCollisionBoundingBox(world, pos).offset(pos))) {
             return EnumActionResult.FAIL;
         }
@@ -89,13 +125,7 @@ public final class SoilPieceItem extends ItemBlock {
 
     private boolean combine(ItemStack stack, EntityPlayer player, World world, BlockPos pos, IBlockState existingState,
             int material, EnumFacing face, float hitX, float hitY, float hitZ) {
-        if (!(existingState.getBlock() instanceof SoilPieceBlock) || !player.canPlayerEdit(pos, face, stack)) {
-            return false;
-        }
-
-        SoilPieceBlock other = (SoilPieceBlock) existingState.getBlock();
-
-        if (other.grass != piece.grass || other.material(existingState) != material) {
+        if (!matches(existingState, material) || !player.canPlayerEdit(pos, face, stack)) {
             return false;
         }
 
@@ -104,10 +134,13 @@ public final class SoilPieceItem extends ItemBlock {
         hitZ += face.getZOffset() * .001f;
 
         boolean isTopHalf = hitY >= .5;
-        int orientation = piece.shape == SoilPieces.Shape.SLAB ? (isTopHalf ? 0 : 1)
-                : (piece.shape == SoilPieces.Shape.STEP ? edge(hitX, hitZ) : corner(hitX, hitZ)) + (isTopHalf ? 0 : 4);
-        int added = SoilPieceBlock.mask(piece.shape, orientation);
-        int before = other.mask(existingState);
+        int orientation = shape == SoilPieces.Shape.SLAB ? (isTopHalf ? 0 : 1)
+                : (shape == SoilPieces.Shape.STEP ? edge(hitX, hitZ) : corner(hitX, hitZ)) + (isTopHalf ? 0 : 4);
+        int added = SoilPieceBlock.mask(shape, orientation);
+        int before = existingState.getBlock() instanceof SoilPieceBlock
+                ? ((SoilPieceBlock) existingState.getBlock()).mask(existingState)
+                : SoilPieceBlock.mask(((SoilPathBlock) existingState.getBlock()).shape,
+                        ((SoilPathBlock) existingState.getBlock()).orientation(existingState));
 
         if ((added & before) != 0) {
             return false;
@@ -117,12 +150,12 @@ public final class SoilPieceItem extends ItemBlock {
         IBlockState target = null;
 
         if (union == 255) {
-            target = NativeSoils.full(piece.grass, material);
+            target = path == null ? NativeSoils.full(piece.grass, material) : NativeSoils.path(material);
         } else {
             for (SoilPieces.Shape shape : SoilPieces.Shape.values()) {
                 for (int candidateOrientation = 0; candidateOrientation < shape.states; candidateOrientation++) {
                     if (SoilPieceBlock.mask(shape, candidateOrientation) == union) {
-                        target = SoilPieces.state(piece.grass, material, shape, candidateOrientation);
+                        target = state(material, shape, candidateOrientation);
                     }
                 }
             }
@@ -137,7 +170,7 @@ public final class SoilPieceItem extends ItemBlock {
     }
 
     private void finish(ItemStack stack, EntityPlayer player, World world, BlockPos pos) {
-        world.playSound(player, pos, piece.getSoundType().getPlaceSound(), SoundCategory.BLOCKS, 1, .8f);
+        world.playSound(player, pos, block.getSoundType().getPlaceSound(), SoundCategory.BLOCKS, 1, .8f);
 
         if (!player.capabilities.isCreativeMode) {
             stack.shrink(1);

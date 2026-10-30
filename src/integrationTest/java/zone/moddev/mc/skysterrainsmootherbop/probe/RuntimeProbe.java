@@ -70,7 +70,13 @@ public final class RuntimeProbe {
             world.getGameRules().setOrCreateGameRule("randomTickSpeed", "0");
             world.setWorldTime(6000);
 
-            int checks = content(world) + placement(world) + recipes(world) + footprints(world) + nativeGrass(world)
+            if (Boolean.getBoolean("skysterrainsmootherbop.pathFixtureOnly")) {
+                PathChecks.fixture(world, phase().equals("reload"));
+                server.initiateShutdown();
+                return;
+            }
+
+            int checks = PathChecks.run(world) + MineralogyProbe.run() + content(world) + placement(world) + recipes(world) + footprints(world) + nativeGrass(world)
                     + persistence(world) + generationOrder(world);
             int generated = generation(world);
             File marker = new File(world.getSaveHandler().getWorldDirectory(),
@@ -117,6 +123,8 @@ public final class RuntimeProbe {
     }
 
     private static int content(WorldServer world) {
+        require(Loader.isModLoaded("skysbuildingpiecesbop"), "the required Building Pieces BOP add-on is loaded");
+        System.out.println("BOP_TERRAIN_REQUIRED_CONTENT_PASS addon=true");
         BlockPos position = position(world, 80, 220, 80);
         int checks = 0;
         int states = 0;
@@ -188,8 +196,10 @@ public final class RuntimeProbe {
 
                         world.setBlockState(position.down(), full, 2);
                         block.neighborChanged(state, world, position, full.getBlock(), position.down());
-                        require(world.getBlockState(position.down()).equals(NativeSoils.dirt(full)),
-                                "native grass support dirtified");
+                        int occupied = block.mask(state);
+                        boolean covered = ((occupied | occupied >> 4) & 15) == 15;
+                        require(world.getBlockState(position.down()).equals(covered ? NativeSoils.dirt(full) : full),
+                                "native support stays grassy wherever its top is exposed");
                         world.setBlockState(position.up(), Blocks.STONE.getDefaultState(), 2);
                         world.setLightFor(EnumSkyBlock.SKY, position.up(), 0);
                         world.setLightFor(EnumSkyBlock.BLOCK, position.up(), 0);
@@ -197,6 +207,9 @@ public final class RuntimeProbe {
                         require(world.getBlockState(position)
                                 .equals(SoilPieces.matching(NativeSoils.dirt(full), block.shape, orientation)),
                                 "covered decay keeps shape and orientation");
+                        world.setBlockState(position.up(), state, 2);
+                        require(!SoilLifecycle.grow(world, position, full),
+                                "covered BOP dirt pieces do not regrow under a grass piece");
                         world.setBlockToAir(position.up());
                         world.setBlockState(position, state, 2);
 
@@ -332,10 +345,15 @@ public final class RuntimeProbe {
                 recipe(world, slab, new String[] { "X ", " X" }, result);
                 recipe(world, step, new String[] { "XX" },
                         SoilPieces.stack(SoilPieces.state(grass, material, SoilPieces.Shape.CORNER, 4), 4));
-                checks += 4;
+                recipe(world,
+                        SoilPieces.stack(SoilPieces.state(grass, material, SoilPieces.Shape.CORNER, 4), 1),
+                        new String[] { "X", "X" }, step);
+                recipe(world, step, new String[] { "X", "X" }, slab);
+                checks += 6;
             }
         }
 
+        checks += RecombinationChecks.run(world);
         System.out.println("BOP_TERRAIN_RECIPE_PASS recipes=" + checks);
         return checks;
     }
@@ -385,8 +403,9 @@ public final class RuntimeProbe {
                                         + cardinal);
 
                         if (grass && expected != null) {
-                            require(world.getBlockState(position).equals(NativeSoils.dirt(full)),
-                                    "generated grass keeps native soil");
+                            boolean covered = ((SoilPieceBlock) expected.getBlock()).shape == SoilPieces.Shape.SLAB;
+                            require(world.getBlockState(position).equals(covered ? NativeSoils.dirt(full) : full),
+                                    "generated grass retains its native exposed support");
                         }
 
                         checks++;
@@ -505,12 +524,15 @@ public final class RuntimeProbe {
     }
 
     private static int generation(WorldServer world) {
+        boolean mineralogyProfile = Boolean.getBoolean("skysterrainsmoother.requireMineralogy");
         FakePlayer player = FakePlayerFactory.get(world,
                 new GameProfile(UUID.fromString("6ba324bf-9731-4e8b-98cd-885e882bd3e1"), "BopTerrainProbe"));
 
         world.getPlayerChunkMap().setPlayerViewRadius(4);
 
         int found = 0;
+        int mineralogyPieces = 0;
+        int nativeSoilPieces = 0;
 
         for (int attempt = 0; attempt < 10; attempt++) {
             int chunkX = 400 + attempt * 160 + (phase().equals("reload") ? 2000 : 0);
@@ -539,6 +561,13 @@ public final class RuntimeProbe {
                                             IBlockState state = section.get(localX, blockY, localZ);
 
                                             if (!(state.getBlock() instanceof SoilPieceBlock)) {
+                                                // OreSpawn's geology changes which surfaces these sample regions contain.
+                                                // The combined profile must exercise real rock transitions as well.
+                                                TerrainMaterial rock = MaterialCatalogue.instance().piece(state);
+                                                if (mineralogyProfile && rock != null && rock.mineralogy) {
+                                                    mineralogyPieces++;
+                                                    found++;
+                                                }
                                                 continue;
                                             }
 
@@ -551,6 +580,7 @@ public final class RuntimeProbe {
                                                     || support.equals(material.supportAfterPlacement),
                                                     "generated BOP piece retains correct support");
                                             found++;
+                                            nativeSoilPieces++;
                                         }
                                     }
                                 }
@@ -561,13 +591,18 @@ public final class RuntimeProbe {
             } finally {
                 world.getPlayerChunkMap().removePlayer(player);
             }
-            if (found > 0) {
+            if (found > 0 && (!mineralogyProfile || mineralogyPieces > 0)) {
                 break;
             }
         }
 
         require(found > 0,
                 "normal player-tracked BOP generation produced no eligible pieces in bounded candidate regions");
+        if (mineralogyProfile) {
+            require(mineralogyPieces > 0, "combined player-tracked generation produced native Mineralogy slabs");
+            System.out.println("BOP_MINERALOGY_GENERATION_PASS soil_pieces=" + nativeSoilPieces
+                    + " rock_pieces=" + mineralogyPieces);
+        }
         return found;
     }
 

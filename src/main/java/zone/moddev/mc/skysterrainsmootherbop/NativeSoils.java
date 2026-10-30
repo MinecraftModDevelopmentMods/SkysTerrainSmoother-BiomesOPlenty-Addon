@@ -14,7 +14,7 @@ public final class NativeSoils {
     public static final String[] DIRT_NAMES = { "loamy", "sandy", "silty", "coarse_loamy", "coarse_sandy",
             "coarse_silty" };
     private static Method dirt, spread;
-    public static Block grassBlock, dirtBlock;
+    public static Block grassBlock, dirtBlock, pathBlock;
 
     private NativeSoils() {
     }
@@ -22,6 +22,7 @@ public final class NativeSoils {
     public static void initialize() {
         grassBlock = required("grass");
         dirtBlock = required("dirt");
+        pathBlock = required("grass_path");
 
         try {
             Class<?> type = Class.forName("biomesoplenty.common.block.BlockBOPGrass");
@@ -41,6 +42,13 @@ public final class NativeSoils {
         }
 
         return block;
+    }
+
+    public static IBlockState path(int material) {
+        if (material < 0 || material > 2) {
+            throw new IllegalArgumentException("Only ordinary loamy, sandy and silty soils have native BOP paths");
+        }
+        return pathBlock.getStateFromMeta(material);
     }
 
     public static IBlockState full(boolean grass, int material) {
