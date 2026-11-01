@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.0.115021 (unreleased)
+
+- Bring BOP terrain smoothing and saved soil pieces to Minecraft 1.15.2.
+- Use the matching Sky builds and BOP 10 materials.
+
 ## 0.1.0.114041
 
 - Added Minecraft 1.14.4 support with the matching Sky mods.

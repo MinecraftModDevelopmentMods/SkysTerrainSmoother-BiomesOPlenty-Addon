@@ -16,8 +16,9 @@ production mod and these matching dependencies, not unit tests or runtime probes
 
 Run clean separately, then check build javadoc genEclipseRuns eclipse
 verifyEclipseProductionClasspath verifyReleaseArtifacts writeReleaseChecksums.
-The build-only runtime checks include a genuine sealed 1.12 family upgrade and
-reload. Archive old disposable runtime evidence before repeating them.
+The build-only runtime checks cover sealed 1.12 and 1.14 family saves. The
+1.14 source was saved and reloaded with the qualified jars and includes wet
+sand and coarse-dirt slabs. Packaged checks exercise first load and reload. Archive old disposable runtime evidence before repeating them.
 
 Development uses mapped BOP bytes from the pinned Building Pieces BOP build,
 including its mapped access rules. Packaged runs use the unchanged public BOP

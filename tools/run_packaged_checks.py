@@ -48,11 +48,11 @@ def manifest_classpath(destination, files):
 
 def client_command(options, directory):
     runtime = options.runtime.resolve()
-    base = json.loads((runtime / "versions/1.14.4/1.14.4.json").read_text(encoding="utf-8"))
-    forge = json.loads((runtime / "versions/1.14.4-forge-28.2.26/1.14.4-forge-28.2.26.json")
+    base = json.loads((runtime / "versions/1.15.2/1.15.2.json").read_text(encoding="utf-8"))
+    forge = json.loads((runtime / "versions/1.15.2-forge-31.2.57/1.15.2-forge-31.2.57.json")
                        .read_text(encoding="utf-8"))
-    if base["id"] != "1.14.4" or forge["inheritsFrom"] != "1.14.4":
-        raise ValueError("This launcher requires the verified Forge 28 client metadata")
+    if base["id"] != "1.15.2" or forge["inheritsFrom"] != "1.15.2":
+        raise ValueError("This launcher requires the verified Forge 31 client metadata")
     libraries = {}
     for layer in (base, forge):
         for library in layer["libraries"]:
@@ -65,7 +65,7 @@ def client_command(options, directory):
         if digest(path, "sha1") != artifact["sha1"].upper():
             raise ValueError("Client library checksum changed: " + library["name"])
         classpath.append(path)
-    client = runtime / "versions/1.14.4/1.14.4.jar"
+    client = runtime / "versions/1.15.2/1.15.2.jar"
     if digest(client, "sha1") != base["downloads"]["client"]["sha1"].upper():
         raise ValueError("Official client checksum changed")
     classpath.append(client)
@@ -90,8 +90,8 @@ def client_command(options, directory):
                 if "${" in value:
                     raise ValueError("Unresolved native launch argument: " + value)
                 arguments.append(value)
-    natives = runtime / "natives/forge-28.2.26"
-    if not natives.is_dir() or not (options.assets / "indexes/1.14.json").is_file():
+    natives = runtime / "natives/1.15.2-forge-31.2.57"
+    if not natives.is_dir() or not (options.assets / "indexes/1.15.json").is_file():
         raise ValueError("Client natives or assets are incomplete")
     return [str(options.java), "-Xmx3g", "-Djava.library.path=" + str(natives),
             "-Dskysterrainsmoother.integrationPhase=" + options.phase,
@@ -122,6 +122,11 @@ def prepare(options, directory):
         "server-port=0\nview-distance=6\ngenerate-structures=false\nspawn-animals=false\nspawn-monsters=false\n"
         "max-tick-time=120000\n", encoding="utf-8")
     (directory / "options.txt").write_text("lang:en_us\nfullscreen:false\nrenderDistance:6\npauseOnLostFocus:false\n", encoding="utf-8")
+    if options.bop_world:
+        if options.mode != "server":
+            raise ValueError("The explicit BOP world profile is a dedicated-server check")
+        with (directory / "server.properties").open("a", encoding="utf-8") as output:
+            output.write("level-type=BIOMESOP\n")
     shutil.copytree("src/bootstrapTest/defaultconfigs", directory, dirs_exist_ok=True)
     if options.level is not None or options.enabled is not None:
         config = directory / "config/skysterrainsmoother-common.toml"
@@ -150,6 +155,9 @@ def prepare(options, directory):
                 target.parent.mkdir(parents=True, exist_ok=True)
                 target.write_bytes(archive.read(name))
         shutil.copyfile(fixture / "source-family-fixture.json", directory / "source-family-fixture.json")
+        native_states = fixture / "native-source-states.json"
+        if native_states.is_file():
+            shutil.copyfile(native_states, directory / "source-native-states.json")
         (directory / "source-inputs.json").write_text(json.dumps({
             "world_sha256": expected,
             "manifest_sha256": digest(fixture / "source-family-fixture.json")}, indent=2) + "\n", encoding="utf-8")
@@ -184,6 +192,7 @@ def main():
     parser.add_argument("--enabled", choices=("true", "false"))
     parser.add_argument("--grass-enabled", choices=("true", "false"))
     parser.add_argument("--generation-only", action="store_true")
+    parser.add_argument("--bop-world", action="store_true")
     options = parser.parse_args()
     directory = options.directory.resolve()
     if not directory.is_relative_to(Path("build").resolve()) or directory == Path("build").resolve():
@@ -204,7 +213,7 @@ def main():
             raise ValueError("Client checks need the verified asset directory")
         command = client_command(options, directory)
     else:
-        forge = options.runtime.resolve() / "forge-1.14.4-28.2.26.jar"
+        forge = options.runtime.resolve() / "forge-1.15.2-31.2.57.jar"
         command = [str(options.java), "-Xmx3g", "-Dskysterrainsmoother.integrationPhase=" + options.phase,
                    "-jar", str(forge), "--nogui"]
     if options.generation_only:

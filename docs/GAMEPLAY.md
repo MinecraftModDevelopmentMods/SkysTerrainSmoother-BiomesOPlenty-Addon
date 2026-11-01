@@ -1,6 +1,6 @@
 # Pieces and smoothing
 
-BOP 1.14 uses vanilla grass and dirt instead of its old soil families. Those
+Current BOP versions use vanilla grass and dirt instead of its old soil families. Those
 surfaces use the normal Terrain Smoother rules at all three levels, in BOP
 biomes too. Existing terrain is left alone.
 

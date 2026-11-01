@@ -16,7 +16,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.server.ServerWorld;
 import zone.moddev.mc.skysgrassslabs.block.LegacySlabBlock;
@@ -66,7 +65,7 @@ public final class CoarseDirtSlab extends LegacySlabBlock {
     }
 
     @Override
-    public void tick(BlockState state, World world, BlockPos position, Random random) {
+    public void tick(BlockState state, ServerWorld world, BlockPos position, Random random) {
         if (!world.isRemote) {
             BlockState updated = state.with(SnowyDirtBlock.SNOWY, snowy(world, position));
             if (updated != state) {
@@ -90,7 +89,7 @@ public final class CoarseDirtSlab extends LegacySlabBlock {
             Block block;
             if (world instanceof ServerWorld) {
                 Chunk chunk = ((ServerWorld) world).getChunkProvider()
-                        .func_225313_a(neighbour.getX() >> 4, neighbour.getZ() >> 4);
+                        .getChunkWithoutLoading(neighbour.getX() >> 4, neighbour.getZ() >> 4);
                 if (chunk == null) {
                     continue;
                 }

@@ -204,7 +204,7 @@ spawn-protection=0
 view-distance=6
 max-tick-time=120000
 '''.replace('level-type=default',
-                probeId == 'skysterrainsmootherbop' ? 'level-type=BIOMESOP' : 'level-type=default'), 'UTF-8')
+                project.mod_id == 'skysterrainsmootherbop' ? 'level-type=BIOMESOP' : 'level-type=default'), 'UTF-8')
     }
 }
 

@@ -41,12 +41,13 @@ final class FamilyForwardChecks {
                 StandardCharsets.UTF_8)) {
             fixture = new JsonParser().parse(input).getAsJsonObject();
         }
+        java.util.Map<BlockPos, BlockState> retainedRocks = retainedNamedRocks(fixture);
         int checked = 0;
         for (JsonElement element : fixture.getAsJsonArray("blocks")) {
             JsonObject saved = element.getAsJsonObject();
             BlockPos position = position(saved);
             BlockState actual = world.getBlockState(position);
-            BlockState expected = expectedState(saved);
+            BlockState expected = expectedState(saved, retainedRocks);
             RuntimeProbe.require(withoutSnow(actual).equals(withoutSnow(expected)),
                     "Forward block identity and orientation at " + position + ": " + actual + " expected " + expected);
             RuntimeProbe.require(actual.getFluidState().isEmpty(), "Pre-waterlogging pieces begin dry");
@@ -59,6 +60,28 @@ final class FamilyForwardChecks {
             }
             checked++;
         }
+        if (fixture.has("native_sand_states")) {
+            int wet = 0;
+
+            RuntimeProbe.require(fixture.getAsJsonArray("native_sand_states").size() == 12,
+                    "The named source includes every sand and coarse-dirt half and wet state");
+            for (JsonElement element : fixture.getAsJsonArray("native_sand_states")) {
+                JsonObject saved = element.getAsJsonObject();
+                BlockPos position = position(saved);
+                BlockState expected = net.minecraft.nbt.NBTUtil.readBlockState(
+                        JsonToNBT.getTagFromJson(saved.get("state").getAsString()));
+                BlockState actual = world.getBlockState(position);
+
+                RuntimeProbe.require(actual.equals(expected),
+                        "Named soil retains its material, orientation and water: " + position + " / " + actual);
+                if (!actual.getFluidState().isEmpty()) {
+                    wet++;
+                }
+                checked++;
+            }
+            RuntimeProbe.require(wet == 6, "All six waterlogged source soil states survive");
+            System.out.println("TERRAIN_BOP_NAMED_SOIL_FORWARD_PASS states=12 wet=6");
+        }
         int stackIndex = 0;
         for (JsonElement element : fixture.getAsJsonArray("stacks")) {
             JsonObject saved = element.getAsJsonObject();
@@ -70,7 +93,7 @@ final class FamilyForwardChecks {
                     .getAsJsonObject();
             ItemStack expected = block.has("material")
                     ? Pieces.legacyItem(block.get("id").getAsString(), block.get("meta").getAsInt(), original.getInt("Count"))
-                    : Pieces.stack(expectedState(block), original.getInt("Count"));
+                    : Pieces.stack(expectedState(block, retainedRocks), original.getInt("Count"));
             RuntimeProbe.require(actual.getItem() == expected.getItem() && actual.getCount() == expected.getCount(),
                     "Saved piece stack keeps material and count: " + original + " -> " + actual);
             RuntimeProbe.require(actual.hasTag() && actual.getTag().equals(original.getCompound("tag")),
@@ -123,7 +146,36 @@ final class FamilyForwardChecks {
         return checked + 7;
     }
 
-    private static BlockState expectedState(JsonObject saved) {
+    private static java.util.Map<BlockPos, BlockState> retainedNamedRocks(JsonObject fixture) throws Exception {
+        java.util.Map<BlockPos, BlockState> retained = new java.util.HashMap<>();
+        if (!fixture.has("native_sand_states")) {
+            return retained;
+        }
+        try (InputStreamReader input = new InputStreamReader(new FileInputStream("source-native-states.json"),
+                StandardCharsets.UTF_8)) {
+            com.google.gson.JsonArray states = new JsonParser().parse(input).getAsJsonArray();
+            RuntimeProbe.require(states.size() == 4700, "Every preceding-version state was exported");
+            for (JsonElement element : states) {
+                JsonObject row = element.getAsJsonObject();
+                CompoundNBT saved = JsonToNBT.getTagFromJson(row.get("state").getAsString());
+                // Adding Mineralogy keeps named fallback rocks. Their bridge recipe is the explicit conversion.
+                if (saved.getString("Name").equals("skysbuildingpiecesbop:retired_rocks")) {
+                    BlockState state = net.minecraft.nbt.NBTUtil.readBlockState(saved);
+                    RuntimeProbe.require(state.getBlock().getRegistryName().toString()
+                                    .equals("skysbuildingpiecesbop:retired_rocks"),
+                            "The saved fallback rock must still resolve");
+                    retained.put(position(row), state);
+                }
+            }
+        }
+        RuntimeProbe.require(!retained.isEmpty(), "The native fixture includes fallback rock blocks");
+        return retained;
+    }
+
+    private static BlockState expectedState(JsonObject saved, java.util.Map<BlockPos, BlockState> retainedRocks) {
+        if (retainedRocks.containsKey(position(saved))) {
+            return retainedRocks.get(position(saved));
+        }
         if (saved.has("material")) {
             return Pieces.state(saved.get("material").getAsString(), Shape.valueOf(saved.get("shape").getAsString()),
                     saved.get("orientation").getAsInt());

@@ -66,8 +66,8 @@ final class SylvesterContentChecks {
             CompoundNBT before = source.copy();
             LegacyBridge.prepareNbt(source);
             CompoundNBT fixed = (CompoundNBT) world.getServer().getDataFixer().update(TypeReferences.ITEM_STACK,
-                    new Dynamic<>(NBTDynamicOps.INSTANCE, source), reload ? 1976 : 1343, 1976).getValue();
-            LegacyBridge.finalizeNbt(fixed, 1976);
+                    new Dynamic<>(NBTDynamicOps.INSTANCE, source), reload ? 2230 : 1343, 2230).getValue();
+            LegacyBridge.finalizeNbt(fixed, 2230);
             ItemStack stack = ItemStack.read(fixed);
             RuntimeProbe.require(!stack.isEmpty() && stack.getCount() == (original.getByte("Count") & 255),
                     "Actual saved Sky stack keeps its count: " + original);
