@@ -63,7 +63,7 @@ final class BopRecoveryChecks {
                     for (int corner = 0; corner < 4; corner++) {
                         double sampleX = corner == 1 || corner == 2 ? .75 : .25;
                         double sampleZ = corner >= 2 ? .75 : .25;
-                        for (AxisAlignedBB box : target.getShape(world, new BlockPos(0, 250, 0)).toBoundingBoxList()) {
+                        for (AxisAlignedBB box : target.getShape(world, new BlockPos(0, 250, 0)).toAabbs()) {
                             if (box.contains(sampleX, verticalHalf == 0 ? .25 : .75, sampleZ)) {
                                 actualMask |= 1 << (verticalHalf * 4 + corner);
                                 break;
@@ -88,7 +88,7 @@ final class BopRecoveryChecks {
                 root.put("Items", nested);
                 LegacySoils.recover(root);
                 ItemStack expected = Pieces.stack(target, 23);
-                ItemStack actual = ItemStack.read(stack);
+                ItemStack actual = ItemStack.of(stack);
                 RuntimeProbe.require(actual.getItem() == expected.getItem() && actual.getCount() == 23,
                         "Nested inventory identity and count survive");
                 RuntimeProbe.require(stack.getByte("Slot") == 7 && stack.getCompound("tag").equals(custom),
@@ -153,7 +153,7 @@ final class BopRecoveryChecks {
             if (!recipe.getId().getNamespace().equals("skysterrainsmootherbop")) {
                 continue;
             }
-            RuntimeProbe.require(!recipe.isDynamic() && !recipe.getRecipeOutput().isEmpty(),
+            RuntimeProbe.require(!recipe.isSpecial() && !recipe.getResultItem().isEmpty(),
                     "Replacement recipes remain visible in the native recipe book");
             RuntimeProbe.require(recipe.getIngredients().stream()
                     .anyMatch(ingredient -> ingredient != net.minecraft.item.crafting.Ingredient.EMPTY),

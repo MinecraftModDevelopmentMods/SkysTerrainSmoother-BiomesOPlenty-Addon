@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.0.116051 (unreleased)
+
+- Bring BOP terrain smoothing and saved soil pieces to Minecraft 1.16.5.
+- Use the matching Sky builds and BOP 13 materials.
+
 ## 0.1.0.115021 (unreleased)
 
 - Bring BOP terrain smoothing and saved soil pieces to Minecraft 1.15.2.

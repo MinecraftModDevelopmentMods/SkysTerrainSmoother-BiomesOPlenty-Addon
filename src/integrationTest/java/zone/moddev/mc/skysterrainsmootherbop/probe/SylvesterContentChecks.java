@@ -3,7 +3,7 @@ package zone.moddev.mc.skysterrainsmootherbop.probe;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.mojang.datafixers.Dynamic;
+import com.mojang.serialization.Dynamic;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -61,24 +61,24 @@ final class SylvesterContentChecks {
         ListNBT converted = new ListNBT();
         int itemIndex = 0;
         for (JsonElement row : census.getAsJsonArray("unique_stack_nbt")) {
-            CompoundNBT original = JsonToNBT.getTagFromJson(row.getAsString());
+            CompoundNBT original = JsonToNBT.parseTag(row.getAsString());
             CompoundNBT source = reload ? prior.getList("Items", 10).getCompound(itemIndex).copy() : original.copy();
             CompoundNBT before = source.copy();
             LegacyBridge.prepareNbt(source);
-            CompoundNBT fixed = (CompoundNBT) world.getServer().getDataFixer().update(TypeReferences.ITEM_STACK,
+            CompoundNBT fixed = (CompoundNBT) world.getServer().getFixerUpper().update(TypeReferences.ITEM_STACK,
                     new Dynamic<>(NBTDynamicOps.INSTANCE, source), reload ? 2230 : 1343, 2230).getValue();
             LegacyBridge.finalizeNbt(fixed, 2230);
-            ItemStack stack = ItemStack.read(fixed);
+            ItemStack stack = ItemStack.of(fixed);
             RuntimeProbe.require(!stack.isEmpty() && stack.getCount() == (original.getByte("Count") & 255),
                     "Actual saved Sky stack keeps its count: " + original);
-            for (String key : original.keySet()) {
+            for (String key : original.getAllKeys()) {
                 if (!key.equals("id") && !key.equals("Damage") && !key.equals("Count") && !key.equals("tag")) {
                     RuntimeProbe.require(original.get(key).equals(fixed.get(key)),
                             "Unrelated root item NBT survives: " + key);
                 }
             }
             CompoundNBT originalTag = original.getCompound("tag");
-            for (String key : originalTag.keySet()) {
+            for (String key : originalTag.getAllKeys()) {
                 if (!key.equals("display") && !key.equals("ench") && !key.equals("StoredEnchantments")
                         && !key.equals("Items") && !key.equals("BasketOpen")) {
                     RuntimeProbe.require(originalTag.get(key).equals(fixed.getCompound("tag").get(key)),
@@ -118,7 +118,7 @@ final class SylvesterContentChecks {
             }
         }
         if (id.equals("skysgrassslabs:turf")) {
-            return ModBlocks.TURF.getDefaultState();
+            return ModBlocks.TURF.defaultBlockState();
         }
         if (id.equals("skysterrainsmoother:sand_slab")) {
             return zone.moddev.mc.skysterrainsmoother.content.SandContent.legacyState(metadata);
@@ -126,7 +126,7 @@ final class SylvesterContentChecks {
         net.minecraft.block.Block block = id.equals("skysgrassslabs:grass_slab") ? ModBlocks.GRASS_SLAB
                 : id.equals("skysgrassslabs:dirt_slab") ? ModBlocks.DIRT_SLAB
                 : id.equals(ModBlocks.PATH_SLAB.getRegistryName().toString()) ? ModBlocks.PATH_SLAB : null;
-        return block == null ? null : block.getDefaultState().with(SlabBlock.TYPE,
+        return block == null ? null : block.defaultBlockState().setValue(SlabBlock.TYPE,
                 (metadata & 1) == 0 ? SlabType.TOP : SlabType.BOTTOM);
     }
 

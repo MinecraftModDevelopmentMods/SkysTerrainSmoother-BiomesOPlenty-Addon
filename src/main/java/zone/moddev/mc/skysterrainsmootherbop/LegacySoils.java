@@ -120,7 +120,7 @@ public final class LegacySoils {
                     changes.add(new Change(compound, target, false));
                 }
             }
-            for (String key : compound.keySet()) {
+            for (String key : compound.getAllKeys()) {
                 collect(compound.get(key), changes, depth + 1);
             }
         } else if (value instanceof ListNBT) {
@@ -137,7 +137,7 @@ public final class LegacySoils {
             }
             String type = properties.getString("type");
             if (type.equals("double")) {
-                return net.minecraft.block.Blocks.COARSE_DIRT.getDefaultState();
+                return net.minecraft.block.Blocks.COARSE_DIRT.defaultBlockState();
             }
             if (!type.equals("top") && !type.equals("bottom")) {
                 throw abort("Invalid saved coarse dirt slab half: " + type);
@@ -213,13 +213,13 @@ public final class LegacySoils {
             int orientation = metadata % orientations;
             BlockState target;
             if (shape == Shape.SLAB && material.equals("minecraft:dirt_coarse")) {
-                target = CoarseDirtSlab.BLOCK.getDefaultState().with(SlabBlock.TYPE,
+                target = CoarseDirtSlab.BLOCK.defaultBlockState().setValue(SlabBlock.TYPE,
                         orientation == 0 ? SlabType.TOP : SlabType.BOTTOM);
             } else if (shape == Shape.SLAB && (material.equals("minecraft:grass")
                     || material.equals("minecraft:dirt") || material.equals("minecraft:grass_path"))) {
                 Block block = material.equals("minecraft:grass") ? ModBlocks.GRASS_SLAB
                         : material.equals("minecraft:dirt") ? ModBlocks.DIRT_SLAB : ModBlocks.PATH_SLAB;
-                target = block.getDefaultState().with(SlabBlock.TYPE,
+                target = block.defaultBlockState().setValue(SlabBlock.TYPE,
                         orientation == 0 ? SlabType.TOP : SlabType.BOTTOM);
             } else {
                 target = Pieces.state(material, shape, orientation);

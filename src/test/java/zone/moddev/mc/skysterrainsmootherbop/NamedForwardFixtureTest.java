@@ -15,6 +15,35 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class NamedForwardFixtureTest {
     @Test
+    void actual115SaveRetainsTheQualifiedFamilyAndItsResolvedEtherealPieces() throws Exception {
+        Path root = Paths.get("src/test/resources/fixtures/forward-1.15.2-family");
+        JsonObject source = json(root.resolve("provenance.json"));
+        String checksum = digest(root.resolve("world.zip"));
+
+        assertEquals("1B7AB7CE8BC9A1F1BA7AB8EAB2F44290B6EE4D3056DBB4475644CBCFE77F22A9", checksum);
+        assertEquals(checksum, source.get("world_sha256").getAsString());
+        assertEquals("1.15.2", source.get("source_minecraft").getAsString());
+        assertEquals(2230, source.get("source_data_version").getAsInt());
+        assertEquals(4700, source.get("source_saved_states").getAsInt());
+        assertEquals(6, source.get("wet_sand_states").getAsInt());
+        assertEquals(24, source.getAsJsonArray("preceding_state_changes").size());
+        assertTrue(source.get("source_world_unchanged").getAsBoolean());
+        assertEquals(source.get("manifest_sha256").getAsString(), digest(root.resolve("source-family-fixture.json")));
+        assertEquals(source.get("native_states_sha256").getAsString(), digest(root.resolve("native-source-states.json")));
+
+        Set<String> artifacts = new HashSet<>();
+        source.getAsJsonArray("source_artifacts")
+                .forEach(row -> artifacts.add(row.getAsJsonObject().get("sha256").getAsString()));
+        assertEquals(6, artifacts.size());
+        assertTrue(artifacts.contains("1BA84C1CAACC9006E3272B3BA37FCC9D1DB6B90091E727C366B9969EDD5E74BF"));
+        assertTrue(artifacts.contains("A0D741B5D641DE05EFA37DDC0565B5FC3164661A6B03890E71ECF86F7EB56E51"));
+        assertTrue(artifacts.contains("94A5BAA4B3DC025A338A60BAC27B3E5BBAD4AE0CE494BA5EC1F852E401A704F7"));
+        assertTrue(artifacts.contains("7AD98ED70F0A88ADE5C7048C21811E7B3BAC889593070D54A0790EA339A81E9D"));
+        assertTrue(artifacts.contains("CF73DA4A5688D79F5FFBC76FEF83941472A5FBEFF9D84581B57F1B67CAA399EB"));
+        assertTrue(artifacts.contains("FA450EB93CCE9CF16F88BCB0DD48FF8ABBD163981EA54DABD27CC0B6E110F99C"));
+    }
+
+    @Test
     void precedingVersionSaveUsesQualifiedJarsAndContainsWetSand() throws Exception {
         Path root = Paths.get("src/test/resources/fixtures/forward-1.14.4-family");
         JsonObject source = json(root.resolve("provenance.json"));

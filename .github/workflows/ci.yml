@@ -1,19 +1,19 @@
-name: Sky's Terrain Smoother - Biomes O Plenty 1.15.2 CI
+name: Sky's Terrain Smoother - Biomes O Plenty 1.16.5 CI
 
 on:
   push:
     branches:
-      - master-1.15.2
+      - master-1.16.5
       - 'feature/**'
   pull_request:
     branches:
-      - master-1.15.2
+      - master-1.16.5
 
 permissions:
   contents: read
 
 concurrency:
-  group: skysterrainsmoother-biomesoplenty-addon-1.15.2-${{ github.workflow }}-${{ github.ref }}
+  group: skysterrainsmoother-biomesoplenty-addon-1.16.5-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -146,13 +146,13 @@ jobs:
       - name: Upload audited release candidate
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
-          name: SkysTerrainSmoother-BiomesOPlenty-Addon-1.15.2-${{ github.sha }}
+          name: SkysTerrainSmoother-BiomesOPlenty-Addon-1.16.5-${{ github.sha }}
           if-no-files-found: error
           retention-days: 30
           path: |
-            build/libs/SkysTerrainSmoother-BiomesOPlenty-Addon-0.1.0.115021.jar
-            build/libs/SkysTerrainSmoother-BiomesOPlenty-Addon-0.1.0.115021-sources.jar
-            build/libs/SkysTerrainSmoother-BiomesOPlenty-Addon-0.1.0.115021-javadoc.jar
+            build/libs/SkysTerrainSmoother-BiomesOPlenty-Addon-0.1.0.116051.jar
+            build/libs/SkysTerrainSmoother-BiomesOPlenty-Addon-0.1.0.116051-sources.jar
+            build/libs/SkysTerrainSmoother-BiomesOPlenty-Addon-0.1.0.116051-javadoc.jar
             build/release/SHA256SUMS
             CHANGELOG.md
 
@@ -160,7 +160,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
-          name: SkysTerrainSmoother-BiomesOPlenty-Addon-1.15.2-diagnostics-${{ github.sha }}
+          name: SkysTerrainSmoother-BiomesOPlenty-Addon-1.16.5-diagnostics-${{ github.sha }}
           if-no-files-found: ignore
           retention-days: 14
           path: |

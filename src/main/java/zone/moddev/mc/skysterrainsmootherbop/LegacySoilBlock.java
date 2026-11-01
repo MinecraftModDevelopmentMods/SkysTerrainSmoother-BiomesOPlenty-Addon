@@ -20,16 +20,16 @@ final class LegacySoilBlock extends Block {
     private final LegacySoils.Palette palette;
 
     LegacySoilBlock(LegacySoils.Palette palette) {
-        super(Block.Properties.create(Material.EARTH).hardnessAndResistance(.5f));
+        super(Block.Properties.of(Material.DIRT).strength(.5f));
         this.palette = palette;
         palette.holder = this;
         setRegistryName(palette.id);
-        setDefaultState(stateContainer.getBaseState().with(META, 0)
-                .with(SnowyDirtBlock.SNOWY, false).with(LOWERED_SUPPORT, false));
+        registerDefaultState(stateDefinition.any().setValue(META, 0)
+                .setValue(SnowyDirtBlock.SNOWY, false).setValue(LOWERED_SUPPORT, false));
     }
 
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
         builder.add(META, SnowyDirtBlock.SNOWY, LOWERED_SUPPORT);
     }
 
@@ -38,10 +38,10 @@ final class LegacySoilBlock extends Block {
             ISelectionContext context) {
         // Forge bakes every possible carrier state, including reserved slots.
         // Saved reserved values are rejected by the recovery bridge before loading.
-        if (!palette.valid(state.get(META))) {
+        if (!palette.valid(state.getValue(META))) {
             return VoxelShapes.empty();
         }
-        BlockState target = palette.resolve(state.get(META));
+        BlockState target = palette.resolve(state.getValue(META));
         return target.getShape(world, position, context);
     }
 }

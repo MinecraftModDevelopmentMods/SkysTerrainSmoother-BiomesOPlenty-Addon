@@ -27,9 +27,9 @@ public final class CoarseDirtSlab extends LegacySlabBlock {
     static Item item;
 
     private CoarseDirtSlab() {
-        super(Material.EARTH, SoundType.GROUND, .5f, true);
+        super(Material.DIRT, SoundType.GRAVEL, .5f, true);
         setRegistryName(BLOCK_ID);
-        setDefaultState(getDefaultState().with(SnowyDirtBlock.SNOWY, false));
+        registerDefaultState(defaultBlockState().setValue(SnowyDirtBlock.SNOWY, false));
     }
 
     @Override
@@ -40,8 +40,8 @@ public final class CoarseDirtSlab extends LegacySlabBlock {
     }
 
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-        super.fillStateContainer(builder);
+    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
         builder.add(SnowyDirtBlock.SNOWY);
     }
 
@@ -51,25 +51,25 @@ public final class CoarseDirtSlab extends LegacySlabBlock {
         if (state == null) {
             return null;
         }
-        if (state.get(TYPE) == SlabType.DOUBLE) {
-            return Blocks.COARSE_DIRT.getDefaultState();
+        if (state.getValue(TYPE) == SlabType.DOUBLE) {
+            return Blocks.COARSE_DIRT.defaultBlockState();
         }
-        return state.with(SnowyDirtBlock.SNOWY, snowy(context.getWorld(), context.getPos()));
+        return state.setValue(SnowyDirtBlock.SNOWY, snowy(context.getLevel(), context.getClickedPos()));
     }
 
     @Override
-    public BlockState updatePostPlacement(BlockState state, Direction facing, BlockState neighbour,
+    public BlockState updateShape(BlockState state, Direction facing, BlockState neighbour,
             IWorld world, BlockPos position, BlockPos neighbourPosition) {
-        return super.updatePostPlacement(state, facing, neighbour, world, position, neighbourPosition)
-                .with(SnowyDirtBlock.SNOWY, snowy(world, position));
+        return super.updateShape(state, facing, neighbour, world, position, neighbourPosition)
+                .setValue(SnowyDirtBlock.SNOWY, snowy(world, position));
     }
 
     @Override
     public void tick(BlockState state, ServerWorld world, BlockPos position, Random random) {
-        if (!world.isRemote) {
-            BlockState updated = state.with(SnowyDirtBlock.SNOWY, snowy(world, position));
+        if (!world.isClientSide) {
+            BlockState updated = state.setValue(SnowyDirtBlock.SNOWY, snowy(world, position));
             if (updated != state) {
-                world.setBlockState(position, updated, 2 | 16);
+                world.setBlock(position, updated, 2 | 16);
             }
         }
     }
@@ -77,26 +77,26 @@ public final class CoarseDirtSlab extends LegacySlabBlock {
     @Override
     public boolean canSustainPlant(BlockState state, IBlockReader world, BlockPos position, Direction face,
             net.minecraftforge.common.IPlantable plant) {
-        BlockState full = Blocks.COARSE_DIRT.getDefaultState();
-        return state.get(TYPE) == SlabType.TOP && face == Direction.UP
+        BlockState full = Blocks.COARSE_DIRT.defaultBlockState();
+        return state.getValue(TYPE) == SlabType.TOP && face == Direction.UP
                 && full.getBlock().canSustainPlant(full, world, position, face, plant);
     }
 
     private static boolean snowy(IBlockReader world, BlockPos position) {
         for (Direction direction : new Direction[] {
                 Direction.UP, Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST }) {
-            BlockPos neighbour = position.offset(direction);
+            BlockPos neighbour = position.relative(direction);
             Block block;
             if (world instanceof ServerWorld) {
-                Chunk chunk = ((ServerWorld) world).getChunkProvider()
-                        .getChunkWithoutLoading(neighbour.getX() >> 4, neighbour.getZ() >> 4);
+                Chunk chunk = ((ServerWorld) world).getChunkSource()
+                        .getChunkNow(neighbour.getX() >> 4, neighbour.getZ() >> 4);
                 if (chunk == null) {
                     continue;
                 }
                 block = chunk.getBlockState(neighbour).getBlock();
             } else {
                 if (world instanceof IWorldReader
-                        && !((IWorldReader) world).chunkExists(neighbour.getX() >> 4, neighbour.getZ() >> 4)) {
+                        && !((IWorldReader) world).hasChunk(neighbour.getX() >> 4, neighbour.getZ() >> 4)) {
                     continue;
                 }
                 block = world.getBlockState(neighbour).getBlock();

@@ -28,8 +28,8 @@ final class NativeTerrain {
                         BuildingPiecesApi.TerrainShape.CORNER, directions[direction]);
             }
             TerrainSmoothingApi.registerMaterial(new TerrainMaterial(coarseId,
-                    Collections.singleton(net.minecraft.block.Blocks.COARSE_DIRT.getDefaultState()),
-                    CoarseDirtSlab.BLOCK.getDefaultState(), steps, corners, false, null));
+                    Collections.singleton(net.minecraft.block.Blocks.COARSE_DIRT.defaultBlockState()),
+                    CoarseDirtSlab.BLOCK.defaultBlockState(), steps, corners, false, null));
         }
         for (String rock : new String[] { "crag_rock", "limestone", "shale", "siltstone" }) {
             String material = "biomesoplenty:" + rock;
