@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.0.114041
+
+- Added Minecraft 1.14.4 support with the matching Sky mods.
+- Recovered the old BOP grass, soil and path pieces as available equivalents,
+  keeping their shape, orientation and custom inventory data.
+- Kept the original recipe identities for cutting and combining replacements.
+- Kept ordinary BOP ground and recovered natural rocks in the same smoothing pass.
+
+
 ## 0.1.0.112021
 
 - Added Minecraft 1.12.2 support for BOP grass, soils and natural rock pieces.

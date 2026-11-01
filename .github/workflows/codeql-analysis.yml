@@ -3,11 +3,11 @@ name: CodeQL
 on:
   push:
     branches:
-      - master-1.12.2
+      - master-1.14.4
       - 'feature/**'
   pull_request:
     branches:
-      - master-1.12.2
+      - master-1.14.4
   schedule:
     - cron: '47 7 * * 4'
 
@@ -41,8 +41,8 @@ jobs:
       - name: Install Java 17 for Gradle
         uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
         with:
-          distribution: microsoft
-          java-version: '17'
+          distribution: temurin
+          java-version: '17.0.1+12'
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@9c971963bec38e04b3d30dcc455b5382be2fdbfb # v6
@@ -91,10 +91,10 @@ jobs:
         run: |
           set -euo pipefail
           chmod +x dependencies/*/gradlew
-          (cd dependencies/grass && ./gradlew jar --no-daemon --stacktrace)
-          (cd dependencies/pieces && ./gradlew jar --no-daemon --stacktrace)
-          (cd dependencies/terrain && ./gradlew jar -PgrassSlabsDirectory=../grass -PbuildingPiecesDirectory=../pieces --no-daemon --stacktrace)
-          (cd dependencies/bopPieces && ./gradlew jar -PbuildingPiecesCoreDir=../pieces --no-daemon --stacktrace)
+          (cd dependencies/grass && ./gradlew assemble --no-daemon --stacktrace)
+          (cd dependencies/pieces && ./gradlew assemble --no-daemon --stacktrace)
+          (cd dependencies/terrain && ./gradlew assemble -PgrassSlabsDirectory=../grass -PbuildingPiecesDirectory=../pieces --no-daemon --stacktrace)
+          (cd dependencies/bopPieces && ./gradlew assemble bopDevelopmentJar -PbuildingPiecesCoreDir=../pieces --no-daemon --stacktrace)
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@db488ddef3bf6cb639b32c2e9a7c0a7ea8271d28 # v4

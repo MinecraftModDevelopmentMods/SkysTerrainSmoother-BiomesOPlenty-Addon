@@ -1,19 +1,19 @@
-name: Sky's Terrain Smoother - Biomes O Plenty 1.12 CI
+name: Sky's Terrain Smoother - Biomes O Plenty 1.14 CI
 
 on:
   push:
     branches:
-      - master-1.12.2
+      - master-1.14.4
       - 'feature/**'
   pull_request:
     branches:
-      - master-1.12.2
+      - master-1.14.4
 
 permissions:
   contents: read
 
 concurrency:
-  group: skysterrainsmoother-biomesoplenty-addon-1.12-${{ github.workflow }}-${{ github.ref }}
+  group: skysterrainsmoother-biomesoplenty-addon-1.14-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -41,8 +41,8 @@ jobs:
       - name: Install Java 17 for Gradle
         uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
         with:
-          distribution: microsoft
-          java-version: '17'
+          distribution: temurin
+          java-version: '17.0.1+12'
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@9c971963bec38e04b3d30dcc455b5382be2fdbfb # v6
@@ -91,18 +91,52 @@ jobs:
         run: |
           set -euo pipefail
           chmod +x dependencies/*/gradlew
-          (cd dependencies/grass && ./gradlew jar --no-daemon --stacktrace)
-          (cd dependencies/pieces && ./gradlew jar --no-daemon --stacktrace)
-          (cd dependencies/terrain && ./gradlew jar -PgrassSlabsDirectory=../grass -PbuildingPiecesDirectory=../pieces --no-daemon --stacktrace)
-          (cd dependencies/bopPieces && ./gradlew jar -PbuildingPiecesCoreDir=../pieces --no-daemon --stacktrace)
+          (cd dependencies/grass && ./gradlew assemble --no-daemon --stacktrace)
+          (cd dependencies/pieces && ./gradlew assemble --no-daemon --stacktrace)
+          (cd dependencies/terrain && ./gradlew assemble -PgrassSlabsDirectory=../grass -PbuildingPiecesDirectory=../pieces --no-daemon --stacktrace)
+          (cd dependencies/bopPieces && ./gradlew assemble bopDevelopmentJar -PbuildingPiecesCoreDir=../pieces --no-daemon --stacktrace)
 
       - name: Make the wrapper executable
         run: chmod +x ./gradlew
 
+      - name: Clean previous outputs
+        run: >-
+          ./gradlew clean --no-daemon --stacktrace
+          -PgrassSlabsDirectory=dependencies/grass -PbuildingPiecesDirectory=dependencies/pieces
+          -PterrainDirectory=dependencies/terrain -PbuildingPiecesBopDirectory=dependencies/bopPieces
+
       - name: Build, test, and audit release artifacts
         run: >-
-          ./gradlew clean check integrationTest build javadoc verifyReleaseArtifacts writeReleaseChecksums
+          ./gradlew check integrationTest build javadoc verifyReleaseArtifacts writeReleaseChecksums
           verifyEclipseProductionClasspath -PgrassSlabsDirectory=dependencies/grass -PbuildingPiecesDirectory=dependencies/pieces -PterrainDirectory=dependencies/terrain -PbuildingPiecesBopDirectory=dependencies/bopPieces --no-daemon --stacktrace
+
+      - name: Bootstrap without project or user caches
+        run: |
+          set -euo pipefail
+          copy="$RUNNER_TEMP/terrain-bop-cold"
+          mkdir -p "$copy"
+          git archive HEAD | tar -x -C "$copy"
+          cd "$copy"
+          chmod +x gradlew
+          ./gradlew assemble verifyReleaseArtifacts writeReleaseChecksums --no-daemon --stacktrace \
+            --gradle-user-home "$RUNNER_TEMP/terrain-bop-gradle-home" \
+            -PgrassSlabsDirectory="$GITHUB_WORKSPACE/dependencies/grass" \
+            -PbuildingPiecesDirectory="$GITHUB_WORKSPACE/dependencies/pieces" \
+            -PterrainDirectory="$GITHUB_WORKSPACE/dependencies/terrain" \
+            -PbuildingPiecesBopDirectory="$GITHUB_WORKSPACE/dependencies/bopPieces"
+          cp build/release/SHA256SUMS "$RUNNER_TEMP/terrain-bop-cold-checksums"
+          ./gradlew clean --offline --no-daemon --gradle-user-home "$RUNNER_TEMP/terrain-bop-gradle-home" \
+            -PgrassSlabsDirectory="$GITHUB_WORKSPACE/dependencies/grass" \
+            -PbuildingPiecesDirectory="$GITHUB_WORKSPACE/dependencies/pieces" \
+            -PterrainDirectory="$GITHUB_WORKSPACE/dependencies/terrain" \
+            -PbuildingPiecesBopDirectory="$GITHUB_WORKSPACE/dependencies/bopPieces"
+          ./gradlew assemble verifyReleaseArtifacts writeReleaseChecksums --offline --no-daemon --rerun-tasks \
+            --gradle-user-home "$RUNNER_TEMP/terrain-bop-gradle-home" \
+            -PgrassSlabsDirectory="$GITHUB_WORKSPACE/dependencies/grass" \
+            -PbuildingPiecesDirectory="$GITHUB_WORKSPACE/dependencies/pieces" \
+            -PterrainDirectory="$GITHUB_WORKSPACE/dependencies/terrain" \
+            -PbuildingPiecesBopDirectory="$GITHUB_WORKSPACE/dependencies/bopPieces"
+          cmp "$RUNNER_TEMP/terrain-bop-cold-checksums" build/release/SHA256SUMS
 
       - name: Replay artifact checks offline
         run: >-
@@ -112,13 +146,13 @@ jobs:
       - name: Upload audited release candidate
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
-          name: SkysTerrainSmoother-BiomesOPlenty-Addon-1.12.2-${{ github.sha }}
+          name: SkysTerrainSmoother-BiomesOPlenty-Addon-1.14.4-${{ github.sha }}
           if-no-files-found: error
           retention-days: 30
           path: |
-            build/libs/SkysTerrainSmoother-BiomesOPlenty-Addon-0.1.0.112021.jar
-            build/libs/SkysTerrainSmoother-BiomesOPlenty-Addon-0.1.0.112021-sources.jar
-            build/libs/SkysTerrainSmoother-BiomesOPlenty-Addon-0.1.0.112021-javadoc.jar
+            build/libs/SkysTerrainSmoother-BiomesOPlenty-Addon-0.1.0.114041.jar
+            build/libs/SkysTerrainSmoother-BiomesOPlenty-Addon-0.1.0.114041-sources.jar
+            build/libs/SkysTerrainSmoother-BiomesOPlenty-Addon-0.1.0.114041-javadoc.jar
             build/release/SHA256SUMS
             CHANGELOG.md
 
@@ -126,7 +160,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
-          name: SkysTerrainSmoother-BiomesOPlenty-Addon-1.12.2-diagnostics-${{ github.sha }}
+          name: SkysTerrainSmoother-BiomesOPlenty-Addon-1.14.4-diagnostics-${{ github.sha }}
           if-no-files-found: ignore
           retention-days: 14
           path: |

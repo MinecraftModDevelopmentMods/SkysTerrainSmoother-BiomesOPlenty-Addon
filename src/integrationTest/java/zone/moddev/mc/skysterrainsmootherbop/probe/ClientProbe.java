@@ -1,21 +1,16 @@
 package zone.moddev.mc.skysterrainsmootherbop.probe;
 
 import java.io.*;
-import net.minecraft.block.BlockGrass;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.*;
-import net.minecraft.item.*;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.world.*;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
-import zone.moddev.mc.skysterrainsmootherbop.*;
-import zone.moddev.mc.skysterrainsmoother.content.SandContent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.event.TickEvent;
 
 public final class ClientProbe extends ProbeProxy {
-    private boolean ran, integrated;
+    private boolean ran;
+    private boolean integrated;
+    private boolean resourcesChecked;
+    private int settledWorldTicks;
 
     @Override
     public void init() {
@@ -24,113 +19,133 @@ public final class ClientProbe extends ProbeProxy {
 
     @SubscribeEvent
     public void tick(TickEvent.ClientTickEvent event) {
-        Minecraft minecraft = Minecraft.getMinecraft();
+        Minecraft minecraft = Minecraft.getInstance();
+
+        org.lwjgl.glfw.GLFW.glfwHideWindow(minecraft.mainWindow.getHandle());
 
         if (event.phase != TickEvent.Phase.END) {
             return;
         }
         if (ran) {
-            if (integrated && ClientStatus.complete) {
-                System.out.println("BOP_TERRAIN_CLIENT_WORLD_PASS");
+            if (integrated && ClientStatus.complete && minecraft.world != null && minecraft.player != null
+                    && minecraft.getConnection() != null
+                    && !minecraft.getConnection().getRecipeManager().getRecipes().isEmpty()) {
+                if (++settledWorldTicks < 20) return;
+                RecipePreviewModels.check(minecraft);
+                checkBiomeTints(minecraft);
+                System.out.println("TERRAIN_SMOOTHER_CLIENT_WORLD_PASS");
                 minecraft.shutdown();
                 integrated = false;
             }
 
             return;
         }
-        if (minecraft.currentScreen == null) {
+        if (minecraft.currentScreen == null || minecraft.getLoadingGui() != null) {
             return;
         }
 
-        ran = true;
+        try {
+            if (!resourcesChecked) {
+                MineralogyProbe.run();
+                FineGrassModelProbe.run(minecraft);
+                checkModel(minecraft, RuntimeProbe.probeOre.getDefaultState());
+                checkRecoveredSoilModels(minecraft);
 
-        int models = 0;
-        int items = 0;
-
-        for (IBlockState state : SandContent.slab.getBlockState().getValidStates()) {
-            model(minecraft, state);
-            models++;
-        }
-        for (SoilPieceBlock block : SoilPieces.BLOCKS) {
-            for (IBlockState state : block.getBlockState().getValidStates()) {
-                if (state.getValue(SoilPieceBlock.META) / block.shape.states >= block.count) {
-                    continue;
+                for (net.minecraft.block.Block block : new net.minecraft.block.Block[] {
+                        zone.moddev.mc.skysterrainsmoother.content.SandContent.slab,
+                        zone.moddev.mc.skysterrainsmoother.content.SandContent.redSlab }) {
+                    for (net.minecraft.block.BlockState state : block.getStateContainer().getValidStates()) {
+                        checkModel(minecraft, state);
+                    }
                 }
-
-                model(minecraft, state);
-                models++;
-
-                int actual = minecraft.getBlockColors().colorMultiplier(state, null, null, 0);
-                int nativeColour = minecraft.getBlockColors().colorMultiplier(block.full(state), null, null, 0);
-
-                if (block.grass) {
-                    RuntimeProbe.require(actual == nativeColour, "native BOP biome/item tint " + state);
+                for (net.minecraft.block.BlockState state : zone.moddev.mc.skysgrassslabs.init.ModBlocks.GRASS_SLAB
+                        .getStateContainer().getValidStates()) {
+                    checkModel(minecraft, state);
                 }
-            }
-            for (int slot = 0; slot < block.count; slot++) {
-                ItemStack stack = new ItemStack(block, 1, slot * block.shape.states);
-                IBakedModel item = minecraft.getRenderItem().getItemModelMesher().getItemModel(stack);
-
-                RuntimeProbe.require(item != minecraft.getBlockRendererDispatcher().getBlockModelShapes()
-                        .getModelManager().getMissingModel(), "inventory model " + stack);
-                RuntimeProbe.require(
-                        !stack.getDisplayName().contains("pieces.") && !stack.getDisplayName().contains("tile."),
-                        "localized item display name");
-                items++;
-            }
-        }
-
-        for (SoilPathBlock block : SoilPaths.BLOCKS) {
-            for (IBlockState state : block.getBlockState().getValidStates()) {
-                if (state.getValue(SoilPieceBlock.META) / block.shape.states >= block.count) {
-                    continue;
+                for (zone.moddev.mc.skysbuildingpieces.content.PieceBlock block : zone.moddev.mc.skysbuildingpieces.content.Pieces.BLOCKS
+                        .values()) {
+                    for (net.minecraft.block.BlockState state : block.getStateContainer().getValidStates()) {
+                        checkModel(minecraft, state);
+                    }
                 }
-                model(minecraft, state);
-                RuntimeProbe.require(minecraft.getBlockColors().colorMultiplier(state, null, null, 0) == -1,
-                        "BOP path surfaces remain untinted");
-                models++;
+                resourcesChecked = true;
+                ConfigScreenProbe.begin(minecraft);
+                return;
             }
-            for (int slot = 0; slot < block.count; slot++) {
-                ItemStack stack = new ItemStack(block, 1, slot * block.shape.states);
-                RuntimeProbe.require(minecraft.getRenderItem().getItemModelMesher().getItemModel(stack)
-                        != minecraft.getBlockRendererDispatcher().getBlockModelShapes().getModelManager().getMissingModel(),
-                        "BOP path item model");
-                RuntimeProbe.require(!stack.getDisplayName().contains("pieces.")
-                        && !stack.getDisplayName().contains("tile."), "BOP path item name");
-                items++;
+            if (!ConfigScreenProbe.tick(minecraft)) return;
+            ran = true;
+            try (Writer writer = new FileWriter(new File(minecraft.gameDir, "terrain-smoother-client-pass.txt"))) {
+                writer.write("TERRAIN_SMOOTHER_CLIENT_PASS\n");
             }
-        }
-        System.out.println("BOP_TERRAIN_CLIENT_PASS models=" + models + " items=" + items);
-        MineralogyProbe.run();
 
-        try (Writer writer = new FileWriter(new File(minecraft.gameDir, "bop-terrain-client-pass.txt"))) {
-            writer.write("BOP_TERRAIN_CLIENT_PASS\n");
+            System.out.println("TERRAIN_SMOOTHER_CLIENT_PASS");
         } catch (IOException failure) {
             throw new IllegalStateException(failure);
         }
-        if (System.getProperty("skysterrainsmootherbop.integrationPhase", "").startsWith("client-")) {
+        if (System.getProperty("skysterrainsmoother.integrationPhase", "").startsWith("client-")) {
             integrated = true;
-            minecraft.launchIntegratedServer("terrain-smoother-world", "BOP Terrain Test",
-                    new WorldSettings(1272993827L, GameType.CREATIVE, true, false, WorldType.byName("BIOMESOP")));
+            minecraft.launchIntegratedServer("terrain-smoother-world", "Terrain Smoother Test",
+                    new net.minecraft.world.WorldSettings(4815162342L, net.minecraft.world.GameType.CREATIVE, false,
+                            false, net.minecraft.world.WorldType.DEFAULT));
         } else {
             minecraft.shutdown();
         }
     }
 
-    private static void model(Minecraft minecraft, IBlockState state) {
-        IBakedModel model = minecraft.getBlockRendererDispatcher().getModelForState(state);
+    private static void checkBiomeTints(Minecraft client) {
+        net.minecraft.util.math.BlockPos sample = new net.minecraft.util.math.BlockPos(client.player);
+        int expected = client.getBlockColors().getColor(net.minecraft.block.Blocks.GRASS_BLOCK.getDefaultState(),
+                client.world, sample, 0);
+        int count = 0;
+        for (zone.moddev.mc.skysbuildingpieces.content.PieceBlock block :
+                zone.moddev.mc.skysbuildingpieces.content.Pieces.BLOCKS.values()) {
+            if (block.palette.group.equals("grass")) {
+                RuntimeProbe.require(client.getBlockColors().getColor(block.getDefaultState(), client.world, sample, 0)
+                                == expected, "Fine grass uses the actual client biome tint");
+                count++;
+            }
+        }
+        RuntimeProbe.require(count > 0, "Grass pieces reached the colour checks");
+        RuntimeProbe.require(client.getBlockColors().getColor(
+                        zone.moddev.mc.skysgrassslabs.init.ModBlocks.GRASS_SLAB.getDefaultState(), client.world, sample, 0)
+                        == expected, "Grass slabs retain the actual client biome tint");
+        System.out.println("TERRAIN_SMOOTHER_CLIENT_TINT_PASS palettes=" + count);
+    }
+
+    private static void checkRecoveredSoilModels(Minecraft client) {
+        int states = 0;
+        for (String name : zone.moddev.mc.skysterrainsmootherbop.LegacySoils.PALETTES.keySet()) {
+            net.minecraft.block.Block block = net.minecraftforge.registries.ForgeRegistries.BLOCKS
+                    .getValue(new net.minecraft.util.ResourceLocation(name));
+            RuntimeProbe.require(block != null, "The saved soil palette remains registered: " + name);
+            for (net.minecraft.block.BlockState state : block.getStateContainer().getValidStates()) {
+                checkModel(client, state);
+                states++;
+            }
+        }
+        net.minecraft.item.Item coarse = zone.moddev.mc.skysterrainsmootherbop.CoarseDirtSlab.BLOCK.asItem();
+        net.minecraft.client.renderer.model.IBakedModel itemModel = client.getItemRenderer().getItemModelMesher()
+                .getItemModel(new net.minecraft.item.ItemStack(coarse));
+        RuntimeProbe.require(itemModel != client.getModelManager().getMissingModel(),
+                "The playable coarse dirt slab has an inventory model");
+        RuntimeProbe.require(!itemModel.getParticleTexture().getName().toString().contains("missingno"),
+                "The coarse dirt slab has its native soil texture");
+        System.out.println("TERRAIN_BOP_SOIL_MODELS_PASS states=" + states);
+    }
+
+    private static void checkModel(Minecraft minecraft, net.minecraft.block.BlockState state) {
+        net.minecraft.client.renderer.model.IBakedModel model = minecraft.getBlockRendererDispatcher()
+                .getModelForState(state);
 
         RuntimeProbe.require(model != minecraft.getBlockRendererDispatcher().getBlockModelShapes().getModelManager()
-                .getMissingModel(), "missing block model " + state);
+                .getMissingModel(), "missing model " + state);
 
-        for (EnumFacing face : new EnumFacing[] { null, EnumFacing.DOWN, EnumFacing.UP, EnumFacing.NORTH,
-                EnumFacing.EAST, EnumFacing.SOUTH, EnumFacing.WEST }) {
-            for (BakedQuad quad : model.getQuads(state, face, 0)) {
-                RuntimeProbe.require(!quad.getSprite().getIconName().contains("missingno"), "missing texture " + state);
-
-                if (state.getPropertyKeys().contains(BlockGrass.SNOWY) && state.getValue(BlockGrass.SNOWY)) {
-                    RuntimeProbe.require(!quad.hasTintIndex(), "snow is never grass tinted");
-                }
+        for (net.minecraft.util.Direction face : new net.minecraft.util.Direction[] { null,
+                net.minecraft.util.Direction.DOWN, net.minecraft.util.Direction.UP,
+                net.minecraft.util.Direction.NORTH, net.minecraft.util.Direction.SOUTH,
+                net.minecraft.util.Direction.WEST, net.minecraft.util.Direction.EAST }) {
+            for (net.minecraft.client.renderer.model.BakedQuad quad : model.getQuads(state, face, new java.util.Random(0))) {
+                RuntimeProbe.require(!quad.getSprite().getName().toString().contains("missingno"), "missing texture " + state);
             }
         }
     }

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "skysterrainsmootherbop/full_block",
+  "pattern": [
+    "XX"
+  ],
+  "key": {
+    "X": {
+      "item": "skysterrainsmootherbop:coarse_dirt_slab"
+    }
+  },
+  "result": {
+    "item": "minecraft:coarse_dirt",
+    "count": 1
+  }
+}
