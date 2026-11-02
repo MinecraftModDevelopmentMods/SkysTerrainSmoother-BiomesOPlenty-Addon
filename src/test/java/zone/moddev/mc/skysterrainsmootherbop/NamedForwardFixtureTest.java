@@ -15,6 +15,26 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class NamedForwardFixtureTest {
     @Test
+    void actual116SaveKeepsTheWholeFamilyAndItsWaterloggedSoils() throws Exception {
+        Path root = Paths.get("src/test/resources/fixtures/forward-1.16.5-family");
+        JsonObject source = json(root.resolve("provenance.json"));
+        String checksum = digest(root.resolve("world.zip"));
+
+        assertEquals("F9E693C7B44CB6C7546354CC34F93F8CC3F3DE6F90094AA4F04CBF2F7803E99F", checksum);
+        assertEquals(checksum, source.get("world_sha256").getAsString());
+        assertEquals("1.16.5", source.get("source_minecraft").getAsString());
+        assertEquals(2586, source.get("source_data_version").getAsInt());
+        assertEquals(4700, source.get("source_saved_states").getAsInt());
+        assertEquals(12, source.get("native_soil_states").getAsInt());
+        assertEquals(6, source.get("wet_soil_states").getAsInt());
+        assertTrue(source.get("source_world_unchanged").getAsBoolean());
+        assertEquals(source.get("manifest_sha256").getAsString(), digest(root.resolve("source-family-fixture.json")));
+        assertEquals(source.get("native_states_sha256").getAsString(), digest(root.resolve("native-source-states.json")));
+        assertEquals("535ad6e46de40c9ceaa77318b1a6d41080c5f0e0", source.get("source_terrain_bop_commit").getAsString());
+        assertEquals(6, source.getAsJsonArray("source_artifacts").size());
+    }
+
+    @Test
     void actual115SaveRetainsTheQualifiedFamilyAndItsResolvedEtherealPieces() throws Exception {
         Path root = Paths.get("src/test/resources/fixtures/forward-1.15.2-family");
         JsonObject source = json(root.resolve("provenance.json"));

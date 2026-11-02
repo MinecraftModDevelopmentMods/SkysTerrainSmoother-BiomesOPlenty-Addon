@@ -6,16 +6,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.SlabBlock;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.item.ItemStack;
-import net.minecraft.state.properties.SlabType;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.properties.SlabType;
+import net.minecraft.resources.ResourceLocation;
 import zone.moddev.mc.skysbuildingpieces.catalogue.Shape;
 import zone.moddev.mc.skysbuildingpieces.content.Pieces;
 import zone.moddev.mc.skysbuildingpieces.legacy.HistoricalFullBlocks;
@@ -66,14 +66,14 @@ public final class LegacySoils {
         HistoricalItems.register(MODULE, LegacySoils::contains, LegacySoils::recover);
     }
 
-    private static boolean contains(CompoundNBT root) {
+    private static boolean contains(CompoundTag root) {
         List<Change> changes = new ArrayList<>();
         collect(root, changes, 0);
         return !changes.isEmpty();
     }
 
     /** Resolve the entire tree first. A bad entry must never leave half an inventory converted. */
-    public static void recover(CompoundNBT root) {
+    public static void recover(CompoundTag root) {
         List<Change> changes = new ArrayList<>();
         collect(root, changes, 0);
         for (Change change : changes) {
@@ -90,19 +90,19 @@ public final class LegacySoils {
                 change.saved.putString("id", target.getItem().getRegistryName().toString());
                 change.saved.remove("Damage");
             } else {
-                CompoundNBT target = NBTUtil.writeBlockState(change.state);
+                CompoundTag target = NbtUtils.writeBlockState(change.state);
                 change.saved.putString("Name", target.getString("Name"));
                 change.saved.put("Properties", target.getCompound("Properties"));
             }
         }
     }
 
-    private static void collect(INBT value, List<Change> changes, int depth) {
+    private static void collect(Tag value, List<Change> changes, int depth) {
         if (depth > 64) {
             throw abort("Saved BOP terrain nesting exceeds 64 levels");
         }
-        if (value instanceof CompoundNBT) {
-            CompoundNBT compound = (CompoundNBT) value;
+        if (value instanceof CompoundTag) {
+            CompoundTag compound = (CompoundTag) value;
             Palette item = PALETTES.get(compound.getString("id"));
             Palette block = PALETTES.get(compound.getString("Name"));
             if (item != null) {
@@ -123,21 +123,21 @@ public final class LegacySoils {
             for (String key : compound.getAllKeys()) {
                 collect(compound.get(key), changes, depth + 1);
             }
-        } else if (value instanceof ListNBT) {
-            for (INBT child : (ListNBT) value) {
+        } else if (value instanceof ListTag) {
+            for (Tag child : (ListTag) value) {
                 collect(child, changes, depth + 1);
             }
         }
     }
 
-    private static BlockState namedState(Palette palette, CompoundNBT properties) {
+    private static BlockState namedState(Palette palette, CompoundTag properties) {
         if (palette.id.equals(CoarseDirtSlab.BLOCK_ID) && properties.contains("type")) {
             if (properties.contains("meta")) {
                 throw abort("Conflicting old and current coarse dirt slab properties");
             }
             String type = properties.getString("type");
             if (type.equals("double")) {
-                return net.minecraft.block.Blocks.COARSE_DIRT.defaultBlockState();
+                return net.minecraft.world.level.block.Blocks.COARSE_DIRT.defaultBlockState();
             }
             if (!type.equals("top") && !type.equals("bottom")) {
                 throw abort("Invalid saved coarse dirt slab half: " + type);
@@ -156,8 +156,8 @@ public final class LegacySoils {
         return palette.resolve(metadata);
     }
 
-    private static boolean integer(CompoundNBT compound, String key) {
-        INBT value = compound.get(key);
+    private static boolean integer(CompoundTag compound, String key) {
+        Tag value = compound.get(key);
         return value != null && value.getId() >= 1 && value.getId() <= 4;
     }
 
@@ -166,11 +166,11 @@ public final class LegacySoils {
     }
 
     private static final class Change {
-        final CompoundNBT saved;
+        final CompoundTag saved;
         final BlockState state;
         final boolean item;
 
-        Change(CompoundNBT saved, BlockState state, boolean item) {
+        Change(CompoundTag saved, BlockState state, boolean item) {
             this.saved = saved;
             this.state = state;
             this.item = item;
@@ -224,7 +224,7 @@ public final class LegacySoils {
             } else {
                 target = Pieces.state(material, shape, orientation);
             }
-            if (target == null || target.getBlock().hasTileEntity(target)) {
+            if (target == null || target.hasBlockEntity()) {
                 throw abort("No safe replacement for " + id + " / " + metadata);
             }
             return target;

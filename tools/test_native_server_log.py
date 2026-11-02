@@ -1,4 +1,4 @@
-"""Negative controls for Forge 36 server completion and native settings."""
+"""Negative controls for Forge 37 server completion and native settings."""
 
 from pathlib import Path
 import shutil
@@ -114,6 +114,21 @@ class NativeRegistryNoticeTest(unittest.TestCase):
                      self.valid.replace(notice, notice + "\n\t" + notice)):
             with self.subTest(text=text[:80]), self.assertRaises(ValueError):
                 self.check(text, self.profile)
+
+    def test_native_116_boat_notice_has_its_own_exact_profile(self):
+        import json
+        root = Path(__file__).resolve().parent.parent
+        profile = json.loads((root / "tools/native-log-profiles.json").read_text(encoding="utf-8"))["profiles"][
+            "F9E693C7B44CB6C7546354CC34F93F8CC3F3DE6F90094AA4F04CBF2F7803E99F"]
+        prefix = "[time] [main/ERROR] [net.minecraftforge.registries.GameData/REGISTRIES]: "
+        notice = (prefix + "Unidentified mapping from registry minecraft:entity_type\n"
+                  "\tbiomesoplenty:boat: 110\n\n" + prefix +
+                  "There are unidentified mappings in this world - we are going to attempt to process anyway\n")
+        self.assertEqual(len(self.check(notice, profile)), 2)
+        for text in (notice.replace(": 110", ": 108"), notice.replace("biomesoplenty:boat", "biomesoplenty:other_boat"),
+                     notice + self.valid, notice * 2):
+            with self.subTest(text=text[:80]), self.assertRaises(ValueError):
+                self.check(text, profile)
 
 
 class NativeServerFilesTest(unittest.TestCase):

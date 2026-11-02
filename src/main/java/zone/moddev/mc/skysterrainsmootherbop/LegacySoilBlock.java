@@ -1,17 +1,17 @@
 package zone.moddev.mc.skysterrainsmootherbop;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.SnowyDirtBlock;
-import net.minecraft.block.material.Material;
-import net.minecraft.state.BooleanProperty;
-import net.minecraft.state.IntegerProperty;
-import net.minecraft.state.StateContainer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.world.IBlockReader;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.SnowyDirtBlock;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.level.BlockGetter;
 
 /** Hidden registry carriers; the early loader replaces their saved states. */
 final class LegacySoilBlock extends Block {
@@ -29,17 +29,17 @@ final class LegacySoilBlock extends Block {
     }
 
     @Override
-    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(META, SnowyDirtBlock.SNOWY, LOWERED_SUPPORT);
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos position,
-            ISelectionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos position,
+            CollisionContext context) {
         // Forge bakes every possible carrier state, including reserved slots.
         // Saved reserved values are rejected by the recovery bridge before loading.
         if (!palette.valid(state.getValue(META))) {
-            return VoxelShapes.empty();
+            return Shapes.empty();
         }
         BlockState target = palette.resolve(state.getValue(META));
         return target.getShape(world, position, context);

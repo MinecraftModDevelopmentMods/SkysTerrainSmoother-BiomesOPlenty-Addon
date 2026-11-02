@@ -51,7 +51,8 @@
         }
       },
       "saved_uses": 0,
-      "inspected_nbt_records": 1405
+      "inspected_nbt_records": 1405,
+      "unused_names": 10
     },
     "1B7AB7CE8BC9A1F1BA7AB8EAB2F44290B6EE4D3056DBB4475644CBCFE77F22A9": {
       "fixture": "src/test/resources/fixtures/forward-1.15.2-family/world.zip",
@@ -104,10 +105,75 @@
         }
       },
       "saved_uses": 0,
-      "inspected_nbt_records": 1406
+      "inspected_nbt_records": 1406,
+      "unused_names": 10
+    },
+    "F9E693C7B44CB6C7546354CC34F93F8CC3F3DE6F90094AA4F04CBF2F7803E99F": {
+      "fixture": "src/test/resources/fixtures/forward-1.16.5-family/world.zip",
+      "sha256": "F9E693C7B44CB6C7546354CC34F93F8CC3F3DE6F90094AA4F04CBF2F7803E99F",
+      "manifest_sha256": "BFC81873B727BCF6FA55754B0A12B839CEBE13D35309C951E3C896F68E1E6D1F",
+      "source_artifacts": [
+        {
+          "name": "SkysTerrainSmoother-BiomesOPlenty-Addon-0.1.0.116051.jar",
+          "sha256": "8539F009EFB34D82E6B47BB5F6C7165FED4178DA1E4114854B47ABB85B7BF26E"
+        },
+        {
+          "name": "SkysGrassSlabs-1.2.0.116051.jar",
+          "sha256": "C975A9BC836DBFC9B4A01E2D1DCB350F8201AB12BFBA8A0D9CFE1D0609A2A568"
+        },
+        {
+          "name": "SkysBuildingPieces-0.3.8.116051.jar",
+          "sha256": "B4DC9F16E5CF42902B93667B9E95EC846B66E2A3C488CC7CF48D9FBA3B477C41"
+        },
+        {
+          "name": "SkysTerrainSmoother-0.1.0.116051.jar",
+          "sha256": "C506D0489231E6663952880F4554B769361DF0FEBE10E05EF18F264DF9D49A3C"
+        },
+        {
+          "name": "SkysBuildingPieces-BiomesOPlenty-Addon-0.2.4.116051.jar",
+          "sha256": "2470024008508957A7FAEC5ED9171E56725A00100ADBC4481C3F48C808DBDFC9"
+        },
+        {
+          "name": "BiomesOPlenty-1.16.5-13.1.0.488-universal.jar",
+          "sha256": "2806139055DC330A1E8F7A4324A68B6305A9EB67CC132EF09B81BDEC5E89D9BB"
+        }
+      ],
+      "mappings": {
+        "minecraft:entity_type": {
+          "biomesoplenty:boat": 110
+        }
+      },
+      "saved_uses": 0,
+      "inspected_nbt_records": 1408,
+      "unused_names": 1
     }
   },
   "native_control": {
+    "source": "Forge 31.2.57",
+    "target": "Forge 37.1.1",
+    "registered_game_content": false,
+    "normal_start_and_stop": true,
+    "reload_errors": 0,
+    "source_sha256": "026DB236B140825EB68B516B84BECDC5E3A41BCF91A89498609AA9214CA77B8C",
+    "helper_sha256": "B8E305F3B1DE1BB372DB72C8D0FB4A13DCD0E478F62EB858C95441BE359B2D18",
+    "first_log_sha256": "A22ACFC9417D2F8FA3D9CF8CFC7BF933A91733FDF3116DD35DA80B7FE08AE346"
+  },
+  "native_client_control": {
+    "source_sha256": "342DCA5D3C88728F8783F71AAAF03F243EE3FFD3798A133B6C0CD39902FD8D61",
+    "helper_sha256": "0FE6163621D771D2E73838641DDE5B2A48B44B51107C9546F69CEC3AC7941A8A",
+    "first_log_sha256": "1FBFC720D43A31AC91C67D7CF9C3ECA424EED983E4CA2902B7D8A341D160A920",
+    "first_debug_sha256": "19A5F1A529B9B6FB4B6B26F80AEB90A63986B507A49F122E63F8820C0B19B8F7",
+    "reload_log_sha256": "C7554022F399C3BB42449479BE79249246B689FEB27C02E826DDC78BE2A1BE05",
+    "registered_game_content": false,
+    "source_world_unchanged": true,
+    "notice_thread": "Render thread",
+    "notice_reads": 2,
+    "registry_reads": {
+      "minecraft:block": 1
+    },
+    "target": "Forge 37.1.1"
+  },
+  "previous_bop_control": {
     "scope": "Native BOP registry behavior without Sky mods; this does not qualify BOP-only world recovery.",
     "source": "Forge31.2.57 / BOP10.0.0.366",
     "target": "Forge36.2.34 / BOP13.1.0.488",
@@ -133,16 +199,5 @@
     },
     "first_log_sha256": "8A2BCF400C7B4ACE766A19D4F4FCBFA25A1E593089B9694CF8EAF683AACD00E2",
     "reload_log_sha256": "FBA58EC29C179EFD021577FF4D0C3F8D96718F40F15F2DE284C4580CCCAE5748"
-  },
-  "native_client_control": {
-    "source_sha256": "4F12909AF499778C4D0F6FD8D821F6F11712F5785B3B0748073A6F8A3D75C8C0",
-    "helper_sha256": "306E92066028FC9B4BD42AC8A17252AE17BE399F03F706CADF17830143150ACB",
-    "first_log_sha256": "400724693F21D4C7C9AE1B7F21DC75C66420A3B25DB6E8F8DA69A6BE0F90F518",
-    "first_debug_sha256": "4EE75F43506E7688CBAD71EF6B33B393D7FF3D68BB7A5D1BAD8821AF6D9B375E",
-    "reload_log_sha256": "D4E18BEB958CAFF6A36ED7430959376590C083829ED74B09C82041D065FADD66",
-    "registered_game_content": false,
-    "source_world_unchanged": true,
-    "notice_thread": "Render thread",
-    "notice_reads": 2
   }
 }

@@ -9,17 +9,17 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.SlabBlock;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.NBTDynamicOps;
-import net.minecraft.state.properties.SlabType;
-import net.minecraft.util.datafix.TypeReferences;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtIo;
+import net.minecraft.nbt.TagParser;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.world.level.block.state.properties.SlabType;
+import net.minecraft.util.datafix.fixes.References;
+import net.minecraft.server.level.ServerLevel;
 import zone.moddev.mc.skysbuildingpieces.catalogue.Catalogue;
 import zone.moddev.mc.skysbuildingpieces.content.Pieces;
 import zone.moddev.mc.skysbuildingpieces.legacy.HistoricalFullBlocks;
@@ -28,7 +28,7 @@ import zone.moddev.mc.skysgrassslabs.init.ModBlocks;
 
 /** Optional, ignored input from a read-only world census; never bundled in the test mod. */
 final class SylvesterContentChecks {
-    static int run(ServerWorld world) throws Exception {
+    static int run(ServerLevel world) throws Exception {
         File input = new File("source-sylvester-sky-content.json");
         if (!input.isFile()) {
             return 0;
@@ -44,7 +44,7 @@ final class SylvesterContentChecks {
             String id = saved.get("id").getAsString();
             int metadata = saved.get("meta").getAsInt();
             BlockState target = block(id, metadata);
-            RuntimeProbe.require(target != null && !target.getBlock().hasTileEntity(target),
+            RuntimeProbe.require(target != null && !target.hasBlockEntity(),
                     "Every placed Sky state in the actual world has a tile-free target: " + id + "/" + metadata);
             RuntimeProbe.require(!Pieces.stack(target, 1).isEmpty(), "The actual world's target has a usable drop");
             blockUnits += saved.get("count").getAsLong();
@@ -52,21 +52,21 @@ final class SylvesterContentChecks {
 
         File output = new File("world/sylvester-sky-audit-items.dat");
         boolean reload = output.isFile();
-        CompoundNBT prior = null;
+        CompoundTag prior = null;
         if (reload) {
             try (FileInputStream stream = new FileInputStream(output)) {
-                prior = CompressedStreamTools.readCompressed(stream);
+                prior = NbtIo.readCompressed(stream);
             }
         }
-        ListNBT converted = new ListNBT();
+        ListTag converted = new ListTag();
         int itemIndex = 0;
         for (JsonElement row : census.getAsJsonArray("unique_stack_nbt")) {
-            CompoundNBT original = JsonToNBT.parseTag(row.getAsString());
-            CompoundNBT source = reload ? prior.getList("Items", 10).getCompound(itemIndex).copy() : original.copy();
-            CompoundNBT before = source.copy();
+            CompoundTag original = TagParser.parseTag(row.getAsString());
+            CompoundTag source = reload ? prior.getList("Items", 10).getCompound(itemIndex).copy() : original.copy();
+            CompoundTag before = source.copy();
             LegacyBridge.prepareNbt(source);
-            CompoundNBT fixed = (CompoundNBT) world.getServer().getFixerUpper().update(TypeReferences.ITEM_STACK,
-                    new Dynamic<>(NBTDynamicOps.INSTANCE, source), reload ? 2230 : 1343, 2230).getValue();
+            CompoundTag fixed = (CompoundTag) world.getServer().getFixerUpper().update(References.ITEM_STACK,
+                    new Dynamic<>(NbtOps.INSTANCE, source), reload ? 2230 : 1343, 2230).getValue();
             LegacyBridge.finalizeNbt(fixed, 2230);
             ItemStack stack = ItemStack.of(fixed);
             RuntimeProbe.require(!stack.isEmpty() && stack.getCount() == (original.getByte("Count") & 255),
@@ -77,7 +77,7 @@ final class SylvesterContentChecks {
                             "Unrelated root item NBT survives: " + key);
                 }
             }
-            CompoundNBT originalTag = original.getCompound("tag");
+            CompoundTag originalTag = original.getCompound("tag");
             for (String key : originalTag.getAllKeys()) {
                 if (!key.equals("display") && !key.equals("ench") && !key.equals("StoredEnchantments")
                         && !key.equals("Items") && !key.equals("BasketOpen")) {
@@ -91,14 +91,14 @@ final class SylvesterContentChecks {
             converted.add(fixed);
             itemIndex++;
         }
-        CompoundNBT saved = new CompoundNBT();
+        CompoundTag saved = new CompoundTag();
         saved.put("Items", converted);
         try (FileOutputStream stream = new FileOutputStream(output)) {
-            CompressedStreamTools.writeCompressed(saved, stream);
+            NbtIo.writeCompressed(saved, stream);
         }
         RuntimeProbe.require(blockUnits == 2721943 && itemIndex == 237,
                 "The complete read-only census was checked, not a selected sample");
-        System.out.println("SYLVESTER_SKY_CONTENT_PASS blocks=" + blockUnits + " states="
+        zone.moddev.mc.skysterrainsmoother.SkysTerrainSmoother.logger.info("SYLVESTER_SKY_CONTENT_PASS blocks=" + blockUnits + " states="
                 + census.getAsJsonArray("blocks").size() + " unique_stacks=" + itemIndex + " reload=" + reload);
         return census.getAsJsonArray("blocks").size() + itemIndex;
     }
@@ -123,7 +123,7 @@ final class SylvesterContentChecks {
         if (id.equals("skysterrainsmoother:sand_slab")) {
             return zone.moddev.mc.skysterrainsmoother.content.SandContent.legacyState(metadata);
         }
-        net.minecraft.block.Block block = id.equals("skysgrassslabs:grass_slab") ? ModBlocks.GRASS_SLAB
+        net.minecraft.world.level.block.Block block = id.equals("skysgrassslabs:grass_slab") ? ModBlocks.GRASS_SLAB
                 : id.equals("skysgrassslabs:dirt_slab") ? ModBlocks.DIRT_SLAB
                 : id.equals(ModBlocks.PATH_SLAB.getRegistryName().toString()) ? ModBlocks.PATH_SLAB : null;
         return block == null ? null : block.defaultBlockState().setValue(SlabBlock.TYPE,

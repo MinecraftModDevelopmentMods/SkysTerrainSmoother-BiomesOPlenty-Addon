@@ -1,9 +1,9 @@
 package zone.moddev.mc.skysterrainsmootherbop;
 
 import java.util.Collections;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import zone.moddev.mc.skysbuildingpieces.api.BuildingPiecesApi;
 import zone.moddev.mc.skysbuildingpieces.catalogue.Catalogue;
 import zone.moddev.mc.skysbuildingpieces.content.Pieces;
@@ -28,7 +28,7 @@ final class NativeTerrain {
                         BuildingPiecesApi.TerrainShape.CORNER, directions[direction]);
             }
             TerrainSmoothingApi.registerMaterial(new TerrainMaterial(coarseId,
-                    Collections.singleton(net.minecraft.block.Blocks.COARSE_DIRT.defaultBlockState()),
+                    Collections.singleton(net.minecraft.world.level.block.Blocks.COARSE_DIRT.defaultBlockState()),
                     CoarseDirtSlab.BLOCK.defaultBlockState(), steps, corners, false, null));
         }
         for (String rock : new String[] { "crag_rock", "limestone", "shale", "siltstone" }) {

@@ -38,6 +38,14 @@ class NativeContractTest {
     }
 
     @Test
+    void playableCoarseDirtSlabsUseTheNativeShovelTag() throws Exception {
+        JsonArray values = read(RESOURCES.resolve("data/minecraft/tags/blocks/mineable/shovel.json"))
+                .getAsJsonObject().getAsJsonArray("values");
+        assertEquals(1, values.size());
+        assertEquals("skysterrainsmootherbop:dirt_slab_00", values.get(0).getAsString());
+    }
+
+    @Test
     void everyOriginalRecipeIdentityHasOneNativeRecipeAndUnlock() throws Exception {
         JsonArray manifest = read(Paths.get("src/main/recipe-book/recipes.json")).getAsJsonArray();
         assertEquals(84, manifest.size());
@@ -72,7 +80,7 @@ class NativeContractTest {
             assertTrue(Files.isRegularFile(assets.resolve("blockstates/" + name + ".json")));
             assertTrue(Files.isRegularFile(assets.resolve("models/item/" + name + ".json")));
         }
-        assertEquals(6, read(RESOURCES.resolve("pack.mcmeta")).getAsJsonObject()
+        assertEquals(7, read(RESOURCES.resolve("pack.mcmeta")).getAsJsonObject()
                 .getAsJsonObject("pack").get("pack_format").getAsInt());
     }
 
@@ -109,7 +117,7 @@ class NativeContractTest {
                 "skysbuildingpiecesbop", "skysterrainsmoother", "biomesoplenty" }) {
             assertTrue(metadata.contains("modId=\"" + mod + "\""));
         }
-        assertTrue(metadata.contains("[1.16.5-13.1.0,1.16.5-14)"));
+        assertTrue(metadata.contains("[1.17.1-14.0.0,1.17.1-15)"));
         assertFalse(Files.exists(RESOURCES.resolve("META-INF/coremods.json")));
         assertFalse(Files.exists(RESOURCES.resolve("mcmod.info")));
     }

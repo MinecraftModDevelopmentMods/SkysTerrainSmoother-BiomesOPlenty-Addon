@@ -1,7 +1,7 @@
 # Building from source
 
-Use the Gradle 9.6.1 wrapper with Java 17.0.1+12 and Temurin 8.0.502+7 for
-production. Set STS_JAVA8_HOME to the Java 8 installation.
+Use the Gradle 9.6.1 wrapper with Java 17.0.1+12 and Temurin 16.0.2+7 for
+production. Set STS_JAVA16_HOME to the Java 16 installation.
 
 Build the exact four clean source commits in gradle/content-dependencies.properties.
 Run assemble for Grass Slabs and Building Pieces, then Terrain Smoother and the

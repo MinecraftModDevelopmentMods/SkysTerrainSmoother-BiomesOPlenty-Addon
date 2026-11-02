@@ -1,23 +1,23 @@
 package zone.moddev.mc.skysterrainsmootherbop;
 
 import java.util.Random;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.SnowyDirtBlock;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.Item;
-import net.minecraft.state.StateContainer;
-import net.minecraft.state.properties.SlabType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SnowyDirtBlock;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.SlabType;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.server.level.ServerLevel;
 import zone.moddev.mc.skysgrassslabs.block.LegacySlabBlock;
 
 /** Retains the old coarse-soil slab without turning it into spreading dirt. */
@@ -40,13 +40,13 @@ public final class CoarseDirtSlab extends LegacySlabBlock {
     }
 
     @Override
-    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
         builder.add(SnowyDirtBlock.SNOWY);
     }
 
     @Override
-    public BlockState getStateForPlacement(BlockItemUseContext context) {
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
         BlockState state = super.getStateForPlacement(context);
         if (state == null) {
             return null;
@@ -59,13 +59,13 @@ public final class CoarseDirtSlab extends LegacySlabBlock {
 
     @Override
     public BlockState updateShape(BlockState state, Direction facing, BlockState neighbour,
-            IWorld world, BlockPos position, BlockPos neighbourPosition) {
+            LevelAccessor world, BlockPos position, BlockPos neighbourPosition) {
         return super.updateShape(state, facing, neighbour, world, position, neighbourPosition)
                 .setValue(SnowyDirtBlock.SNOWY, snowy(world, position));
     }
 
     @Override
-    public void tick(BlockState state, ServerWorld world, BlockPos position, Random random) {
+    public void tick(BlockState state, ServerLevel world, BlockPos position, Random random) {
         if (!world.isClientSide) {
             BlockState updated = state.setValue(SnowyDirtBlock.SNOWY, snowy(world, position));
             if (updated != state) {
@@ -75,28 +75,28 @@ public final class CoarseDirtSlab extends LegacySlabBlock {
     }
 
     @Override
-    public boolean canSustainPlant(BlockState state, IBlockReader world, BlockPos position, Direction face,
+    public boolean canSustainPlant(BlockState state, BlockGetter world, BlockPos position, Direction face,
             net.minecraftforge.common.IPlantable plant) {
         BlockState full = Blocks.COARSE_DIRT.defaultBlockState();
         return state.getValue(TYPE) == SlabType.TOP && face == Direction.UP
                 && full.getBlock().canSustainPlant(full, world, position, face, plant);
     }
 
-    private static boolean snowy(IBlockReader world, BlockPos position) {
+    private static boolean snowy(BlockGetter world, BlockPos position) {
         for (Direction direction : new Direction[] {
                 Direction.UP, Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST }) {
             BlockPos neighbour = position.relative(direction);
             Block block;
-            if (world instanceof ServerWorld) {
-                Chunk chunk = ((ServerWorld) world).getChunkSource()
+            if (world instanceof ServerLevel) {
+                LevelChunk chunk = ((ServerLevel) world).getChunkSource()
                         .getChunkNow(neighbour.getX() >> 4, neighbour.getZ() >> 4);
                 if (chunk == null) {
                     continue;
                 }
                 block = chunk.getBlockState(neighbour).getBlock();
             } else {
-                if (world instanceof IWorldReader
-                        && !((IWorldReader) world).hasChunk(neighbour.getX() >> 4, neighbour.getZ() >> 4)) {
+                if (world instanceof LevelReader
+                        && !((LevelReader) world).hasChunk(neighbour.getX() >> 4, neighbour.getZ() >> 4)) {
                     continue;
                 }
                 block = world.getBlockState(neighbour).getBlock();
