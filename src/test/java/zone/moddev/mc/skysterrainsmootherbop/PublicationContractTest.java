@@ -11,7 +11,7 @@ class PublicationContractTest {
     void hostedBuildsPinTheDeclaredProductionToolchainBeforeStartingGradle() throws Exception {
         java.util.Properties metadata = new java.util.Properties();
         metadata.load(new java.io.StringReader(text("gradle.properties")));
-        assertEquals("16.0.2+7", metadata.getProperty("java_toolchain_version"));
+        assertEquals("17.0.1+12", metadata.getProperty("java_toolchain_version"));
         assertEquals("17.0.1+12", metadata.getProperty("gradle_java_toolchain_version"));
         for (String name : new String[] { "ci.yml", "codeql-analysis.yml" }) {
             String workflow = text(".github/workflows/" + name);
@@ -20,10 +20,10 @@ class PublicationContractTest {
             int gradle = workflow.indexOf("- name: Install Java for Gradle", pin);
             assertTrue(install >= 0 && install < pin && pin < gradle, name);
             assertTrue(workflow.substring(install, pin).contains("steps.target.outputs.java_setup_version"));
-            assertTrue(workflow.substring(pin, gradle).contains("STS_JAVA16_HOME=$JAVA_HOME"));
+            assertTrue(workflow.substring(pin, gradle).contains("STS_JAVA17_HOME=$JAVA_HOME"));
         }
         String ci = text(".github/workflows/ci.yml");
-        assertTrue(ci.contains("java-version: '16.0.2+7'"));
+        assertTrue(ci.contains("java-version: '17.0.1+12'"));
         assertTrue(ci.contains("Bootstrap Forge from an empty cache"));
         assertTrue(ci.contains("-PterrainDirectory=dependencies/terrain"));
         assertTrue(ci.contains("-PbuildingPiecesBopDirectory=dependencies/bopPieces"));

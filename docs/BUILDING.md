@@ -1,11 +1,12 @@
 # Building from source
 
-Use the Gradle 9.6.1 wrapper with Java 17.0.1+12 and Temurin 16.0.2+7 for
-production. Set STS_JAVA16_HOME to the Java 16 installation.
+Use the Gradle 9.6.1 wrapper with Java 17.0.1+12 and Temurin 17.0.1+12 for
+production. Set STS_JAVA17_HOME to the Java 17 installation.
 
 Build the exact four clean source commits in gradle/content-dependencies.properties.
 Run assemble for Grass Slabs and Building Pieces, then Terrain Smoother and the
-Building Pieces BOP add-on. Also run the latter's bopDevelopmentJar task. The
+Building Pieces BOP add-on. Also run the latter's bopDevelopmentJar task, which
+prepares both BOP and TerraBlender for development. The
 build verifies their commits, versions and main/development jar hashes. These
 are local qualified candidates; hosted checks remain pending their later push.
 
@@ -21,5 +22,6 @@ The build-only runtime checks cover sealed 1.12 and 1.14 family saves. The
 sand and coarse-dirt slabs. Packaged checks exercise first load and reload. Archive old disposable runtime evidence before repeating them.
 
 Development uses mapped BOP bytes from the pinned Building Pieces BOP build,
-including its mapped access rules. Packaged runs use the unchanged public BOP
-jar. No dependency classes or textures are bundled in this mod.
+including mapped access rules for both BOP and TerraBlender. Packaged runs use
+their unchanged public jars. No dependency classes or textures are bundled in
+this mod.

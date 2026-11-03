@@ -48,7 +48,7 @@ def manifest_classpath(destination, files):
 
 
 def argument_file(java, directory, phase, arguments):
-    # Java 16 argument files avoid Windows' command-line length limit. Quoting
+    # Java 17 argument files avoid Windows' command-line length limit. Quoting
     # each argument also preserves paths containing spaces.
     source = Path(__file__).resolve().parent.parent / "src/bootstrapTest/native-log4j2.xml"
     logging = directory / "native-log4j2.xml"
@@ -64,7 +64,7 @@ def argument_file(java, directory, phase, arguments):
 def server_command(options, directory):
     runtime = options.runtime.resolve()
     filename = "win_args.txt" if os.name == "nt" else "unix_args.txt"
-    source = runtime / "libraries/net/minecraftforge/forge/1.17.1-37.1.1" / filename
+    source = runtime / "libraries/net/minecraftforge/forge/1.18.2-40.3.0" / filename
     arguments = ["-Xmx3g", "-Djava.net.preferIPv4Stack=true",
                  "-Dskysterrainsmoother.integrationPhase=" + options.phase]
     for argument in shlex.split(source.read_text(encoding="utf-8")):
@@ -77,15 +77,15 @@ def server_command(options, directory):
 
 def client_command(options, directory):
     runtime = options.runtime.resolve()
-    base = json.loads((runtime / "versions/1.17.1/1.17.1.json").read_text(encoding="utf-8"))
+    base = json.loads((runtime / "versions/1.18.2/1.18.2.json").read_text(encoding="utf-8"))
     profiles = [runtime / "versions" / name / (name + ".json")
-                for name in ("1.17.1-forge-37.1.1", "forge-37.1.1")]
+                for name in ("1.18.2-forge-40.3.0", "forge-40.3.0")]
     profile = next((path for path in profiles if path.is_file()), None)
     if profile is None:
-        raise ValueError("The installed client has no Forge 37.1.1 profile")
+        raise ValueError("The installed client has no Forge 40.3.0 profile")
     forge = json.loads(profile.read_text(encoding="utf-8"))
-    if base["id"] != "1.17.1" or forge["inheritsFrom"] != "1.17.1":
-        raise ValueError("This launcher requires the verified Forge 37 client metadata")
+    if base["id"] != "1.18.2" or forge["inheritsFrom"] != "1.18.2":
+        raise ValueError("This launcher requires the verified Forge 40 client metadata")
     libraries = {}
     for layer in (base, forge):
         for library in layer["libraries"]:
@@ -100,7 +100,7 @@ def client_command(options, directory):
         if digest(path, "sha1") != artifact["sha1"].upper():
             raise ValueError("Client library checksum changed: " + library["name"])
         classpath.append(path)
-    client = runtime / "versions/1.17.1/1.17.1.jar"
+    client = runtime / "versions/1.18.2/1.18.2.jar"
     if digest(client, "sha1") != base["downloads"]["client"]["sha1"].upper():
         raise ValueError("Official client checksum changed")
     classpath.append(client)
@@ -162,7 +162,8 @@ def prepare(options, directory):
         if options.mode != "server":
             raise ValueError("The explicit BOP world profile is a dedicated-server check")
         with (directory / "server.properties").open("a", encoding="utf-8") as output:
-            output.write("level-type=biomesoplenty\n")
+            # BOP 16 contributes biomes through TerraBlender's normal world generator.
+            output.write("level-type=minecraft:normal\n")
     shutil.copytree("src/bootstrapTest/defaultconfigs", directory, dirs_exist_ok=True)
     if options.level is not None or options.enabled is not None:
         config = directory / "config/skysterrainsmoother-common.toml"
@@ -195,6 +196,9 @@ def prepare(options, directory):
         native_states = fixture / "native-source-states.json"
         if native_states.is_file():
             shutil.copyfile(native_states, directory / "source-native-states.json")
+        biomes = fixture / "native-source-biomes.json"
+        if biomes.is_file():
+            shutil.copyfile(biomes, directory / "source-native-biomes.json")
         (directory / "source-inputs.json").write_text(json.dumps({
             "world_sha256": expected,
             "mode": options.mode,
@@ -202,6 +206,15 @@ def prepare(options, directory):
 
 
 def audit(directory, phase, mode):
+    biome_contract = directory / "source-native-biomes.json"
+    if biome_contract.is_file():
+        contract = json.loads(biome_contract.read_text(encoding="utf-8"))
+        marker = ("TERRAIN_NATIVE_BIOME_PASS source=" + contract["source_minecraft"]
+                  + " cells=" + str(contract["checked_cells"])
+                  + " renamed=" + str(contract["native_renamed_cells"]))
+        log = (directory / "logs/latest.log").read_text(encoding="utf-8")
+        if not any(line.endswith(marker) for line in log.splitlines()):
+            raise ValueError("The complete saved biome volume was not verified")
     if mode == "client":
         audit_client(directory, phase)
         shutil.copyfile(directory / "logs/latest.log", directory / (phase + "-complete.log"))
@@ -249,6 +262,25 @@ def main():
         for receipt in expected:
             if digest(directory / "mods" / receipt["name"]) != receipt["sha256"]:
                 raise ValueError("A runtime artifact changed between loads")
+        if options.fixture:
+            snapshot = directory / "first-save-data"
+            if snapshot.exists():
+                raise ValueError("Preserve the existing first-save snapshot")
+            first_phase = "client-fresh" if options.mode == "client" else "fresh"
+            completed = directory / (first_phase + "-complete.log")
+            if not completed.is_file() or "TERRAIN_SMOOTHER_RUNTIME_PASS phase=fresh" not in completed.read_text(encoding="utf-8"):
+                raise ValueError("A complete first load is required before taking its saved-data snapshot")
+            world = directory / ("saves/terrain-smoother-world" if options.mode == "client" else "world")
+            # The first process has stopped. Keep its actual saved bytes before starting reload.
+            shutil.copytree(world / "data", snapshot)
+            shutil.copyfile(world / "level.dat", directory / "first-save-level.dat")
+            saved = {path.relative_to(snapshot).as_posix(): digest(path)
+                     for path in snapshot.rglob("*") if path.is_file()}
+            if saved != {path.relative_to(world / "data").as_posix(): digest(path)
+                         for path in (world / "data").rglob("*") if path.is_file()}:
+                raise ValueError("The first-save snapshot does not match its stopped source")
+            (directory / "first-save-data.json").write_text(
+                json.dumps(saved, indent=2) + "\n", encoding="utf-8")
     if options.mode == "client":
         if options.assets is None:
             raise ValueError("Client checks need the verified asset directory")

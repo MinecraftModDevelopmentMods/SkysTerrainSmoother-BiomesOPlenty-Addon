@@ -24,7 +24,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.*;
 import net.minecraftforge.fml.common.*;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fmlserverevents.FMLServerStartedEvent;
+import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -58,8 +58,6 @@ public final class RuntimeProbe {
     private int forwardWaitTicks;
 
     public RuntimeProbe() {
-        probeOre = new Block(Block.Properties.of(net.minecraft.world.level.material.Material.STONE))
-                .setRegistryName("bopterrainsmootherprobe", "ore_support");
         net.minecraftforge.eventbus.api.IEventBus modBus = net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext.get().getModEventBus();
         modBus.addGenericListener(Block.class, this::blocks);
         modBus.addGenericListener(net.minecraft.world.item.Item.class, this::items);
@@ -71,6 +69,8 @@ public final class RuntimeProbe {
     }
 
     public void blocks(net.minecraftforge.event.RegistryEvent.Register<Block> event) {
+        probeOre = new Block(Block.Properties.of(net.minecraft.world.level.material.Material.STONE))
+                .setRegistryName("bopterrainsmootherprobe", "ore_support");
         event.getRegistry().register(probeOre);
     }
 
@@ -105,13 +105,18 @@ public final class RuntimeProbe {
     }
 
     @SubscribeEvent
-    public void started(FMLServerStartedEvent event) {
+    public void started(ServerStartedEvent event) {
         server = event.getServer();
         if (Boolean.getBoolean("skysterrainsmoother.requireBopWorld")) {
             String provider = server.getLevel(Level.OVERWORLD).getChunkSource().getGenerator()
                     .getBiomeSource().getClass().getName();
-            require(provider.equals("biomesoplenty.common.world.BOPBiomeProvider"),
+            require(provider.equals("net.minecraft.world.level.biome.MultiNoiseBiomeSource"),
                     "The dedicated BOP profile must use its native biome provider: " + provider);
+            long biomes = server.getLevel(Level.OVERWORLD).getChunkSource().getGenerator()
+                    .getBiomeSource().possibleBiomes().stream()
+                    .filter(biome -> biome.unwrapKey().orElseThrow().location().getNamespace().equals("biomesoplenty"))
+                    .count();
+            require(biomes > 0, "TerraBlender contributes BOP biomes to the native generator");
             SkysTerrainSmoother.logger.info("TERRAIN_BOP_NATIVE_WORLD_PASS provider=" + provider);
         }
         checkFeatureRegistration();
@@ -123,19 +128,19 @@ public final class RuntimeProbe {
         int vegetation = net.minecraft.world.level.levelgen.GenerationStep.Decoration.VEGETAL_DECORATION.ordinal();
         for (net.minecraft.world.level.biome.Biome biome : server.registryAccess()
                 .registryOrThrow(net.minecraft.core.Registry.BIOME_REGISTRY)) {
-            List<List<java.util.function.Supplier<net.minecraft.world.level.levelgen.feature.ConfiguredFeature<?, ?>>>> stages =
+            List<net.minecraft.core.HolderSet<net.minecraft.world.level.levelgen.placement.PlacedFeature>> stages =
                     biome.getGenerationSettings().features();
-            List<java.util.function.Supplier<net.minecraft.world.level.levelgen.feature.ConfiguredFeature<?, ?>>> features =
-                    vegetation < stages.size() ? stages.get(vegetation) : Collections.emptyList();
-            long occurrences = features.stream().filter(feature -> feature.get().getFeatures()
+            net.minecraft.core.HolderSet<net.minecraft.world.level.levelgen.placement.PlacedFeature> features =
+                    vegetation < stages.size() ? stages.get(vegetation) : net.minecraft.core.HolderSet.direct(Collections.emptyList());
+            long occurrences = features.stream().filter(feature -> feature.value().getFeatures()
                     .anyMatch(configured -> configured.feature() == TerrainSmoothingFeature.INSTANCE)).count();
-            boolean excludedBiome = biome.getBiomeCategory() == net.minecraft.world.level.biome.Biome.BiomeCategory.NETHER
-                    || biome.getBiomeCategory() == net.minecraft.world.level.biome.Biome.BiomeCategory.THEEND;
+            boolean excludedBiome = net.minecraft.world.level.biome.Biome.getBiomeCategory(net.minecraft.core.Holder.direct(biome)) == net.minecraft.world.level.biome.Biome.BiomeCategory.NETHER
+                    || net.minecraft.world.level.biome.Biome.getBiomeCategory(net.minecraft.core.Holder.direct(biome)) == net.minecraft.world.level.biome.Biome.BiomeCategory.THEEND;
             if (excludedBiome) {
                 require(occurrences == 0, "Nether and End biomes exclude terrain smoothing");
                 excluded++;
             } else {
-                require(occurrences == 1 && features.get(0).get().getFeatures()
+                require(occurrences == 1 && features.get(0).value().getFeatures()
                         .anyMatch(configured -> configured.feature() == TerrainSmoothingFeature.INSTANCE),
                         "Terrain smoothing occurs once, at the start of vegetation decoration");
                 eligible++;
@@ -585,6 +590,18 @@ public final class RuntimeProbe {
         generationCenterX = Integer.getInteger("skysterrainsmoother.probeCenterX", 400)
                 + (phase().equals("reload") ? 200 : 0);
         generationCenterZ = Integer.getInteger("skysterrainsmoother.probeCenterZ", 400);
+        if (Boolean.getBoolean("skysterrainsmoother.requireBopWorld")) {
+            var generator = world.getChunkSource().getGenerator();
+            var selected = generator.getBiomeSource().findBiomeHorizontal(
+                    generationCenterX * 16 + 8, 80, generationCenterZ * 16 + 8, 2048, 16,
+                    biome -> biome.unwrapKey().orElseThrow().location().getNamespace().equals("biomesoplenty"),
+                    new Random(4815162342L), true, generator.climateSampler());
+            require(selected != null, "The noise sampler finds new BOP terrain without loading chunks");
+            generationCenterX = selected.getFirst().getX() >> 4;
+            generationCenterZ = selected.getFirst().getZ() >> 4;
+            SkysTerrainSmoother.logger.info("TERRAIN_BOP_TRACKED_BIOME target={} chunk={},{}",
+                    selected.getSecond().unwrapKey().orElseThrow().location(), generationCenterX, generationCenterZ);
+        }
         generationBefore = SkysTerrainSmoother.engine.passes;
         trackingStarted = System.nanoTime();
         trackedPlayer.setPos(generationCenterX * 16 + 8, 90, generationCenterZ * 16 + 8);
@@ -615,6 +632,7 @@ public final class RuntimeProbe {
         int mineralogy = 0;
         int lushClay = 0;
         int lushGrass = 0;
+        int bopPieces = 0;
         int grassPieces = 0;
         int slabs = 0;
         int steps = 0;
@@ -654,8 +672,12 @@ public final class RuntimeProbe {
                                                         mineralogy++;
                                                     }
                                                 }
-                                                if (new ResourceLocation("biomesoplenty:lush_desert")
-                                                        .equals(world.getBiome(piece).getRegistryName())) {
+                                                ResourceLocation biomeId = world.getBiome(piece).unwrapKey()
+                                                        .orElseThrow().location();
+                                                if (biomeId.getNamespace().equals("biomesoplenty")) {
+                                                    bopPieces++;
+                                                }
+                                                if (new ResourceLocation("biomesoplenty:lush_desert").equals(biomeId)) {
                                                     if (terrainMaterial.id
                                                             .equals(new ResourceLocation("minecraft:hardened_clay"))) {
                                                         lushClay++;
@@ -711,6 +733,10 @@ public final class RuntimeProbe {
             require(lushGrass > 0, "player-tracked Lush Desert has grass oasis transitions");
             zone.moddev.mc.skysterrainsmoother.SkysTerrainSmoother.logger.info("TERRAIN_SMOOTHER_LUSH_DESERT_GENERATION_PASS clay=" + lushClay + " grass=" + lushGrass);
         }
+        if (Boolean.getBoolean("skysterrainsmoother.requireBopWorld")) {
+            require(bopPieces > 0, "Player-tracked new BOP terrain contains actual smoothing pieces");
+            SkysTerrainSmoother.logger.info("TERRAIN_BOP_GENERATED_PIECES_PASS pieces=" + bopPieces);
+        }
 
         zone.moddev.mc.skysterrainsmoother.SkysTerrainSmoother.logger.info("TERRAIN_SMOOTHER_GENERATED_CAVES_PASS caves=" + caves + " mineralogy=" + mineralogy);
         return found;
@@ -752,10 +778,10 @@ public final class RuntimeProbe {
                         // Bulk fixture construction avoids relighting 20,736 artificially raised columns one by one.
                         // The actual smoothing pass still uses real chunk writes.
                         for (int blockY = 170; blockY < 205; blockY++) {
-                            LevelChunkSection section = chunk.getSections()[blockY >> 4];
+                            LevelChunkSection section = chunk.getSections()[chunk.getSectionIndex(blockY)];
 
                             if (section == null) {
-                                chunk.getSections()[blockY >> 4] = section = new LevelChunkSection(blockY & ~15);
+                                chunk.getSections()[chunk.getSectionIndex(blockY)] = section = ProbeWorld.emptySection(world, chunk, chunk.getSectionIndex(blockY));
                             }
 
                             section.setBlockState(blockX & 15, blockY & 15, blockZ & 15, Blocks.AIR.defaultBlockState());
@@ -763,11 +789,11 @@ public final class RuntimeProbe {
                         for (int floor : new int[] { 170, 188, 200 }) {
                             int floorY = floor + height - 200;
 
-                            chunk.getSections()[floorY >> 4].setBlockState(blockX & 15, floorY & 15, blockZ & 15,
+                            chunk.getSections()[chunk.getSectionIndex(floorY)].setBlockState(blockX & 15, floorY & 15, blockZ & 15,
                                     Blocks.STONE.defaultBlockState());
                         }
                         for (int roof : new int[] { 180, 198 }) {
-                            chunk.getSections()[roof >> 4].setBlockState(blockX & 15, roof & 15, blockZ & 15,
+                            chunk.getSections()[chunk.getSectionIndex(roof)].setBlockState(blockX & 15, roof & 15, blockZ & 15,
                                     Blocks.BRICKS.defaultBlockState());
                         }
 

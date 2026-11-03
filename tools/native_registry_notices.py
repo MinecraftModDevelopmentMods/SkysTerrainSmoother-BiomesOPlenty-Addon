@@ -25,25 +25,75 @@ def profile_for(directory):
             or hashlib.sha256(saved_manifest.read_bytes()).hexdigest().upper() != profile["manifest_sha256"]
             or source.get("manifest_sha256") != profile["manifest_sha256"]
             or provenance["source_artifacts"] != profile["source_artifacts"]
-            or profile["saved_uses"] != 0 or profile["inspected_nbt_records"] <= 0):
+            or profile.get("non_biome_saved_uses", profile["saved_uses"]) != 0 or profile["inspected_nbt_records"] <= 0):
         raise ValueError("The unused-entry proof does not match the upgrade fixture")
+    proof = profile.get("native_biome_contract")
+    if proof is not None:
+        contract = root / proof["path"]
+        data = json.loads(contract.read_text(encoding="utf-8"))
+        if (hashlib.sha256(contract.read_bytes()).hexdigest().upper() != proof["sha256"]
+                or data["source_world_sha256"] != profile["sha256"]
+                or data["checked_cells"] != proof["checked_cells"]
+                or data["native_renamed_cells"] != proof["renamed_cells"]
+                or profile["saved_uses"] != proof["renamed_cells"]):
+            raise ValueError("The complete biome proof does not match this fixture")
     if source.get("mode") == "client":
-        control = policy["native_client_control"]
-        if (control["registered_game_content"] or not control["source_world_unchanged"]
-                or control["notice_reads"] != 2 or control["notice_thread"] != "Render thread"):
-            raise ValueError("The native client control is not qualified")
-        profile = dict(profile, notice_thread="Render thread", notice_reads=2)
+        control = policy["native_client_notice_contract"]
+        if (control["target"] != "Forge 40.3.0" or not control["completed_native_world"]
+                or control["production_log_filter"] or control["notice_reads"] != 1
+                or control["notice_thread"] != "Render thread"):
+            raise ValueError("The native client notice contract is not qualified")
+        profile = dict(profile, notice_thread="Render thread", notice_reads=1)
     return profile
 
 
-def audit_text(text, profile=None):
+def completed_offline_client(text):
+    return all(marker in text for marker in (
+        "TERRAIN_SMOOTHER_CLIENT_PASS", "TERRAIN_SMOOTHER_CLIENT_WORLD_PASS",
+        "TERRAIN_SMOOTHER_RUNTIME_PASS phase="))
+
+
+def checked_offline_profile_warnings(text):
+    """Recognise the controlled Authlib 3.3.39 gateway failure for our offline profile."""
+    pattern = re.compile(
+        r"^\[[^\]\n]+\] \[Render thread/WARN\] "
+        r"\[com\.mojang\.authlib\.yggdrasil\.YggdrasilMinecraftSessionService/\]: "
+        r"Couldn't look up profile properties for com\.mojang\.authlib\.GameProfile@[0-9a-f]+"
+        r"\[id=11111111-1111-1111-1111-111111111111,name=TerrainSmootherChecks,"
+        r"properties=\{\},legacy=false\]\n(?P<body>.*?)(?=^\[|\Z)", re.M | re.S)
+    expected = [
+        "com.mojang.authlib.exceptions.AuthenticationUnavailableException: Cannot contact authentication server",
+        "Caused by: com.google.gson.JsonSyntaxException: java.lang.IllegalStateException: "
+        "Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $",
+        "Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $"
+    ]
+
+    def recognise(match):
+        lines = [line for line in match["body"].splitlines() if line.strip()]
+        exceptions = [line for line in lines if not re.fullmatch(r"\s+(?:at .+\([^\n]*\).+|\.\.\. \d+ more)", line)]
+        if exceptions != expected:
+            return match[0]
+        required = ("authlib-3.3.39.jar", "YggdrasilMinecraftSessionService.fillGameProfile",
+                    "YggdrasilAuthenticationService.makeRequest", "com.google.gson.stream.JsonReader.beginObject")
+        if not all(fragment in match[0] for fragment in required):
+            return match[0]
+        return ""
+
+    if len(list(pattern.finditer(text))) > 1:
+        return text
+    return pattern.sub(recognise, text)
+
+
+def audit_text(text, profile=None, completed_native_client=False):
     text = text.replace("\r\n", "\n")
+    if completed_native_client:
+        text = checked_offline_profile_warnings(text)
     observed = {}
     occurrences = Counter()
     expected_reads = profile.get("notice_reads", 1) if profile else 1
     registry_reads = profile.get("registry_reads", {}) if profile else {}
     expected_thread = profile.get("notice_thread", "main") if profile else "main"
-    pattern = r"Unidentified mapping from registry (minecraft:[a-z_]+)\n(.*?)(?:\n\n)"
+    pattern = r"Unidentified mapping from registry (minecraft:[a-z_/]+)\n(.*?)(?:\n\n)"
     for registry, body in re.findall(pattern, text, re.S):
         entries = {}
         for row in body.splitlines():
@@ -85,7 +135,8 @@ def audit_text(text, profile=None):
     for problem in ("Encountered an unexpected exception", "Exception stopping the server",
                     "MissingModsException", "NoSuchMethodError", "NoClassDefFoundError",
                     "ExceptionInInitializerError", "cascading worldgen lag", "Unable to load model",
-                    "Unable to load blockstate", "outside of the generating region"):
+                    "Unable to load blockstate", "outside of the generating region",
+                    "java.lang.AssertionError", "java.lang.IllegalStateException:"):
         if problem in text:
             raise ValueError("Unexpected native failure: " + problem)
     return sorted(headers)

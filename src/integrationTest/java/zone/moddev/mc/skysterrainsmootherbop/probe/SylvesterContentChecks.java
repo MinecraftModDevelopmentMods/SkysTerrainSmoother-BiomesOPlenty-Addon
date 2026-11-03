@@ -60,14 +60,15 @@ final class SylvesterContentChecks {
         }
         ListTag converted = new ListTag();
         int itemIndex = 0;
+        int targetVersion = net.minecraft.SharedConstants.getCurrentVersion().getWorldVersion();
         for (JsonElement row : census.getAsJsonArray("unique_stack_nbt")) {
             CompoundTag original = TagParser.parseTag(row.getAsString());
             CompoundTag source = reload ? prior.getList("Items", 10).getCompound(itemIndex).copy() : original.copy();
             CompoundTag before = source.copy();
             LegacyBridge.prepareNbt(source);
             CompoundTag fixed = (CompoundTag) world.getServer().getFixerUpper().update(References.ITEM_STACK,
-                    new Dynamic<>(NbtOps.INSTANCE, source), reload ? 2230 : 1343, 2230).getValue();
-            LegacyBridge.finalizeNbt(fixed, 2230);
+                    new Dynamic<>(NbtOps.INSTANCE, source), reload ? targetVersion : 1343, targetVersion).getValue();
+            LegacyBridge.finalizeNbt(fixed, targetVersion);
             ItemStack stack = ItemStack.of(fixed);
             RuntimeProbe.require(!stack.isEmpty() && stack.getCount() == (original.getByte("Count") & 255),
                     "Actual saved Sky stack keeps its count: " + original);

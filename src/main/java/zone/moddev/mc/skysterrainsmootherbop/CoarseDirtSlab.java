@@ -23,10 +23,11 @@ import zone.moddev.mc.skysgrassslabs.block.LegacySlabBlock;
 /** Retains the old coarse-soil slab without turning it into spreading dirt. */
 public final class CoarseDirtSlab extends LegacySlabBlock {
     public static final String BLOCK_ID = SkysTerrainSmootherBop.ID + ":dirt_slab_00";
-    public static final CoarseDirtSlab BLOCK = new CoarseDirtSlab();
+    // Forge 40 creates block holders only while the block registry is open.
+    public static CoarseDirtSlab BLOCK;
     static Item item;
 
-    private CoarseDirtSlab() {
+    CoarseDirtSlab() {
         super(Material.DIRT, SoundType.GRAVEL, .5f, true);
         setRegistryName(BLOCK_ID);
         registerDefaultState(defaultBlockState().setValue(SnowyDirtBlock.SNOWY, false));

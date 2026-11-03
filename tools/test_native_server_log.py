@@ -1,4 +1,4 @@
-"""Negative controls for Forge 37 server completion and native settings."""
+"""Negative controls for Forge 40 server completion and native settings."""
 
 from pathlib import Path
 import shutil
@@ -74,12 +74,12 @@ class NativeRegistryNoticeTest(unittest.TestCase):
         self.assertEqual(len(self.check(self.valid, self.profile)), 5)
         self.assertEqual(self.check("A clean native reload", None), [])
 
-    def test_client_control_allows_exactly_two_render_thread_reads(self):
-        profile = dict(self.profile, notice_thread="Render thread", notice_reads=2)
+    def test_target_client_requires_one_exact_snapshot_read(self):
+        profile = dict(self.profile, notice_thread="Render thread", notice_reads=1)
         one_read = self.valid.replace("[main/ERROR]", "[Render thread/ERROR]")
-        self.assertEqual(len(self.check(one_read * 2, profile)), 5)
-        for text in (one_read, one_read * 3, self.valid * 2,
-                     one_read + one_read.replace(self.entity_notice, self.entity_notice + "0")):
+        self.assertEqual(len(self.check(one_read, profile)), 5)
+        for text in (one_read * 2, one_read * 3, self.valid,
+                     one_read.replace(self.entity_notice, self.entity_notice + "0")):
             with self.subTest(text=text[:80]), self.assertRaises(ValueError):
                 self.check(text, profile)
 
@@ -115,7 +115,7 @@ class NativeRegistryNoticeTest(unittest.TestCase):
             with self.subTest(text=text[:80]), self.assertRaises(ValueError):
                 self.check(text, self.profile)
 
-    def test_native_116_boat_notice_has_its_own_exact_profile(self):
+    def test_current_boat_cannot_be_reported_as_missing(self):
         import json
         root = Path(__file__).resolve().parent.parent
         profile = json.loads((root / "tools/native-log-profiles.json").read_text(encoding="utf-8"))["profiles"][
@@ -124,8 +124,7 @@ class NativeRegistryNoticeTest(unittest.TestCase):
         notice = (prefix + "Unidentified mapping from registry minecraft:entity_type\n"
                   "\tbiomesoplenty:boat: 110\n\n" + prefix +
                   "There are unidentified mappings in this world - we are going to attempt to process anyway\n")
-        self.assertEqual(len(self.check(notice, profile)), 2)
-        for text in (notice.replace(": 110", ": 108"), notice.replace("biomesoplenty:boat", "biomesoplenty:other_boat"),
+        for text in (notice, notice.replace(": 110", ": 108"), notice.replace("biomesoplenty:boat", "biomesoplenty:other_boat"),
                      notice + self.valid, notice * 2):
             with self.subTest(text=text[:80]), self.assertRaises(ValueError):
                 self.check(text, profile)

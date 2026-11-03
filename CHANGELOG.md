@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.0.118021 (unreleased)
+
+- Bring BOP terrain smoothing and saved soil pieces to Minecraft 1.18.2.
+- Use the matching Sky builds, BOP 16 and TerraBlender.
+
 ## 0.1.0.117011 (unreleased)
 
 - Bring BOP terrain smoothing and saved soil pieces to Minecraft 1.17.1.

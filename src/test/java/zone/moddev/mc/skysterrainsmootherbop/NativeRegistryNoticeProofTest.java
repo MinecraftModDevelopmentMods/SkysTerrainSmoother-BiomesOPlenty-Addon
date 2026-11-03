@@ -31,7 +31,7 @@ class NativeRegistryNoticeProofTest {
         JsonObject profiles = new JsonParser().parse(new String(
                 Files.readAllBytes(Paths.get("tools/native-log-profiles.json")), StandardCharsets.UTF_8))
                 .getAsJsonObject().getAsJsonObject("profiles");
-        assertEquals(3, profiles.size());
+        assertEquals(4, profiles.size());
 
         for (java.util.Map.Entry<String, com.google.gson.JsonElement> entry : profiles.entrySet()) {
             JsonObject profile = entry.getValue().getAsJsonObject();
@@ -43,7 +43,25 @@ class NativeRegistryNoticeProofTest {
                     names.add(mapping.getKey());
                 }
             }
-            assertEquals(profile.get("unused_names").getAsInt(), names.size());
+            if (profile.has("remapped")) {
+                for (java.util.Map.Entry<String, com.google.gson.JsonElement> registry
+                        : profile.getAsJsonObject("remapped").entrySet()) {
+                    for (java.util.Map.Entry<String, com.google.gson.JsonElement> mapping
+                            : registry.getValue().getAsJsonObject().entrySet()) {
+                        assertTrue(mapping.getValue().getAsJsonObject().get("id").getAsInt() >= 0);
+                        assertTrue(mapping.getValue().getAsJsonObject().get("target").getAsString().startsWith("minecraft:"));
+                        names.add(mapping.getKey());
+                    }
+                }
+            }
+            assertFalse(names.isEmpty());
+            JsonObject biome = profile.getAsJsonObject("native_biome_contract");
+            byte[] biomeBytes = Files.readAllBytes(Paths.get(biome.get("path").getAsString()));
+            assertEquals(biome.get("sha256").getAsString(), checksum(biomeBytes));
+            JsonObject contract = new JsonParser().parse(new String(biomeBytes, StandardCharsets.UTF_8)).getAsJsonObject();
+            assertEquals(profile.get("sha256"), contract.get("source_world_sha256"));
+            assertEquals(biome.get("checked_cells"), contract.get("checked_cells"));
+            assertEquals(0, contract.get("native_renamed_cells").getAsInt());
             int records = 0;
 
             try (ZipFile archive = new ZipFile(profile.get("fixture").getAsString())) {
@@ -64,6 +82,36 @@ class NativeRegistryNoticeProofTest {
                             // Registry availability is not a saved block, entity or inventory use.
                             root.remove("FML");
                             root.remove("fml");
+                            if (label.equals("world/data/skysbuildingpiecesbop_named_registry.dat")) {
+                                assertEquals(Set.of("schema_version", "snapshots"), root.getAllKeys());
+                                assertEquals(1, root.getInt("schema_version"));
+                                CompoundTag snapshots = root.getCompound("snapshots");
+                                for (String version : snapshots.getAllKeys()) {
+                                    assertTrue(version.matches("[0-9]+"));
+                                    CompoundTag registry = snapshots.getCompound(version);
+                                    assertEquals(Set.of("aliases", "blocked", "ids", "overrides", "dummied"),
+                                            registry.getAllKeys());
+                                    for (Tag entryId : registry.getList("ids", 10)) {
+                                        CompoundTag identity = (CompoundTag) entryId;
+                                        assertEquals(Set.of("K", "V"), identity.getAllKeys());
+                                        assertTrue(identity.contains("K", 8) && identity.contains("V", 3));
+                                    }
+                                }
+                                // These are available registry identities, not saved biome cells or items.
+                                root.remove("snapshots");
+                            }
+                            if (label.equals("world/data/skysgrassslabs_legacy_registry.dat")) {
+                                assertEquals(java.util.Collections.singleton("Blocks"), root.getAllKeys());
+                                CompoundTag blocks = root.getCompound("Blocks");
+                                assertEquals(new java.util.HashSet<>(java.util.Arrays.asList(
+                                        "aliases", "blocked", "ids", "overrides", "dummied")), blocks.getAllKeys());
+                                for (Tag row : blocks.getList("ids", 10)) {
+                                    assertEquals(new java.util.HashSet<>(java.util.Arrays.asList("K", "V")),
+                                            ((CompoundTag) row).getAllKeys());
+                                }
+                                // This file contains registry availability, not placed blocks or inventories.
+                                root.remove("Blocks");
+                            }
                             inspect(root, names, label);
                             records++;
                         } else if (label.endsWith(".mca")) {
@@ -75,6 +123,14 @@ class NativeRegistryNoticeProofTest {
             assertEquals(profile.get("inspected_nbt_records").getAsInt(), records);
             assertEquals(0, profile.get("saved_uses").getAsInt());
         }
+    }
+
+    private static String checksum(byte[] bytes) throws Exception {
+        StringBuilder result = new StringBuilder();
+        for (byte value : java.security.MessageDigest.getInstance("SHA-256").digest(bytes)) {
+            result.append(String.format(java.util.Locale.ROOT, "%02X", value));
+        }
+        return result.toString();
     }
 
     private static int region(byte[] bytes, Set<String> names, String label) throws Exception {

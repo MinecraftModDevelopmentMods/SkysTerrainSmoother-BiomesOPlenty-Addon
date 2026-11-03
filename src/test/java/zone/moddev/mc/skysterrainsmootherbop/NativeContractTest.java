@@ -80,7 +80,7 @@ class NativeContractTest {
             assertTrue(Files.isRegularFile(assets.resolve("blockstates/" + name + ".json")));
             assertTrue(Files.isRegularFile(assets.resolve("models/item/" + name + ".json")));
         }
-        assertEquals(7, read(RESOURCES.resolve("pack.mcmeta")).getAsJsonObject()
+        assertEquals(9, read(RESOURCES.resolve("pack.mcmeta")).getAsJsonObject()
                 .getAsJsonObject("pack").get("pack_format").getAsInt());
     }
 
@@ -117,10 +117,27 @@ class NativeContractTest {
                 "skysbuildingpiecesbop", "skysterrainsmoother", "biomesoplenty" }) {
             assertTrue(metadata.contains("modId=\"" + mod + "\""));
         }
-        assertTrue(metadata.contains("[1.17.1-14.0.0,1.17.1-15)"));
+        assertTrue(metadata.contains("[1.18.2-16,1.18.2-17)"));
         assertFalse(Files.exists(RESOURCES.resolve("META-INF/coremods.json")));
         assertFalse(Files.exists(RESOURCES.resolve("mcmod.info")));
     }
+
+    @Test
+    void developmentLaunchesKeepBothMappedDependenciesAndTheirAccessRules() throws Exception {
+        String build = text(Paths.get("build.gradle"));
+        assertTrue(build.contains("systemProperty 'mixin.env.disableRefMap', 'true'"));
+        assertTrue(build.contains("accessTransformers.from(bopDevelopmentAccessRules, terraBlenderDevelopmentAccessRules)"));
+        assertTrue(build.contains("bopPiecesDevelopmentJar, bopDevelopmentJar, terraBlenderDevelopmentJar"));
+        String launcher = text(Paths.get("tools/run_packaged_checks.py"));
+        assertFalse(launcher.contains("mixin.env.disableRefMap"), "Public jars retain their own refmaps");
+        java.util.Properties lock = new java.util.Properties();
+        lock.load(new java.io.StringReader(text(Paths.get("gradle/content-dependencies.properties"))));
+        for (String name : new String[] { "bop", "terrablender" }) {
+            assertTrue(lock.getProperty(name + ".sha256").matches("[0-9A-F]{64}"));
+            assertTrue(lock.getProperty(name + ".development.sha256").matches("[0-9A-F]{64}"));
+        }
+    }
+
 
     private static JsonElement read(Path path) throws Exception {
         return new JsonParser().parse(text(path));

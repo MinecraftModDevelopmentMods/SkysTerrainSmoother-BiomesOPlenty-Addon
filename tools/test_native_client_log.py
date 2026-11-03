@@ -1,7 +1,8 @@
-"""Negative controls for the exact Forge 37 native log classification."""
+"""Negative controls for the exact Forge 40 native log classification."""
 
 import unittest
 import json
+import hashlib
 from pathlib import Path
 import shutil
 import tempfile
@@ -16,6 +17,57 @@ PAYLOAD = "[Client thread/ERROR] [net.minecraftforge.fml.network.simple.IndexedM
 
 
 class NativeClientLogTest(unittest.TestCase):
+    def gateway_block(self):
+        root = Path(__file__).resolve().parent.parent
+        fixture = root / "src/test/resources/native-authlib-gateway.txt"
+        control = json.loads((root / "tools/native-log-profiles.json").read_text())["offline_profile_gateway_control"]
+        self.assertTrue(control["library_only_control"] and control["unchanged_offline_profile"])
+        self.assertEqual(control["fixture_sha256"], hashlib.sha256(fixture.read_bytes()).hexdigest().upper())
+        self.assertEqual(control["authlib_sha256"], "21132E3BDE5EEAC556437DA9580221931BB00DBF350B453F100526C9AA232FEE")
+        return fixture.read_text()
+
+    def completed_client(self, block):
+        return "\n".join((START, LOGIN, block,
+                           "[time] [Render thread/INFO] [Probe/]: TERRAIN_SMOOTHER_CLIENT_PASS",
+                           "[time] [Render thread/INFO] [Probe/]: TERRAIN_SMOOTHER_CLIENT_WORLD_PASS",
+                           "[time] [Server thread/INFO] [Probe/]: TERRAIN_SMOOTHER_RUNTIME_PASS phase=reload"))
+
+    def test_controlled_profile_gateway_failure_requires_successful_native_completion(self):
+        receipt = classify(self.completed_client(self.gateway_block()), True)
+        self.assertEqual(receipt["notices"], [])
+        for marker in ("TERRAIN_SMOOTHER_CLIENT_PASS", "TERRAIN_SMOOTHER_CLIENT_WORLD_PASS",
+                       "TERRAIN_SMOOTHER_RUNTIME_PASS phase=reload"):
+            with self.subTest(marker=marker), self.assertRaises(ValueError):
+                classify(self.completed_client(self.gateway_block()).replace(marker, "incomplete"), True)
+
+    def test_other_profiles_loggers_threads_and_cause_chains_still_fail(self):
+        block = self.gateway_block()
+        changes = (
+            ("Render thread/WARN", "Render thread/ERROR"),
+            ("Render thread/WARN", "Server thread/WARN"),
+            ("YggdrasilMinecraftSessionService/", "OtherSessionService/"),
+            ("11111111-1111-1111-1111-111111111111", "22222222-2222-2222-2222-222222222222"),
+            ("name=TerrainSmootherChecks", "name=AnotherPlayer"),
+            ("authlib-3.3.39.jar", "authlib-4.0.0.jar"),
+            ("Caused by: com.google.gson.JsonSyntaxException:", "Caused by: AnotherException:"),
+            ("Expected BEGIN_OBJECT but was STRING", "An unrelated illegal state"),
+        )
+        for old, new in changes:
+            changed = block.replace(old, new)
+            self.assertNotEqual(block, changed)
+            with self.subTest(change=new), self.assertRaises(ValueError):
+                classify(self.completed_client(changed), True)
+
+    def test_gateway_warning_cannot_hide_an_unrelated_failure(self):
+        log = self.completed_client(self.gateway_block())
+        for extra in ("java.lang.IllegalStateException: A genuine world failure",
+                      "[time] [Server thread/ERROR] [MinecraftServer/]: Failed to save a chunk",
+                      "java.lang.NoClassDefFoundError: missing.class"):
+            with self.subTest(extra=extra), self.assertRaises(ValueError):
+                classify(log + "\n" + extra, True)
+        with self.assertRaises(ValueError):
+            classify(self.completed_client(self.gateway_block() + self.gateway_block()), True)
+
     def test_previous_target_notices_are_rejected(self):
         with self.assertRaises(ValueError):
             classify("\n".join((NOTICE, START, LOGIN, PAYLOAD)), True)
@@ -72,7 +124,7 @@ class NativeClientFilesTest(unittest.TestCase):
         (self.directory / "logs").mkdir()
         (self.directory / "logs/latest.log").write_text("\n".join((
             START, LOGIN,
-            "FORGE37_CLIENT_CONTROL_PASS joined=true sky_mods=false")), encoding="utf-8")
+            "FORGE40_CLIENT_CONTROL_PASS joined=true sky_mods=false")), encoding="utf-8")
 
     def test_native_defaults_with_different_order_and_comments(self):
         client = self.directory / "config/forge-client.toml"
@@ -87,9 +139,9 @@ class NativeClientFilesTest(unittest.TestCase):
     def test_changed_default_stops_the_check(self):
         client = self.directory / "config/forge-client.toml"
         contents = client.read_text(encoding="utf-8")
-        self.assertIn("selectiveResourceReloadEnabled = true", contents)
-        client.write_text(contents.replace("selectiveResourceReloadEnabled = true",
-                                           "selectiveResourceReloadEnabled = false"), encoding="utf-8")
+        self.assertIn("experimentalForgeLightPipelineEnabled = false", contents)
+        client.write_text(contents.replace("experimentalForgeLightPipelineEnabled = false",
+                                           "experimentalForgeLightPipelineEnabled = true"), encoding="utf-8")
         with self.assertRaises(ValueError):
             audit(self.directory, "control", True)
 

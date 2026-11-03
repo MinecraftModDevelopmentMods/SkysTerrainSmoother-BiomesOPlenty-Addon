@@ -5,15 +5,16 @@ worlds and building pieces. Choose slabs, steps or corners in Terrain Smoother's
 configuration. Only new, dry terrain is smoothed, including suitable cave floors.
 Existing chunks are left alone.
 
-## Minecraft 1.17.1
+## Minecraft 1.18.2
 
-Use Forge 37.1.1 and Java 16 with these matching mods on both client and server:
+Use Forge 40.3.0 and Java 17 with these matching mods on both client and server:
 
-- Biomes O' Plenty 14.0.0.43.
-- Sky's Grass Slabs 1.2.0.117011.
-- Sky's Building Pieces 0.3.8.117011.
-- Sky's Building Pieces BOP add-on 0.2.4.117011.
-- Sky's Terrain Smoother 0.1.0.117011.
+- Biomes O' Plenty 16.0.0.134.
+- TerraBlender 1.2.0.126, required by BOP.
+- Sky's Grass Slabs 1.2.0.118021.
+- Sky's Building Pieces 0.3.8.118021.
+- Sky's Building Pieces BOP add-on 0.2.4.118021.
+- Sky's Terrain Smoother 0.1.0.118021.
 
 BOP now uses vanilla grass and dirt for its ordinary ground. Terrain Smoother
 already handles those states in BOP biomes. This add-on also connects the

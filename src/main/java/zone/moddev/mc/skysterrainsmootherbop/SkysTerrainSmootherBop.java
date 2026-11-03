@@ -13,10 +13,9 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 @Mod(SkysTerrainSmootherBop.ID)
 public final class SkysTerrainSmootherBop {
     public static final String ID = "skysterrainsmootherbop";
-    public static final String VERSION = "0.1.0.117011";
+    public static final String VERSION = "0.1.0.118021";
 
     public SkysTerrainSmootherBop() {
-        LegacySoils.register();
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
     }
 
@@ -31,8 +30,12 @@ public final class SkysTerrainSmootherBop {
 
         @SubscribeEvent
         public static void blocks(RegistryEvent.Register<Block> event) {
+            // Catalogue constructors have finished before registry events. Registering here
+            // keeps our recovery mappings out of the parallel constructor writes.
+            LegacySoils.register();
             for (LegacySoils.Palette palette : LegacySoils.PALETTES.values()) {
                 if (palette.id.equals(CoarseDirtSlab.BLOCK_ID)) {
+                    CoarseDirtSlab.BLOCK = new CoarseDirtSlab();
                     palette.holder = CoarseDirtSlab.BLOCK;
                     event.getRegistry().register(palette.holder);
                 } else {

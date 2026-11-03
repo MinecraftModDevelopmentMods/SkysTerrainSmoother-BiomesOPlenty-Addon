@@ -45,8 +45,10 @@ final class BopRecoveryChecks {
                 }
                 states++;
                 BlockState target = palette.resolve(metadata);
-                RuntimeProbe.require(HistoricalFullBlocks.resolve(palette.id, metadata).equals(target),
-                        "The numeric bridge resolves the same material and orientation");
+                BlockState recovered = HistoricalFullBlocks.resolve(palette.id, metadata);
+                RuntimeProbe.require(target.equals(recovered),
+                        "The numeric bridge resolves the same material and orientation: "
+                                + palette.id + "/" + metadata + " actual=" + recovered);
                 RuntimeProbe.require(!target.hasBlockEntity() && target.getFluidState().isEmpty(),
                         "Recovered pieces are dry and have no block entity");
                 RuntimeProbe.require(target.getBlock() == zone.moddev.mc.skysterrainsmootherbop.CoarseDirtSlab.BLOCK
