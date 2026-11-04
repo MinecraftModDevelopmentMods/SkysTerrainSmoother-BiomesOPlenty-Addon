@@ -36,15 +36,15 @@ def mavenizerLicense = mavenizerToolsDirectory.file('LICENSE-MAVENIZER.txt')
 def mavenizerReadme = mavenizerToolsDirectory.file('README.md')
 def mavenizerFixtureChecksums = [
         (mavenizerCompatibilityJar.asFile):
-                '416DCA4797BC55826F0DDCF03FDC405F1990FC15C2133FA27A1F143BF7976177',
+                'F4DB44F64C98F6401ED3A856ECEBCC5E1C2126E7C02BD1237FAB38793B4AF275',
         (mavenizerRuleManifest.asFile):
-                '8945511DFF53B8F1A91EE44B14AF9EC7DB34C373617EA37A608C6958BFEEB22E',
+                '351746200B44A4B9656C9AD5888DA3371E69AA601880FECA048C0131223DCCAC',
         (mavenizerSourcePatch.asFile):
-                'D856190DEF5574716C5E4F4379912C451B1F5952B0B111576651A98EECF58544',
+                '0AC522C64FEBA87C14792364D86FE1487E064681C54629F747E7DC80E8A83650',
         (mavenizerLicense.asFile):
                 '20C17D8B8C48A600800DFD14F95D5CB9FF47066A9641DDEAB48DC54AEC96E331',
         (mavenizerReadme.asFile):
-                '177C1DDEDEF9704B9FDC8EA24B8DCDF4DDCC826DD0E253E7872A00DB2EA34518'
+                '5E79C3569CE05BF402BB98860720C08FA0F9DAFE01713C401F46B8DE43CE46AB'
 ]
 
 // ForgeGradle invokes Mavenizer while configuring the project. Verify the
@@ -115,8 +115,8 @@ tasks.withType(JavaCompile).configureEach {
     }
 }
 
-def grassSlabsDirectory = file(providers.gradleProperty('grassSlabsDirectory').getOrElse('../..' + '/SkysGrassSlabs1201/SkysGrassSlabs'))
-def buildingPiecesDirectory = file(providers.gradleProperty('buildingPiecesDirectory').getOrElse('../..' + '/SkysBuildingPieces1201/SkysBuildingPieces'))
+def grassSlabsDirectory = file(providers.gradleProperty('grassSlabsDirectory').getOrElse('../..' + '/SkysGrassSlabs1201NEO/SkysGrassSlabs'))
+def buildingPiecesDirectory = file(providers.gradleProperty('buildingPiecesDirectory').getOrElse('../..' + '/SkysBuildingPieces1201NEO/SkysBuildingPieces'))
 def contentLock=new Properties()
 file('gradle/content-dependencies.properties').withInputStream { contentLock.load(it) }
 
@@ -141,9 +141,9 @@ def buildingPiecesDevelopmentJar = new File(buildingPiecesDirectory,
         "build/libs-dev/SkysBuildingPieces-${piecesVersion}-deobf.jar")
 
 def terrainDirectory = file(providers.gradleProperty('terrainDirectory')
-        .getOrElse('../../SkysTerrainSmoother1201/SkysTerrainSmoother'))
+        .getOrElse('../../SkysTerrainSmoother1201NEO/SkysTerrainSmoother'))
 def bopPiecesDirectory = file(providers.gradleProperty('buildingPiecesBopDirectory')
-        .getOrElse('../../SkysBuildingPiecesBOP1201/SkysBuildingPieces-BiomesOPlenty-Addon'))
+        .getOrElse('../../SkysBuildingPiecesBOP1201NEO/SkysBuildingPieces-BiomesOPlenty-Addon'))
 def terrainVersion = contentLock.getProperty('terrain.version')
 def bopPiecesVersion = contentLock.getProperty('bopPieces.version')
 def terrainDevelopmentJar = new File(terrainDirectory,
@@ -153,9 +153,7 @@ def bopPiecesDevelopmentJar = new File(bopPiecesDirectory,
 def bopDevelopmentJar = new File(bopPiecesDirectory, 'build/development-dependencies/biomesoplenty-official.jar')
 def terraBlenderDevelopmentJar = new File(bopPiecesDirectory, 'build/development-dependencies/terrablender-official.jar')
 
-def glitchCoreDevelopmentJar = new File(bopPiecesDirectory, 'build/development-dependencies/glitchcore-official.jar')
-def biomeDevelopmentJars = [bop: bopDevelopmentJar, terrablender: terraBlenderDevelopmentJar,
-                           glitchcore: glitchCoreDevelopmentJar]
+def biomeDevelopmentJars = [bop: bopDevelopmentJar, terrablender: terraBlenderDevelopmentJar]
 
 def mappedAccessRules = biomeDevelopmentJars.collect { name, File jar ->
     if (!jar.isFile()) {
@@ -234,7 +232,7 @@ def verifyContentDependencies = tasks.register('verifyContentDependencies') {
 tasks.named('compileJava') {
     dependsOn verifyContentDependencies
     doFirst {
-        [grassSlabsDevelopmentJar, buildingPiecesDevelopmentJar, terrainDevelopmentJar, bopPiecesDevelopmentJar, bopDevelopmentJar, terraBlenderDevelopmentJar, glitchCoreDevelopmentJar].each { dependency ->
+        [grassSlabsDevelopmentJar, buildingPiecesDevelopmentJar, terrainDevelopmentJar, bopPiecesDevelopmentJar, bopDevelopmentJar, terraBlenderDevelopmentJar].each { dependency ->
             if (!dependency.isFile()) throw new GradleException("Build the coordinated content dependency first: " + dependency)
         }
     }
@@ -299,7 +297,7 @@ def prepareContentDevelopmentRun = tasks.register('prepareContentDevelopmentRun'
             }
         }
         copy {
-            from grassSlabsDevelopmentJar, buildingPiecesDevelopmentJar, terrainDevelopmentJar, bopPiecesDevelopmentJar, bopDevelopmentJar, terraBlenderDevelopmentJar, glitchCoreDevelopmentJar
+            from grassSlabsDevelopmentJar, buildingPiecesDevelopmentJar, terrainDevelopmentJar, bopPiecesDevelopmentJar, bopDevelopmentJar, terraBlenderDevelopmentJar
             into mods
         }
     }
@@ -409,6 +407,11 @@ def configureFromForgeRun = { JavaExec process, String runTaskName ->
 
 repositories {
     minecraft.mavenizer(it)
+    maven {
+        name = 'NeoForge'
+        url = 'https://maven.neoforged.net/releases'
+        content { includeGroupAndSubgroups('net.neoforged') }
+    }
     maven fg.forgeMaven
     maven fg.minecraftLibsMaven
     exclusiveContent {
@@ -428,9 +431,9 @@ repositories {
 }
 
 dependencies {
-    implementation files(grassSlabsDevelopmentJar, buildingPiecesDevelopmentJar, terrainDevelopmentJar, bopPiecesDevelopmentJar, bopDevelopmentJar, terraBlenderDevelopmentJar, glitchCoreDevelopmentJar)
+    implementation files(grassSlabsDevelopmentJar, buildingPiecesDevelopmentJar, terrainDevelopmentJar, bopPiecesDevelopmentJar, bopDevelopmentJar, terraBlenderDevelopmentJar)
     implementation minecraft.dependency(
-            "net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}") {
+            "net.neoforged:forge:${project.minecraft_version}-${project.forge_version}") {
         accessTransformers.from(mappedAccessRules)
     }
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
@@ -499,7 +502,7 @@ def prepareIntegrationTest = tasks.register('prepareIntegrationTest') {
         mods.mkdirs()
         project.copy {
             from integrationTestModJar.flatMap { it.archiveFile }
-            from grassSlabsDevelopmentJar, buildingPiecesDevelopmentJar, terrainDevelopmentJar, bopPiecesDevelopmentJar, bopDevelopmentJar, terraBlenderDevelopmentJar, glitchCoreDevelopmentJar
+            from grassSlabsDevelopmentJar, buildingPiecesDevelopmentJar, terrainDevelopmentJar, bopPiecesDevelopmentJar, bopDevelopmentJar, terraBlenderDevelopmentJar
             into mods
         }
         new File(runDirectory, 'eula.txt').setText('eula=true\n', 'UTF-8')
@@ -593,7 +596,7 @@ def prepareIntegrationClient = tasks.register('prepareIntegrationClient') {
         target.mkdirs()
         copy { from 'src/bootstrapTest/defaultconfigs'; into target }
         copy {
-            from integrationTestModJar.flatMap { it.archiveFile }, grassSlabsDevelopmentJar, buildingPiecesDevelopmentJar, terrainDevelopmentJar, bopPiecesDevelopmentJar, bopDevelopmentJar, terraBlenderDevelopmentJar, glitchCoreDevelopmentJar
+            from integrationTestModJar.flatMap { it.archiveFile }, grassSlabsDevelopmentJar, buildingPiecesDevelopmentJar, terrainDevelopmentJar, bopPiecesDevelopmentJar, bopDevelopmentJar, terraBlenderDevelopmentJar
             into new File(target, 'mods')
         }
         new File(target, 'options.txt').text = 'fullscreen:false\noverrideWidth:854\noverrideHeight:480\nmaxFps:30\npauseOnLostFocus:false\nrenderDistance:6\n'
@@ -678,9 +681,9 @@ def releaseFiles = provider {
 tasks.register('verifyReleaseMetadata') {
     group = 'verification'
     doLast {
-        if (project.minecraft_version != '1.20.1' || project.forge_version != '47.4.10' ||
+        if (project.minecraft_version != '1.20.1' || project.forge_version != '47.1.106' ||
                 project.mapping_channel != 'official' || project.mapping_version != '1.20.1' ||
-                project.loader_name != 'forge' || project.loader_code != '1' ||
+                project.loader_name != 'neoforge' || project.loader_code != '2' ||
                 project.java_version != '17' || project.java_toolchain_version != '17.0.1+12' ||
                 project.mod_id != 'skysterrainsmootherbop') {
             throw new GradleException('Unexpected 1.20.1 release metadata')
@@ -1048,7 +1051,7 @@ tasks.register('integrationClientReloadProcess', JavaExec) {
 
 ext.configureMineralogyVerificationRun = configureFromForgeRun
 ext.mineralogyProfileProbeId = 'skysterrainsmoother'
-ext.mineralogyProfileAdditionalMods = files(grassSlabsDevelopmentJar, buildingPiecesDevelopmentJar, terrainDevelopmentJar, bopPiecesDevelopmentJar, bopDevelopmentJar, terraBlenderDevelopmentJar, glitchCoreDevelopmentJar)
+ext.mineralogyProfileAdditionalMods = files(grassSlabsDevelopmentJar, buildingPiecesDevelopmentJar, terrainDevelopmentJar, bopPiecesDevelopmentJar, bopDevelopmentJar, terraBlenderDevelopmentJar)
 apply from: 'gradle/mineralogy-runs.gradle'
 
 apply from: 'gradle/recipe-advancements.gradle'
@@ -1087,7 +1090,7 @@ def prepareFamilyForward = tasks.register('prepareFamilyForwardFixture') {
         copy { from new File(fixture, 'source-family-fixture.json'); into target }
         copy { from 'src/bootstrapTest/defaultconfigs'; into target }
         copy {
-            from integrationTestModJar.flatMap { it.archiveFile }, grassSlabsDevelopmentJar, buildingPiecesDevelopmentJar, terrainDevelopmentJar, bopPiecesDevelopmentJar, bopDevelopmentJar, terraBlenderDevelopmentJar, glitchCoreDevelopmentJar
+            from integrationTestModJar.flatMap { it.archiveFile }, grassSlabsDevelopmentJar, buildingPiecesDevelopmentJar, terrainDevelopmentJar, bopPiecesDevelopmentJar, bopDevelopmentJar, terraBlenderDevelopmentJar
             into new File(target, 'mods')
         }
         new File(target, 'eula.txt').setText('eula=true\n', 'UTF-8')

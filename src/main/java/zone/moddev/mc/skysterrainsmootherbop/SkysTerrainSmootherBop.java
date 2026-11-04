@@ -20,7 +20,7 @@ import zone.moddev.mc.skysbuildingpieces.api.BuildingPiecesApi;
 @Mod(SkysTerrainSmootherBop.ID)
 public final class SkysTerrainSmootherBop {
     public static final String ID = "skysterrainsmootherbop";
-    public static final String VERSION = "0.1.0.120011";
+    public static final String VERSION = "0.1.0.120012";
 
     public SkysTerrainSmootherBop() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);

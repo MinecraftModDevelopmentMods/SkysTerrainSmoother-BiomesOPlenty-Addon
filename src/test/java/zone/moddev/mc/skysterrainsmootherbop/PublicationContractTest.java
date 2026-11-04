@@ -24,7 +24,8 @@ class PublicationContractTest {
         }
         String ci = text(".github/workflows/ci.yml");
         assertTrue(ci.contains("java-version: '17.0.1+12'"));
-        assertTrue(ci.contains("Bootstrap Forge from an empty cache"));
+        assertEquals("neoforge", metadata.getProperty("loader_name"));
+        assertTrue(ci.contains("Bootstrap NeoForge from an empty cache"));
         assertTrue(ci.contains("-PterrainDirectory=dependencies/terrain"));
         assertTrue(ci.contains("-PbuildingPiecesBopDirectory=dependencies/bopPieces"));
     }

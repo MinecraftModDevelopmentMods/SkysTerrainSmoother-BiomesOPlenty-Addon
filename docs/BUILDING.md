@@ -7,7 +7,7 @@ Mavenizer tool; Gradle, compilation and Minecraft use Java 17.
 Build the exact four clean source commits in gradle/content-dependencies.properties.
 Run assemble for Grass Slabs and Building Pieces, then Terrain Smoother and the
 Building Pieces BOP add-on. Also run the latter's bopDevelopmentJar task, which
-prepares BOP, TerraBlender and GlitchCore for development. The
+prepares BOP and TerraBlender for development. The
 build verifies their commits, versions and main/development jar hashes. These
 dependencies are checked before compilation and development runs.
 
@@ -25,6 +25,6 @@ and client/server options. Archive old disposable runtime evidence before
 repeating a check.
 
 Development uses mapped BOP bytes from the pinned Building Pieces BOP build,
-including mapped access rules for BOP and its two dependencies. Packaged runs use
+including mapped access rules for BOP and TerraBlender. Packaged runs use
 their unchanged public jars. No dependency classes or textures are bundled in
 this mod.

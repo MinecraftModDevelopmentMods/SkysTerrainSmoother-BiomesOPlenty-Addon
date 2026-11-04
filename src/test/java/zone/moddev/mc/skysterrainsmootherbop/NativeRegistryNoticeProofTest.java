@@ -51,7 +51,8 @@ class NativeRegistryNoticeProofTest {
             JsonObject mappings = profile.getAsJsonObject("mappings");
             boolean forge47 = profile.has("forge47_registry_proof");
             boolean forge45 = profile.has("forge45_registry_proof");
-            boolean nativeProof = forge45 || forge47;
+            boolean neo47 = profile.has("neo47_registry_proof");
+            boolean nativeProof = forge45 || forge47 || neo47;
             Set<String> names = new HashSet<>();
             for (java.util.Map.Entry<String, com.google.gson.JsonElement> registry
                     : mappings.entrySet()) {
@@ -84,11 +85,14 @@ class NativeRegistryNoticeProofTest {
             assertEquals(biome.get("checked_cells"), contract.get("checked_cells"));
             assertEquals(0, contract.get("native_renamed_cells").getAsInt());
             if (nativeProof) {
-                JsonObject binding = profile.getAsJsonObject(forge47 ? "forge47_registry_proof" : "forge45_registry_proof");
+                String proofKey = neo47 ? "neo47_registry_proof"
+                        : forge47 ? "forge47_registry_proof" : "forge45_registry_proof";
+                JsonObject binding = profile.getAsJsonObject(proofKey);
                 byte[] proofBytes = Files.readAllBytes(Paths.get(binding.get("path").getAsString()));
                 assertEquals(binding.get("sha256").getAsString(), checksum(proofBytes));
                 JsonObject proof = new JsonParser().parse(new String(proofBytes, StandardCharsets.UTF_8)).getAsJsonObject();
-                assertEquals(forge47 ? "Forge 47.4.10" : "Forge 45.4.0", proof.get("target").getAsString());
+                String target = neo47 ? "NeoForge 47.1.106" : forge47 ? "Forge 47.4.10" : "Forge 45.4.0";
+                assertEquals(target, proof.get("target").getAsString());
                 assertEquals(mappings, proof.getAsJsonObject("snapshot_entries"));
                 assertEquals(profile.get("sha256"), proof.get("source_world_sha256"));
                 assertEquals(biome.get("sha256"), proof.get("native_biome_contract_sha256"));
@@ -96,7 +100,27 @@ class NativeRegistryNoticeProofTest {
                 for (var use : proof.getAsJsonObject("unused_non_biome_ids").entrySet()) {
                     assertEquals(0, use.getValue().getAsInt(), use.getKey());
                 }
-                checkBiomeCensus(contract, mappings.getAsJsonObject("minecraft:worldgen/biome"), proof);
+                JsonObject biomeMappings = mappings.getAsJsonObject("minecraft:worldgen/biome");
+                checkBiomeCensus(contract, biomeMappings, proof);
+                if (neo47) {
+                    java.util.Properties lock = new java.util.Properties();
+                    try (var input = Files.newInputStream(Paths.get("gradle/content-dependencies.properties"))) {
+                        lock.load(input);
+                    }
+                    assertEquals(lock.getProperty("bop.sha256"), proof.get("target_bop_jar_sha256").getAsString());
+                    assertEquals(0, proof.get("added_biome_saved_cells").getAsInt());
+                    var added = proof.getAsJsonArray("added_live_bop_biomes");
+                    assertFalse(added.isEmpty());
+                    Set<String> savedNames = new HashSet<>();
+                    for (var named : contract.getAsJsonObject("source_names").entrySet()) {
+                        savedNames.add(named.getValue().getAsString());
+                    }
+                    for (var named : added) {
+                        String name = named.getAsString();
+                        assertTrue(name.startsWith("biomesoplenty:") && biomeMappings.has(name), name);
+                        assertFalse(savedNames.contains(name), name);
+                    }
+                }
             }
             int records = 0;
 

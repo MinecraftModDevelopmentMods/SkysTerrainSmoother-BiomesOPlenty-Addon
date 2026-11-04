@@ -119,7 +119,7 @@ class NativeContractTest {
                 "skysbuildingpiecesbop", "skysterrainsmoother", "biomesoplenty" }) {
             assertTrue(metadata.contains("modId=\"" + mod + "\""));
         }
-        assertTrue(metadata.contains("[19.0.0.96]"));
+        assertTrue(metadata.contains("[18.0.0.598]"));
         assertFalse(Files.exists(RESOURCES.resolve("META-INF/coremods.json")));
         assertFalse(Files.exists(RESOURCES.resolve("mcmod.info")));
     }
@@ -129,12 +129,12 @@ class NativeContractTest {
         String build = text(Paths.get("build.gradle"));
         assertTrue(build.contains("systemProperty 'mixin.env.disableRefMap', 'true'"));
         assertTrue(build.contains("accessTransformers.from(mappedAccessRules)"));
-        assertTrue(build.contains("bopPiecesDevelopmentJar, bopDevelopmentJar, terraBlenderDevelopmentJar, glitchCoreDevelopmentJar"));
+        assertTrue(build.contains("bopPiecesDevelopmentJar, bopDevelopmentJar, terraBlenderDevelopmentJar"));
         String launcher = text(Paths.get("tools/run_packaged_checks.py"));
         assertFalse(launcher.contains("mixin.env.disableRefMap"), "Public jars retain their own refmaps");
         java.util.Properties lock = new java.util.Properties();
         lock.load(new java.io.StringReader(text(Paths.get("gradle/content-dependencies.properties"))));
-        for (String name : new String[] { "bop", "terrablender", "glitchcore" }) {
+        for (String name : new String[] { "bop", "terrablender" }) {
             assertTrue(lock.getProperty(name + ".sha256").matches("[0-9A-F]{64}"));
             assertTrue(lock.getProperty(name + ".development.sha256").matches("[0-9A-F]{64}"));
         }

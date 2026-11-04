@@ -44,6 +44,8 @@
         },
         "minecraft:worldgen/biome": {
           "biomesoplenty:bayou": 60,
+          "biomesoplenty:bog": 184,
+          "biomesoplenty:clover_patch": 186,
           "biomesoplenty:cold_desert": 63,
           "biomesoplenty:coniferous_forest": 64,
           "biomesoplenty:crag": 187,
@@ -62,8 +64,10 @@
           "biomesoplenty:highland": 82,
           "biomesoplenty:jade_cliffs": 85,
           "biomesoplenty:lavender_field": 86,
+          "biomesoplenty:lavender_forest": 87,
           "biomesoplenty:lush_desert": 88,
           "biomesoplenty:lush_savanna": 89,
+          "biomesoplenty:maple_woods": 192,
           "biomesoplenty:marsh": 90,
           "biomesoplenty:mediterranean_forest": 193,
           "biomesoplenty:muskeg": 93,
@@ -73,6 +77,7 @@
           "biomesoplenty:ominous_woods": 96,
           "biomesoplenty:orchard": 56,
           "biomesoplenty:origin_valley": 98,
+          "biomesoplenty:pasture": 196,
           "biomesoplenty:prairie": 99,
           "biomesoplenty:pumpkin_patch": 197,
           "biomesoplenty:rainforest": 101,
@@ -166,9 +171,9 @@
         "checked_cells": 1337856,
         "renamed_cells": 0
       },
-      "forge47_registry_proof": {
-        "path": "src/test/resources/fixtures/forward-1.18.2-family/forge-47-registry-notices.json",
-        "sha256": "8FD94CD7F2B4253158AB1E1658E93BAFD5CA815F78D77877A85AEBD11780877E"
+      "neo47_registry_proof": {
+        "path": "src/test/resources/fixtures/forward-1.18.2-family/neo-47-registry-notices.json",
+        "sha256": "879032E65AFB7C053D7A35F24BA084610CE242D00884174E3A8650CE9C13C12B"
       }
     },
     "54791A41A96148B0DBF34BE88185629C8EF6C3133A56C15BFF6136BBDCF5F662": {
@@ -358,6 +363,7 @@
           "biomesoplenty:highland": 82,
           "biomesoplenty:jade_cliffs": 85,
           "biomesoplenty:lavender_field": 86,
+          "biomesoplenty:lavender_forest": 87,
           "biomesoplenty:lush_desert": 88,
           "biomesoplenty:lush_savanna": 89,
           "biomesoplenty:marsh": 90,
@@ -371,6 +377,7 @@
           "biomesoplenty:redwood_forest": 104,
           "biomesoplenty:scrubland": 106,
           "biomesoplenty:seasonal_forest": 107,
+          "biomesoplenty:seasonal_orchard": 108,
           "biomesoplenty:shrubland": 111,
           "biomesoplenty:snowy_coniferous_forest": 113,
           "biomesoplenty:snowy_fir_clearing": 115,
@@ -471,9 +478,9 @@
         "checked_cells": 672768,
         "renamed_cells": 0
       },
-      "forge47_registry_proof": {
-        "path": "src/test/resources/fixtures/forward-1.16.5-family/forge-47-registry-notices.json",
-        "sha256": "5975B50358C33E16815988F287B8809C13CBD6735D2F52FAA624C19913FDFC20"
+      "neo47_registry_proof": {
+        "path": "src/test/resources/fixtures/forward-1.16.5-family/neo-47-registry-notices.json",
+        "sha256": "D92D1C284A599346861CB63D3B7BA8FAB299973822B1F6F3638AB80AE920A0F0"
       }
     },
     "932180D7BA3AECF1E5506ECCB691BAF813284E5805CB198BAB3813C031EF6262": {
@@ -525,6 +532,7 @@
           "biomesoplenty:highland": 82,
           "biomesoplenty:jade_cliffs": 85,
           "biomesoplenty:lavender_field": 86,
+          "biomesoplenty:lavender_forest": 87,
           "biomesoplenty:lush_desert": 88,
           "biomesoplenty:lush_savanna": 89,
           "biomesoplenty:marsh": 90,
@@ -538,6 +546,7 @@
           "biomesoplenty:redwood_forest": 104,
           "biomesoplenty:scrubland": 106,
           "biomesoplenty:seasonal_forest": 107,
+          "biomesoplenty:seasonal_orchard": 108,
           "biomesoplenty:shrubland": 111,
           "biomesoplenty:snowy_coniferous_forest": 113,
           "biomesoplenty:snowy_fir_clearing": 115,
@@ -641,9 +650,9 @@
         "checked_cells": 891904,
         "renamed_cells": 0
       },
-      "forge47_registry_proof": {
-        "path": "src/test/resources/fixtures/forward-1.17.1-family/forge-47-registry-notices.json",
-        "sha256": "D6AD4DA1D6E30AF6F09DC669CAFA2691C0147B6EFA710A515CB13C2A606D73D0"
+      "neo47_registry_proof": {
+        "path": "src/test/resources/fixtures/forward-1.17.1-family/neo-47-registry-notices.json",
+        "sha256": "AE6E8111BE3A117E8B64BD9EEA4D4163A3B86B40BBE41DF2720AC0D61C074A1C"
       }
     },
     "BA2421F2A9D2E746401DF3FDA2AAB524E8E8A2537F6332815C9AA913BD72E161": {

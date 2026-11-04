@@ -1,8 +1,8 @@
 # Changelog
 
-## 0.1.0.120011 (unreleased)
+## 0.1.0.120012 (unreleased)
 
-- Update to Minecraft 1.20.1 and Biomes O’ Plenty 19.
+- Add a NeoForge 1.20.1 build for Biomes O’ Plenty 18.
 
 ## 0.1.0.119041 (unreleased)
 

@@ -7,19 +7,18 @@ Existing chunks are left alone.
 
 ## Minecraft 1.20.1
 
-Use Forge 47.4.10 and Java 17 with these matching mods on both client and server:
+Use NeoForge 47.1.106 and Java 17 with these matching mods on both client and server:
 
-- Biomes O' Plenty 19.0.0.96.
-- TerraBlender 3.0.1.10 and GlitchCore 0.0.1.1, required by BOP.
-- Sky's Grass Slabs 1.2.0.120011.
-- Sky's Building Pieces 0.3.8.120011.
-- Sky's Building Pieces BOP add-on 0.2.4.120011.
-- Sky's Terrain Smoother 0.1.0.120011.
+- Biomes O' Plenty 18.0.0.598.
+- TerraBlender 3.0.1.10, required by BOP.
+- Sky's Grass Slabs 1.2.0.120012.
+- Sky's Building Pieces 0.3.8.120012.
+- Sky's Building Pieces BOP add-on 0.2.4.120012.
+- Sky's Terrain Smoother 0.1.0.120012.
 
 BOP now uses vanilla grass and dirt for its ordinary ground. Terrain Smoother
 already handles those states in BOP biomes. This add-on also connects the
-remaining natural rock replacements supplied by Building Pieces BOP. Mineralogy
-is optional; its existing rock mapping takes priority when it provides the rock.
+remaining natural rock replacements supplied by Building Pieces BOP. Use the Forge 47.4.10 build if your world uses Mineralogy or BOP 19.
 
 ## Upgrading an older BOP world
 
