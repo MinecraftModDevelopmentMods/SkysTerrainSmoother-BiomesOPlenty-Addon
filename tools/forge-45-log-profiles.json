@@ -174,6 +174,50 @@
       "forge45_registry_proof": {
         "path": "src/test/resources/fixtures/forward-1.18.2-family/forge-45-registry-notices.json",
         "sha256": "05787DDC99C0227437F5A403D55E429173CCBDA00FCB44B7C38F8C15AF72ED8B"
+      },
+      "client": {
+        "target": "Forge 45.4.0",
+        "notice_thread": "Render thread",
+        "notice_reads": 1,
+        "source_sha256": "62E490F819BB2794F1AE663C28296CE5AD28361917B5347A94C10B7BAB27A77D",
+        "artifact_inputs": [
+          {
+            "name": "SkysTerrainSmoother-BiomesOPlenty-Addon-0.1.0.119041.jar",
+            "sha256": "2D525C2F6BEC75B60A3E3854668827D162BBCA62270C0DA7AA59D1DEA3BC3ADD"
+          },
+          {
+            "name": "skysterrainsmootherbop-integration-test-reobf.jar",
+            "sha256": "81CDE0C00FAF061299C880A738458DC575B91ED69AE519A41D881D44EDCF726D"
+          },
+          {
+            "name": "SkysGrassSlabs-1.2.0.119041.jar",
+            "sha256": "3A97C2D7E1A2E1D9C33D513BE08F9B2D3611AC914185DED8C8B9138D76EF5B82"
+          },
+          {
+            "name": "SkysBuildingPieces-0.3.8.119041.jar",
+            "sha256": "A1055C3DD776D24619635D1F30700D6E2A51CBA19ECF2AEE6894E2DBBC6C6DB7"
+          },
+          {
+            "name": "SkysTerrainSmoother-0.1.0.119041.jar",
+            "sha256": "88EDD053B5A44391FE12FA9642EAABBB685DD3B17FAB845D36C7EE159AD595DA"
+          },
+          {
+            "name": "SkysBuildingPieces-BiomesOPlenty-Addon-0.2.4.119041.jar",
+            "sha256": "DCA79750EF7C078D6CE1400366817BA2C998312996BFAE7F130FE0BD46B72339"
+          },
+          {
+            "name": "BiomesOPlenty-1.19.4-17.3.0.593.jar",
+            "sha256": "325C991BF1801FDDA576EE20D356C4D3D1E69FDA5B5CB778350653773C991A20"
+          },
+          {
+            "name": "TerraBlender-forge-1.19.4-2.3.0.22.jar",
+            "sha256": "BD792CEC995BD4EBD44046B096E4BFBA4B9032BC9F36182FFB8101DFE2D2BBE2"
+          }
+        ],
+        "completed_log_sha256": {
+          "debug.log": "62BA9189B11DB30B2C16DBE222E46C068705075692C3BD2415107F8DADAF3DEF",
+          "latest.log": "184D75060A97ABA939AB9B125D1E0CB387BD336D03E24AC841E6650A8B18B1EA"
+        }
       }
     },
     "54791A41A96148B0DBF34BE88185629C8EF6C3133A56C15BFF6136BBDCF5F662": {

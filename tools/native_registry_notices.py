@@ -58,8 +58,17 @@ def profile_for(directory):
                 or not 0 <= receipt["noticed_biome_cells"] <= proof["checked_cells"]):
             raise ValueError("The Forge 45 registry notice proof does not match the saved fixture")
     if source.get("mode") == "client":
-        # Client notice order is qualified separately from the server.
-        return None
+        control = profile.get("client")
+        if control is None:
+            return None
+        inputs = Path(directory) / "artifact-inputs.json"
+        if (control["target"] != "Forge 45.4.0" or control["notice_thread"] != "Render thread"
+                or control["notice_reads"] != 1 or control["source_sha256"] != profile["sha256"]
+                or set(control["completed_log_sha256"]) != {"latest.log", "debug.log"}
+                or not inputs.is_file()
+                or json.loads(inputs.read_text(encoding="utf-8")) != control["artifact_inputs"]):
+            return None
+        profile = dict(profile, notice_thread=control["notice_thread"], notice_reads=control["notice_reads"])
     return profile
 
 

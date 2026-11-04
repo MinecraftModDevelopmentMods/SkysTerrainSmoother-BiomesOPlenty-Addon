@@ -157,5 +157,29 @@ class NativeClientFilesTest(unittest.TestCase):
             audit(self.directory, "control", True)
 
 
+class Forge45RegistryProfileTest(unittest.TestCase):
+    def test_client_binding_requires_the_exact_artifact_set(self):
+        import json
+        import tempfile
+        from native_registry_notices import profile_for
+
+        root = Path(__file__).resolve().parent.parent
+        policy = json.loads((root / "tools/forge-45-log-profiles.json").read_text(encoding="utf-8"))
+        profile = next(profile for profile in policy["profiles"].values() if "client" in profile)
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            (directory / "source-inputs.json").write_text(json.dumps({
+                "world_sha256": profile["sha256"],
+                "manifest_sha256": profile["manifest_sha256"],
+                "mode": "client",
+            }), encoding="utf-8")
+            self.assertIsNone(profile_for(directory))
+            artifacts = directory / "artifact-inputs.json"
+            artifacts.write_text(json.dumps(profile["client"]["artifact_inputs"]), encoding="utf-8")
+            self.assertEqual(profile_for(directory)["notice_thread"], "Render thread")
+            artifacts.write_text("[]", encoding="utf-8")
+            self.assertIsNone(profile_for(directory))
+
+
 if __name__ == "__main__":
     unittest.main()
