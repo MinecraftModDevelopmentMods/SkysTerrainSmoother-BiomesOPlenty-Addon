@@ -22,8 +22,6 @@ final class LegacySoilBlock extends Block {
     LegacySoilBlock(LegacySoils.Palette palette) {
         super(Block.Properties.of(Material.DIRT).strength(.5f));
         this.palette = palette;
-        palette.holder = this;
-        setRegistryName(palette.id);
         registerDefaultState(stateDefinition.any().setValue(META, 0)
                 .setValue(SnowyDirtBlock.SNOWY, false).setValue(LOWERED_SUPPORT, false));
     }

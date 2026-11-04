@@ -1,5 +1,6 @@
 package zone.moddev.mc.skysterrainsmootherbop;
 
+import net.minecraftforge.registries.ForgeRegistries;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -87,7 +88,7 @@ public final class LegacySoils {
         for (Change change : changes) {
             if (change.item) {
                 ItemStack target = Pieces.stack(change.state, 1);
-                change.saved.putString("id", target.getItem().getRegistryName().toString());
+                change.saved.putString("id", ForgeRegistries.ITEMS.getKey(target.getItem()).toString());
                 change.saved.remove("Damage");
             } else {
                 CompoundTag target = NbtUtils.writeBlockState(change.state);

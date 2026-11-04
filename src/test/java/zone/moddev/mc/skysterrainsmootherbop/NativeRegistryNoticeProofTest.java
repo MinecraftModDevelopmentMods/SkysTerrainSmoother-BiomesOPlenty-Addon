@@ -10,6 +10,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
@@ -32,12 +33,29 @@ class NativeRegistryNoticeProofTest {
                 Files.readAllBytes(Paths.get("tools/native-log-profiles.json")), StandardCharsets.UTF_8))
                 .getAsJsonObject().getAsJsonObject("profiles");
         assertEquals(4, profiles.size());
+        checkProfiles(profiles);
+    }
 
+    @Test
+    void forge45RegistryNoticesMatchTheSourceSnapshotAndSavedBiomeCensus() throws Exception {
+        JsonObject profiles = JsonParser.parseString(Files.readString(Paths.get("tools/forge-45-log-profiles.json")))
+                .getAsJsonObject().getAsJsonObject("profiles");
+        assertTrue(profiles.has("62E490F819BB2794F1AE663C28296CE5AD28361917B5347A94C10B7BAB27A77D"));
+        checkProfiles(profiles);
+    }
+
+    private static void checkProfiles(JsonObject profiles) throws Exception {
         for (java.util.Map.Entry<String, com.google.gson.JsonElement> entry : profiles.entrySet()) {
             JsonObject profile = entry.getValue().getAsJsonObject();
+            JsonObject mappings = profile.getAsJsonObject("mappings");
+            boolean forge45 = profile.has("forge45_registry_proof");
             Set<String> names = new HashSet<>();
             for (java.util.Map.Entry<String, com.google.gson.JsonElement> registry
-                    : profile.getAsJsonObject("mappings").entrySet()) {
+                    : mappings.entrySet()) {
+                if (forge45 && registry.getKey().equals("minecraft:worldgen/biome")) {
+                    // The static snapshot no longer owns these dynamic biome entries.
+                    continue;
+                }
                 for (java.util.Map.Entry<String, com.google.gson.JsonElement> mapping
                         : registry.getValue().getAsJsonObject().entrySet()) {
                     names.add(mapping.getKey());
@@ -62,6 +80,20 @@ class NativeRegistryNoticeProofTest {
             assertEquals(profile.get("sha256"), contract.get("source_world_sha256"));
             assertEquals(biome.get("checked_cells"), contract.get("checked_cells"));
             assertEquals(0, contract.get("native_renamed_cells").getAsInt());
+            if (forge45) {
+                JsonObject binding = profile.getAsJsonObject("forge45_registry_proof");
+                byte[] proofBytes = Files.readAllBytes(Paths.get(binding.get("path").getAsString()));
+                assertEquals(binding.get("sha256").getAsString(), checksum(proofBytes));
+                JsonObject proof = new JsonParser().parse(new String(proofBytes, StandardCharsets.UTF_8)).getAsJsonObject();
+                assertEquals(mappings, proof.getAsJsonObject("snapshot_entries"));
+                assertEquals(profile.get("sha256"), proof.get("source_world_sha256"));
+                assertEquals(biome.get("sha256"), proof.get("native_biome_contract_sha256"));
+                assertEquals(names, proof.getAsJsonObject("unused_non_biome_ids").keySet());
+                for (var use : proof.getAsJsonObject("unused_non_biome_ids").entrySet()) {
+                    assertEquals(0, use.getValue().getAsInt(), use.getKey());
+                }
+                checkBiomeCensus(contract, mappings.getAsJsonObject("minecraft:worldgen/biome"), proof);
+            }
             int records = 0;
 
             try (ZipFile archive = new ZipFile(profile.get("fixture").getAsString())) {
@@ -78,6 +110,9 @@ class NativeRegistryNoticeProofTest {
                             } else {
                                 // Older forced-chunk data is native, uncompressed NBT.
                                 root = NbtIo.read(new DataInputStream(new ByteArrayInputStream(bytes)));
+                            }
+                            if (forge45 && label.equals("world/level.dat")) {
+                                checkSnapshot(root.getCompound("fml").getCompound("Registries"), mappings);
                             }
                             // Registry availability is not a saved block, entity or inventory use.
                             root.remove("FML");
@@ -113,7 +148,9 @@ class NativeRegistryNoticeProofTest {
                                 root.remove("Blocks");
                             }
                             inspect(root, names, label);
-                            records++;
+                            if (!forge45 || !label.endsWith(".dat_old")) {
+                                records++;
+                            }
                         } else if (label.endsWith(".mca")) {
                             records += region(readAll(input), names, label);
                         }
@@ -123,6 +160,39 @@ class NativeRegistryNoticeProofTest {
             assertEquals(profile.get("inspected_nbt_records").getAsInt(), records);
             assertEquals(0, profile.get("saved_uses").getAsInt());
         }
+    }
+
+    private static void checkSnapshot(CompoundTag registries, JsonObject mappings) {
+        for (var registry : mappings.entrySet()) {
+            var saved = new java.util.HashMap<String, Integer>();
+            for (Tag row : registries.getCompound(registry.getKey()).getList("ids", 10)) {
+                CompoundTag entry = (CompoundTag) row;
+                assertNull(saved.put(entry.getString("K"), entry.getInt("V")));
+            }
+            for (var entry : registry.getValue().getAsJsonObject().entrySet()) {
+                assertEquals(entry.getValue().getAsInt(), saved.get(entry.getKey()), entry.getKey());
+            }
+        }
+    }
+
+    private static void checkBiomeCensus(JsonObject contract, JsonObject noticed, JsonObject proof) throws Exception {
+        JsonObject names = contract.getAsJsonObject("source_names");
+        int cells = 0;
+        int noticedCells = 0;
+        for (var value : contract.getAsJsonArray("chunks")) {
+            byte[] packed = Base64.getDecoder().decode(value.getAsJsonObject().get("cells").getAsString());
+            try (var input = new InflaterInputStream(new ByteArrayInputStream(packed))) {
+                for (byte cell : input.readAllBytes()) {
+                    String name = names.get(Integer.toString(Byte.toUnsignedInt(cell))).getAsString();
+                    if (noticed != null && noticed.has(name)) {
+                        noticedCells++;
+                    }
+                    cells++;
+                }
+            }
+        }
+        assertEquals(contract.get("checked_cells").getAsInt(), cells);
+        assertEquals(proof.get("noticed_biome_cells").getAsInt(), noticedCells);
     }
 
     private static String checksum(byte[] bytes) throws Exception {

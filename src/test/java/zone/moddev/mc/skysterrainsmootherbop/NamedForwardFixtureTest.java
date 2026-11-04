@@ -15,6 +15,28 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class NamedForwardFixtureTest {
     @Test
+    void actual118SaveKeepsAllFiveModsAndTheFullSavedBiomeVolume() throws Exception {
+        Path root = Paths.get("src/test/resources/fixtures/forward-1.18.2-family");
+        JsonObject source = json(root.resolve("provenance.json"));
+        String checksum = digest(root.resolve("world.zip"));
+        assertEquals("62E490F819BB2794F1AE663C28296CE5AD28361917B5347A94C10B7BAB27A77D", checksum);
+        assertEquals(checksum, source.get("world_sha256").getAsString());
+        assertEquals("1.18.2", source.get("source_minecraft").getAsString());
+        assertEquals(2975, source.get("source_data_version").getAsInt());
+        assertEquals(4700, source.get("source_saved_states").getAsInt());
+        assertEquals(12, source.get("native_sand_states").getAsInt());
+        assertEquals(6, source.get("wet_sand_states").getAsInt());
+        assertEquals(1337856, source.get("checked_biome_cells").getAsInt());
+        assertTrue(source.get("source_world_unchanged").getAsBoolean());
+        assertEquals(source.get("manifest_sha256").getAsString(), digest(root.resolve("source-family-fixture.json")));
+        assertEquals(source.get("native_states_sha256").getAsString(), digest(root.resolve("native-source-states.json")));
+        assertEquals(source.get("native_biomes_sha256").getAsString(), digest(root.resolve("native-source-biomes.json")));
+        assertEquals("fa8cf9fd9fbb6f6649b4a7c11dd36a948e983e73", source.get("source_terrain_bop_commit").getAsString());
+        assertEquals(7, source.getAsJsonArray("source_artifacts").size());
+        assertEquals(2, source.getAsJsonObject("source_log_sha256").size());
+    }
+
+    @Test
     void actual117SaveKeepsTheQualifiedFamilyAndAllWetSoilStates() throws Exception {
         Path root = Paths.get("src/test/resources/fixtures/forward-1.17.1-family");
         JsonObject source = json(root.resolve("provenance.json"));

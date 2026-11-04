@@ -80,8 +80,10 @@ class NativeContractTest {
             assertTrue(Files.isRegularFile(assets.resolve("blockstates/" + name + ".json")));
             assertTrue(Files.isRegularFile(assets.resolve("models/item/" + name + ".json")));
         }
-        assertEquals(9, read(RESOURCES.resolve("pack.mcmeta")).getAsJsonObject()
-                .getAsJsonObject("pack").get("pack_format").getAsInt());
+        JsonObject pack = read(RESOURCES.resolve("pack.mcmeta")).getAsJsonObject().getAsJsonObject("pack");
+        assertEquals(13, pack.get("pack_format").getAsInt());
+        assertEquals(13, pack.get("forge:resource_pack_format").getAsInt());
+        assertEquals(12, pack.get("forge:data_pack_format").getAsInt());
     }
 
     @Test
@@ -117,7 +119,7 @@ class NativeContractTest {
                 "skysbuildingpiecesbop", "skysterrainsmoother", "biomesoplenty" }) {
             assertTrue(metadata.contains("modId=\"" + mod + "\""));
         }
-        assertTrue(metadata.contains("[1.18.2-16,1.18.2-17)"));
+        assertTrue(metadata.contains("[17.3,18)"));
         assertFalse(Files.exists(RESOURCES.resolve("META-INF/coremods.json")));
         assertFalse(Files.exists(RESOURCES.resolve("mcmod.info")));
     }

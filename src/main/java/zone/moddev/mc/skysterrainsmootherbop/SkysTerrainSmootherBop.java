@@ -1,19 +1,26 @@
 package zone.moddev.mc.skysterrainsmootherbop;
 
-import net.minecraft.world.level.block.Block;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.event.RegistryEvent;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegisterEvent;
+import zone.moddev.mc.skysbuildingpieces.api.BuildingPiecesApi;
 
 /** Keeps old BOP terrain pieces recoverable and adds the remaining rock mappings. */
 @Mod(SkysTerrainSmootherBop.ID)
 public final class SkysTerrainSmootherBop {
     public static final String ID = "skysterrainsmootherbop";
-    public static final String VERSION = "0.1.0.118021";
+    public static final String VERSION = "0.1.0.119041";
 
     public SkysTerrainSmootherBop() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
@@ -29,41 +36,45 @@ public final class SkysTerrainSmootherBop {
         }
 
         @SubscribeEvent
-        public static void blocks(RegistryEvent.Register<Block> event) {
-            // Catalogue constructors have finished before registry events. Registering here
-            // keeps our recovery mappings out of the parallel constructor writes.
-            LegacySoils.register();
-            for (LegacySoils.Palette palette : LegacySoils.PALETTES.values()) {
-                if (palette.id.equals(CoarseDirtSlab.BLOCK_ID)) {
-                    CoarseDirtSlab.BLOCK = new CoarseDirtSlab();
-                    palette.holder = CoarseDirtSlab.BLOCK;
-                    event.getRegistry().register(palette.holder);
-                } else {
-                    event.getRegistry().register(new LegacySoilBlock(palette));
+        public static void register(RegisterEvent event) {
+            event.register(ForgeRegistries.Keys.BLOCKS, registry -> {
+                // The content catalogue is ready by the time Forge opens its registries.
+                LegacySoils.register();
+                for (LegacySoils.Palette palette : LegacySoils.PALETTES.values()) {
+                    if (palette.id.equals(CoarseDirtSlab.BLOCK_ID)) {
+                        CoarseDirtSlab.BLOCK = new CoarseDirtSlab();
+                        palette.holder = CoarseDirtSlab.BLOCK;
+                    } else {
+                        palette.holder = new LegacySoilBlock(palette);
+                    }
+                    registry.register(new ResourceLocation(palette.id), palette.holder);
                 }
-            }
+            });
+
+            event.register(ForgeRegistries.Keys.ITEMS, registry -> {
+                for (LegacySoils.Palette palette : LegacySoils.PALETTES.values()) {
+                    registry.register(new ResourceLocation(palette.id),
+                            new BlockItem(palette.holder, new Item.Properties()));
+                }
+
+                BlockItem coarse = new BlockItem(CoarseDirtSlab.BLOCK, new Item.Properties()) {
+                    @Override
+                    public Component getName(ItemStack stack) {
+                        return Component.translatable("pieces.skysterrainsmootherbop.slab",
+                                Component.translatable(Blocks.COARSE_DIRT.getDescriptionId()));
+                    }
+                };
+                registry.register(new ResourceLocation(ID, "coarse_dirt_slab"), coarse);
+                CoarseDirtSlab.item = coarse;
+                BuildingPiecesApi.registerStateItems(CoarseDirtSlab.BLOCK, state -> coarse);
+            });
         }
 
         @SubscribeEvent
-        public static void items(RegistryEvent.Register<Item> event) {
-            for (LegacySoils.Palette palette : LegacySoils.PALETTES.values()) {
-                event.getRegistry().register(new BlockItem(palette.holder, new Item.Properties())
-                        .setRegistryName(palette.holder.getRegistryName()));
+        public static void creativeTab(CreativeModeTabEvent.BuildContents event) {
+            if (event.getTab() == CreativeModeTabs.BUILDING_BLOCKS) {
+                event.accept(CoarseDirtSlab.item);
             }
-            BlockItem coarse = new BlockItem(CoarseDirtSlab.BLOCK,
-                    new Item.Properties().tab(net.minecraft.world.item.CreativeModeTab.TAB_BUILDING_BLOCKS)) {
-                @Override
-                public net.minecraft.network.chat.Component getName(net.minecraft.world.item.ItemStack stack) {
-                    return new net.minecraft.network.chat.TranslatableComponent("pieces.skysterrainsmootherbop.slab",
-                            new net.minecraft.network.chat.TranslatableComponent(
-                                    net.minecraft.world.level.block.Blocks.COARSE_DIRT.getDescriptionId()));
-                }
-            };
-            coarse.setRegistryName(ID, "coarse_dirt_slab");
-            event.getRegistry().register(coarse);
-            CoarseDirtSlab.item = coarse;
-            zone.moddev.mc.skysbuildingpieces.api.BuildingPiecesApi.registerStateItems(CoarseDirtSlab.BLOCK,
-                    state -> coarse);
         }
     }
 }

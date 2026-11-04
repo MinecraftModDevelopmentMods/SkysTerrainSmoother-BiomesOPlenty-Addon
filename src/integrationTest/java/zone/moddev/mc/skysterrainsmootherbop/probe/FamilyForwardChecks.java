@@ -1,5 +1,6 @@
 package zone.moddev.mc.skysterrainsmootherbop.probe;
 
+import net.minecraftforge.registries.ForgeRegistries;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -167,7 +168,7 @@ final class FamilyForwardChecks {
                 StandardCharsets.UTF_8)) {
             fixture = new JsonParser().parse(input).getAsJsonObject();
         }
-        java.util.Map<BlockPos, BlockState> retainedRocks = retainedNamedRocks(fixture);
+        java.util.Map<BlockPos, BlockState> retainedRocks = retainedNamedRocks(world, fixture);
         if (new File("source-native-biomes.json").isFile()) {
             NativeBiomeChecks.verify(world);
         }
@@ -198,6 +199,7 @@ final class FamilyForwardChecks {
                 JsonObject saved = element.getAsJsonObject();
                 BlockPos position = position(saved);
                 BlockState expected = net.minecraft.nbt.NbtUtils.readBlockState(
+                        world.holderLookup(net.minecraft.core.registries.Registries.BLOCK),
                         TagParser.parseTag(saved.get("state").getAsString()));
                 BlockState actual = world.getBlockState(position);
 
@@ -278,7 +280,7 @@ final class FamilyForwardChecks {
         return checked + 7;
     }
 
-    private static java.util.Map<BlockPos, BlockState> retainedNamedRocks(JsonObject fixture) throws Exception {
+    private static java.util.Map<BlockPos, BlockState> retainedNamedRocks(ServerLevel world, JsonObject fixture) throws Exception {
         java.util.Map<BlockPos, BlockState> retained = new java.util.HashMap<>();
         if (!fixture.has("native_sand_states")) {
             return retained;
@@ -292,8 +294,8 @@ final class FamilyForwardChecks {
                 CompoundTag saved = TagParser.parseTag(row.get("state").getAsString());
                 // Adding Mineralogy keeps named fallback rocks. Their bridge recipe is the explicit conversion.
                 if (saved.getString("Name").equals("skysbuildingpiecesbop:retired_rocks")) {
-                    BlockState state = net.minecraft.nbt.NbtUtils.readBlockState(saved);
-                    RuntimeProbe.require(state.getBlock().getRegistryName().toString()
+                    BlockState state = net.minecraft.nbt.NbtUtils.readBlockState(world.holderLookup(net.minecraft.core.registries.Registries.BLOCK), saved);
+                    RuntimeProbe.require(ForgeRegistries.BLOCKS.getKey(state.getBlock()).toString()
                                     .equals("skysbuildingpiecesbop:retired_rocks"),
                             "The saved fallback rock must still resolve");
                     retained.put(position(row), state);

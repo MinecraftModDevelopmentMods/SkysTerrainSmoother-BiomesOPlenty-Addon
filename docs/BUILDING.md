@@ -18,7 +18,7 @@ production mod and these matching dependencies, not unit tests or runtime probes
 
 Run clean separately, then check build javadoc genEclipseRuns eclipse
 verifyEclipseProductionClasspath verifyReleaseArtifacts writeReleaseChecksums.
-Packaged checks can load the sealed 1.12.2 and 1.14.4 through 1.17.1 family
+Packaged checks can load the sealed 1.12.2 and 1.14.4 through 1.18.2 family
 fixtures. They verify first load and reload, including saved biomes, states,
 counters and sidecars. Run tools/run_packaged_checks.py --help for the fixture
 and client/server options. Archive old disposable runtime evidence before

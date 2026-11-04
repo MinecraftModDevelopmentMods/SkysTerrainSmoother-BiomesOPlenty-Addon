@@ -1,5 +1,6 @@
 package zone.moddev.mc.skysterrainsmootherbop.probe;
 
+import net.minecraftforge.registries.ForgeRegistries;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -60,7 +61,7 @@ final class SylvesterContentChecks {
         }
         ListTag converted = new ListTag();
         int itemIndex = 0;
-        int targetVersion = net.minecraft.SharedConstants.getCurrentVersion().getWorldVersion();
+        int targetVersion = net.minecraft.SharedConstants.getCurrentVersion().getDataVersion().getVersion();
         for (JsonElement row : census.getAsJsonArray("unique_stack_nbt")) {
             CompoundTag original = TagParser.parseTag(row.getAsString());
             CompoundTag source = reload ? prior.getList("Items", 10).getCompound(itemIndex).copy() : original.copy();
@@ -126,7 +127,7 @@ final class SylvesterContentChecks {
         }
         net.minecraft.world.level.block.Block block = id.equals("skysgrassslabs:grass_slab") ? ModBlocks.GRASS_SLAB
                 : id.equals("skysgrassslabs:dirt_slab") ? ModBlocks.DIRT_SLAB
-                : id.equals(ModBlocks.PATH_SLAB.getRegistryName().toString()) ? ModBlocks.PATH_SLAB : null;
+                : id.equals(ForgeRegistries.BLOCKS.getKey(ModBlocks.PATH_SLAB).toString()) ? ModBlocks.PATH_SLAB : null;
         return block == null ? null : block.defaultBlockState().setValue(SlabBlock.TYPE,
                 (metadata & 1) == 0 ? SlabType.TOP : SlabType.BOTTOM);
     }

@@ -1,5 +1,6 @@
 package zone.moddev.mc.skysterrainsmootherbop.probe;
 
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SlabBlock;
@@ -31,11 +32,11 @@ final class CoarseSlabChecks {
         for (SlabType half : new SlabType[] { SlabType.BOTTOM, SlabType.TOP }) {
             world.setBlock(position, CoarseDirtSlab.BLOCK.defaultBlockState().setValue(SlabBlock.TYPE, half), 18);
             ItemStack held = Pieces.stack(world.getBlockState(position), 2);
-            RuntimeProbe.require(held.getItem().getRegistryName().toString().equals("skysterrainsmootherbop:coarse_dirt_slab"),
+            RuntimeProbe.require(ForgeRegistries.ITEMS.getKey(held.getItem()).toString().equals("skysterrainsmootherbop:coarse_dirt_slab"),
                     "The coarse slab uses its flat playable item, not the hidden carrier");
             RuntimeProbe.require(CoarseDirtSlab.BLOCK.asItem() == held.getItem(),
                     "Coarse slab item identity is stable after registry reload: block="
-                            + CoarseDirtSlab.BLOCK.asItem().getRegistryName() + " held=" + held.getItem().getRegistryName());
+                            + ForgeRegistries.ITEMS.getKey(CoarseDirtSlab.BLOCK.asItem()) + " held=" + ForgeRegistries.ITEMS.getKey(held.getItem()));
             player.setItemInHand(InteractionHand.MAIN_HAND, held);
             Direction face = half == SlabType.BOTTOM ? Direction.UP : Direction.DOWN;
             InteractionResult used = held.useOn(new UseOnContext(player, InteractionHand.MAIN_HAND,

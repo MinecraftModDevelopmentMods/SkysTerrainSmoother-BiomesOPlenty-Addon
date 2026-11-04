@@ -1,5 +1,6 @@
 package zone.moddev.mc.skysterrainsmootherbop.probe;
 
+import net.minecraftforge.registries.ForgeRegistries;
 import java.util.*;
 import java.security.MessageDigest;
 import net.minecraft.world.level.block.state.BlockState;
@@ -221,7 +222,7 @@ final class LateTerrainProbe {
                                 BlockState state = world.getBlockState(
                                         new BlockPos((origin << 4) + blockX, blockY, (128 << 4) + blockZ));
 
-                                digest.update((state.getBlock().getRegistryName() + "/"
+                                digest.update((ForgeRegistries.BLOCKS.getKey(state.getBlock()) + "/"
                                         + state.toString() + "\n").getBytes("UTF-8"));
                             }
                         }

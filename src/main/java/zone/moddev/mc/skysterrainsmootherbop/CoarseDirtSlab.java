@@ -1,6 +1,6 @@
 package zone.moddev.mc.skysterrainsmootherbop;
 
-import java.util.Random;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
@@ -23,13 +23,12 @@ import zone.moddev.mc.skysgrassslabs.block.LegacySlabBlock;
 /** Retains the old coarse-soil slab without turning it into spreading dirt. */
 public final class CoarseDirtSlab extends LegacySlabBlock {
     public static final String BLOCK_ID = SkysTerrainSmootherBop.ID + ":dirt_slab_00";
-    // Forge 40 creates block holders only while the block registry is open.
+    // Forge creates block holders only while the block registry is open.
     public static CoarseDirtSlab BLOCK;
     static Item item;
 
     CoarseDirtSlab() {
         super(Material.DIRT, SoundType.GRAVEL, .5f, true);
-        setRegistryName(BLOCK_ID);
         registerDefaultState(defaultBlockState().setValue(SnowyDirtBlock.SNOWY, false));
     }
 
@@ -66,7 +65,7 @@ public final class CoarseDirtSlab extends LegacySlabBlock {
     }
 
     @Override
-    public void tick(BlockState state, ServerLevel world, BlockPos position, Random random) {
+    public void tick(BlockState state, ServerLevel world, BlockPos position, RandomSource random) {
         if (!world.isClientSide) {
             BlockState updated = state.setValue(SnowyDirtBlock.SNOWY, snowy(world, position));
             if (updated != state) {

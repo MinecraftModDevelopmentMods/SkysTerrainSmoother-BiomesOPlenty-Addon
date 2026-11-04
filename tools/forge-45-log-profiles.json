@@ -1,0 +1,662 @@
+{
+  "profiles": {
+    "62E490F819BB2794F1AE663C28296CE5AD28361917B5347A94C10B7BAB27A77D": {
+      "sha256": "62E490F819BB2794F1AE663C28296CE5AD28361917B5347A94C10B7BAB27A77D",
+      "fixture": "src/test/resources/fixtures/forward-1.18.2-family/world.zip",
+      "manifest_sha256": "280C279BE70071073B115E9DF04DE6098E18396D324B028CEE89DEABD5507F3F",
+      "source_artifacts": [
+        {
+          "name": "SkysTerrainSmoother-BiomesOPlenty-Addon-0.1.0.118021.jar",
+          "sha256": "3D0A1B8E1CC7C145CB28F225903DFFDBABFB4D66C8C554C9F7B52FE76A4071D3"
+        },
+        {
+          "name": "SkysGrassSlabs-1.2.0.118021.jar",
+          "sha256": "357E8792542EEC84E4D3DEF3E91193559B826574DC23DB8A5081A69ABF112CE7"
+        },
+        {
+          "name": "SkysBuildingPieces-0.3.8.118021.jar",
+          "sha256": "82709CF16A7282DB5562BE5FCC2F417D0F103620EAE86DBDE9E0CBD760B51B5A"
+        },
+        {
+          "name": "SkysTerrainSmoother-0.1.0.118021.jar",
+          "sha256": "D74CE5C1E1F58A3A679A26E836F3CFEEEEB3897D7A51C407980B6252D47C4433"
+        },
+        {
+          "name": "SkysBuildingPieces-BiomesOPlenty-Addon-0.2.4.118021.jar",
+          "sha256": "95390406BE1B3B81E6C55E802F970E03753810CBCBB2151CDA26BB1D7AF7A594"
+        },
+        {
+          "name": "BiomesOPlenty-1.18.2-16.0.0.134.jar",
+          "sha256": "1D2A95BC7F32944AC5B8332DFD14B6B4168FF47ED1D72DDE64604F27550C4BDB"
+        },
+        {
+          "name": "TerraBlender-forge-1.18.2-1.2.0.126.jar",
+          "sha256": "77EFE21003E4968460652DDA1454F4777CA0A5C77FE84D698259CF4472DAFA04"
+        }
+      ],
+      "inspected_nbt_records": 886,
+      "saved_uses": 0,
+      "non_biome_saved_uses": 0,
+      "mappings": {
+        "minecraft:point_of_interest_type": {
+          "minecraft:nitwit": 11,
+          "minecraft:unemployed": 0
+        },
+        "minecraft:worldgen/biome": {
+          "biomesoplenty:bamboo_grove": 183,
+          "biomesoplenty:bayou": 60,
+          "biomesoplenty:cherry_blossom_grove": 62,
+          "biomesoplenty:clover_patch": 186,
+          "biomesoplenty:cold_desert": 63,
+          "biomesoplenty:coniferous_forest": 64,
+          "biomesoplenty:crag": 187,
+          "biomesoplenty:crystalline_chasm": 128,
+          "biomesoplenty:dead_forest": 66,
+          "biomesoplenty:dryland": 70,
+          "biomesoplenty:dune_beach": 188,
+          "biomesoplenty:erupting_inferno": 139,
+          "biomesoplenty:field": 189,
+          "biomesoplenty:fir_clearing": 72,
+          "biomesoplenty:floodplain": 190,
+          "biomesoplenty:forested_field": 191,
+          "biomesoplenty:fungal_jungle": 75,
+          "biomesoplenty:glowing_grotto": 141,
+          "biomesoplenty:grassland": 77,
+          "biomesoplenty:highland": 82,
+          "biomesoplenty:highland_moor": 84,
+          "biomesoplenty:jade_cliffs": 85,
+          "biomesoplenty:lavender_field": 86,
+          "biomesoplenty:lavender_forest": 87,
+          "biomesoplenty:lush_desert": 88,
+          "biomesoplenty:lush_savanna": 89,
+          "biomesoplenty:marsh": 90,
+          "biomesoplenty:mediterranean_forest": 193,
+          "biomesoplenty:muskeg": 93,
+          "biomesoplenty:mystic_grove": 94,
+          "biomesoplenty:old_growth_dead_forest": 194,
+          "biomesoplenty:old_growth_woodland": 195,
+          "biomesoplenty:ominous_woods": 96,
+          "biomesoplenty:orchard": 56,
+          "biomesoplenty:origin_valley": 98,
+          "biomesoplenty:prairie": 99,
+          "biomesoplenty:pumpkin_patch": 197,
+          "biomesoplenty:rainforest": 101,
+          "biomesoplenty:redwood_forest": 104,
+          "biomesoplenty:rocky_rainforest": 198,
+          "biomesoplenty:rocky_shrubland": 199,
+          "biomesoplenty:scrubland": 106,
+          "biomesoplenty:seasonal_forest": 107,
+          "biomesoplenty:shrubland": 111,
+          "biomesoplenty:snowy_coniferous_forest": 113,
+          "biomesoplenty:snowy_fir_clearing": 115,
+          "biomesoplenty:snowy_maple_woods": 200,
+          "biomesoplenty:spider_nest": 142,
+          "biomesoplenty:tropics": 117,
+          "biomesoplenty:tundra": 118,
+          "biomesoplenty:undergrowth": 135,
+          "biomesoplenty:visceral_heap": 136,
+          "biomesoplenty:volcanic_plains": 55,
+          "biomesoplenty:volcano": 121,
+          "biomesoplenty:wasteland": 122,
+          "biomesoplenty:wetland": 123,
+          "biomesoplenty:withered_abyss": 137,
+          "biomesoplenty:woodland": 126,
+          "minecraft:badlands": 37,
+          "minecraft:bamboo_jungle": 168,
+          "minecraft:basalt_deltas": 173,
+          "minecraft:beach": 16,
+          "minecraft:birch_forest": 27,
+          "minecraft:cold_ocean": 46,
+          "minecraft:crimson_forest": 171,
+          "minecraft:dark_forest": 29,
+          "minecraft:deep_cold_ocean": 49,
+          "minecraft:deep_frozen_ocean": 50,
+          "minecraft:deep_lukewarm_ocean": 48,
+          "minecraft:deep_ocean": 24,
+          "minecraft:desert": 2,
+          "minecraft:dripstone_caves": 174,
+          "minecraft:end_barrens": 43,
+          "minecraft:end_highlands": 42,
+          "minecraft:end_midlands": 41,
+          "minecraft:eroded_badlands": 165,
+          "minecraft:flower_forest": 132,
+          "minecraft:forest": 4,
+          "minecraft:frozen_ocean": 10,
+          "minecraft:frozen_peaks": 178,
+          "minecraft:frozen_river": 11,
+          "minecraft:grove": 176,
+          "minecraft:ice_spikes": 140,
+          "minecraft:jagged_peaks": 179,
+          "minecraft:jungle": 21,
+          "minecraft:lukewarm_ocean": 45,
+          "minecraft:lush_caves": 175,
+          "minecraft:meadow": 159,
+          "minecraft:mushroom_fields": 14,
+          "minecraft:nether_wastes": 8,
+          "minecraft:ocean": 0,
+          "minecraft:old_growth_birch_forest": 144,
+          "minecraft:old_growth_pine_taiga": 145,
+          "minecraft:old_growth_spruce_taiga": 146,
+          "minecraft:plains": 1,
+          "minecraft:river": 7,
+          "minecraft:savanna": 35,
+          "minecraft:savanna_plateau": 36,
+          "minecraft:small_end_islands": 40,
+          "minecraft:snowy_beach": 26,
+          "minecraft:snowy_plains": 143,
+          "minecraft:snowy_slopes": 177,
+          "minecraft:snowy_taiga": 30,
+          "minecraft:soul_sand_valley": 170,
+          "minecraft:sparse_jungle": 153,
+          "minecraft:stony_peaks": 180,
+          "minecraft:stony_shore": 181,
+          "minecraft:sunflower_plains": 129,
+          "minecraft:swamp": 6,
+          "minecraft:taiga": 5,
+          "minecraft:the_end": 9,
+          "minecraft:the_void": 127,
+          "minecraft:warm_ocean": 44,
+          "minecraft:warped_forest": 172,
+          "minecraft:windswept_forest": 150,
+          "minecraft:windswept_gravelly_hills": 148,
+          "minecraft:windswept_hills": 147,
+          "minecraft:windswept_savanna": 152,
+          "minecraft:wooded_badlands": 154,
+          "terrablender:deferred_placeholder": 182
+        }
+      },
+      "native_biome_contract": {
+        "path": "src/test/resources/fixtures/forward-1.18.2-family/native-source-biomes.json",
+        "sha256": "CA8B75D4217A0AC56AD521BA4E1BF3655BC3C0FF5DC9B814D890ADF8FA56A82C",
+        "checked_cells": 1337856,
+        "renamed_cells": 0
+      },
+      "forge45_registry_proof": {
+        "path": "src/test/resources/fixtures/forward-1.18.2-family/forge-45-registry-notices.json",
+        "sha256": "05787DDC99C0227437F5A403D55E429173CCBDA00FCB44B7C38F8C15AF72ED8B"
+      }
+    },
+    "54791A41A96148B0DBF34BE88185629C8EF6C3133A56C15BFF6136BBDCF5F662": {
+      "sha256": "54791A41A96148B0DBF34BE88185629C8EF6C3133A56C15BFF6136BBDCF5F662",
+      "fixture": "src/test/resources/fixtures/forward-1.14.4-family/world.zip",
+      "manifest_sha256": "26A7A64956647C28C7B6858D12268BA9F1001162B3F957A7D1DD374CE1789610",
+      "source_artifacts": [
+        {
+          "name": "SkysTerrainSmoother-BiomesOPlenty-Addon-0.1.0.114041.jar",
+          "sha256": "03D2E769EBC5F701DE065BA5002207D9BE399E66F7DABF653B28A3FDC9061DD3"
+        },
+        {
+          "name": "SkysGrassSlabs-1.2.0.114041.jar",
+          "sha256": "CE66EA52660BC48533387B3065C082CF1C3916F4502BDB95C04B0F761B1BB195"
+        },
+        {
+          "name": "SkysBuildingPieces-0.3.8.114041.jar",
+          "sha256": "8A0A1DEA2A4A6C069519C7B1BCF28331186FF2DF6284DB72C2FFDB8178FC84D4"
+        },
+        {
+          "name": "SkysTerrainSmoother-0.1.0.114041.jar",
+          "sha256": "3DCC134F8EC216D8C7E78DC7294BB31F06DAEFA097739C241178E7C1D7E8A357"
+        },
+        {
+          "name": "SkysBuildingPieces-BiomesOPlenty-Addon-0.2.4.114041.jar",
+          "sha256": "CF0BA460D641A4723CEB4E069D5B995C2F3357531DD86CA73CD9157F687D5702"
+        },
+        {
+          "name": "BiomesOPlenty-1.14.4-9.0.0.262-universal.jar",
+          "sha256": "65B32AAF4D34B1FFBAC6452041A4411F64357970DE6A736E4D9500346FABCA1B"
+        }
+      ],
+      "inspected_nbt_records": 1404,
+      "saved_uses": 0,
+      "non_biome_saved_uses": 0,
+      "mappings": {
+        "minecraft:entity_type": {
+          "biomesoplenty:boat_bop": 102,
+          "minecraft:zombie_pigman": 56
+        },
+        "minecraft:item": {
+          "minecraft:zombie_pigman_spawn_egg": 753
+        },
+        "minecraft:memory_module_type": {
+          "minecraft:golem_last_seen_time": 24,
+          "minecraft:opened_doors": 16
+        },
+        "minecraft:point_of_interest_type": {
+          "minecraft:nitwit": 11,
+          "minecraft:unemployed": 0
+        },
+        "minecraft:sound_event": {
+          "minecraft:entity.zombie_pigman.ambient": 784,
+          "minecraft:entity.zombie_pigman.angry": 785,
+          "minecraft:entity.zombie_pigman.death": 786,
+          "minecraft:entity.zombie_pigman.hurt": 787,
+          "minecraft:music.nether": 400
+        }
+      },
+      "native_biome_contract": {
+        "path": "src/test/resources/fixtures/forward-1.14.4-family/native-source-biomes.json",
+        "sha256": "4C8F82E0C282AEA3FD0AC5159614CE04A3C6D3158184118A06693764B1B3350F",
+        "checked_cells": 672768,
+        "renamed_cells": 0
+      },
+      "forge45_registry_proof": {
+        "path": "src/test/resources/fixtures/forward-1.14.4-family/forge-45-registry-notices.json",
+        "sha256": "0E11243D6905D9BC0FD232AC837D99C76B6FA08EAC4488E758D3D05F99FDA688"
+      }
+    },
+    "1B7AB7CE8BC9A1F1BA7AB8EAB2F44290B6EE4D3056DBB4475644CBCFE77F22A9": {
+      "sha256": "1B7AB7CE8BC9A1F1BA7AB8EAB2F44290B6EE4D3056DBB4475644CBCFE77F22A9",
+      "fixture": "src/test/resources/fixtures/forward-1.15.2-family/world.zip",
+      "manifest_sha256": "CBC2708D485033AAFDC57CC7E99EAB78009D6535DF197C9ADA994460A0196D6C",
+      "source_artifacts": [
+        {
+          "name": "SkysTerrainSmoother-BiomesOPlenty-Addon-0.1.0.115021.jar",
+          "sha256": "1BA84C1CAACC9006E3272B3BA37FCC9D1DB6B90091E727C366B9969EDD5E74BF"
+        },
+        {
+          "name": "SkysGrassSlabs-1.2.0.115021.jar",
+          "sha256": "A0D741B5D641DE05EFA37DDC0565B5FC3164661A6B03890E71ECF86F7EB56E51"
+        },
+        {
+          "name": "SkysBuildingPieces-0.3.8.115021.jar",
+          "sha256": "94A5BAA4B3DC025A338A60BAC27B3E5BBAD4AE0CE494BA5EC1F852E401A704F7"
+        },
+        {
+          "name": "SkysTerrainSmoother-0.1.0.115021.jar",
+          "sha256": "7AD98ED70F0A88ADE5C7048C21811E7B3BAC889593070D54A0790EA339A81E9D"
+        },
+        {
+          "name": "SkysBuildingPieces-BiomesOPlenty-Addon-0.2.4.115021.jar",
+          "sha256": "CF73DA4A5688D79F5FFBC76FEF83941472A5FBEFF9D84581B57F1B67CAA399EB"
+        },
+        {
+          "name": "BiomesOPlenty-1.15.2-10.0.0.366-universal.jar",
+          "sha256": "FA450EB93CCE9CF16F88BCB0DD48FF8ABBD163981EA54DABD27CC0B6E110F99C"
+        }
+      ],
+      "inspected_nbt_records": 1405,
+      "saved_uses": 0,
+      "non_biome_saved_uses": 0,
+      "mappings": {
+        "minecraft:entity_type": {
+          "biomesoplenty:boat_bop": 102,
+          "minecraft:zombie_pigman": 56
+        },
+        "minecraft:item": {
+          "minecraft:zombie_pigman_spawn_egg": 753
+        },
+        "minecraft:memory_module_type": {
+          "minecraft:golem_last_seen_time": 24,
+          "minecraft:opened_doors": 16
+        },
+        "minecraft:point_of_interest_type": {
+          "minecraft:nitwit": 11,
+          "minecraft:unemployed": 0
+        },
+        "minecraft:sound_event": {
+          "minecraft:entity.zombie_pigman.ambient": 784,
+          "minecraft:entity.zombie_pigman.angry": 785,
+          "minecraft:entity.zombie_pigman.death": 786,
+          "minecraft:entity.zombie_pigman.hurt": 787,
+          "minecraft:music.nether": 400
+        }
+      },
+      "native_biome_contract": {
+        "path": "src/test/resources/fixtures/forward-1.15.2-family/native-source-biomes.json",
+        "sha256": "7CAC051F9B7D66CC0FDB9860FAFC17BEC56FC01A6D8CD6C4989A57D1470172CB",
+        "checked_cells": 672768,
+        "renamed_cells": 0
+      },
+      "forge45_registry_proof": {
+        "path": "src/test/resources/fixtures/forward-1.15.2-family/forge-45-registry-notices.json",
+        "sha256": "1F203A7D6D4E656A6B92982962D86394403ADF230E995A5E9926987DAA366AA6"
+      }
+    },
+    "F9E693C7B44CB6C7546354CC34F93F8CC3F3DE6F90094AA4F04CBF2F7803E99F": {
+      "sha256": "F9E693C7B44CB6C7546354CC34F93F8CC3F3DE6F90094AA4F04CBF2F7803E99F",
+      "fixture": "src/test/resources/fixtures/forward-1.16.5-family/world.zip",
+      "manifest_sha256": "BFC81873B727BCF6FA55754B0A12B839CEBE13D35309C951E3C896F68E1E6D1F",
+      "source_artifacts": [
+        {
+          "name": "SkysTerrainSmoother-BiomesOPlenty-Addon-0.1.0.116051.jar",
+          "sha256": "8539F009EFB34D82E6B47BB5F6C7165FED4178DA1E4114854B47ABB85B7BF26E"
+        },
+        {
+          "name": "SkysGrassSlabs-1.2.0.116051.jar",
+          "sha256": "C975A9BC836DBFC9B4A01E2D1DCB350F8201AB12BFBA8A0D9CFE1D0609A2A568"
+        },
+        {
+          "name": "SkysBuildingPieces-0.3.8.116051.jar",
+          "sha256": "B4DC9F16E5CF42902B93667B9E95EC846B66E2A3C488CC7CF48D9FBA3B477C41"
+        },
+        {
+          "name": "SkysTerrainSmoother-0.1.0.116051.jar",
+          "sha256": "C506D0489231E6663952880F4554B769361DF0FEBE10E05EF18F264DF9D49A3C"
+        },
+        {
+          "name": "SkysBuildingPieces-BiomesOPlenty-Addon-0.2.4.116051.jar",
+          "sha256": "2470024008508957A7FAEC5ED9171E56725A00100ADBC4481C3F48C808DBDFC9"
+        },
+        {
+          "name": "BiomesOPlenty-1.16.5-13.1.0.488-universal.jar",
+          "sha256": "2806139055DC330A1E8F7A4324A68B6305A9EB67CC132EF09B81BDEC5E89D9BB"
+        }
+      ],
+      "inspected_nbt_records": 1407,
+      "saved_uses": 0,
+      "non_biome_saved_uses": 0,
+      "mappings": {
+        "minecraft:point_of_interest_type": {
+          "minecraft:nitwit": 11,
+          "minecraft:unemployed": 0
+        },
+        "minecraft:worldgen/biome": {
+          "biomesoplenty:bayou": 60,
+          "biomesoplenty:cherry_blossom_grove": 62,
+          "biomesoplenty:cold_desert": 63,
+          "biomesoplenty:coniferous_forest": 64,
+          "biomesoplenty:crystalline_chasm": 128,
+          "biomesoplenty:dead_forest": 66,
+          "biomesoplenty:dryland": 70,
+          "biomesoplenty:fir_clearing": 72,
+          "biomesoplenty:fungal_jungle": 75,
+          "biomesoplenty:grassland": 77,
+          "biomesoplenty:highland": 82,
+          "biomesoplenty:highland_moor": 84,
+          "biomesoplenty:jade_cliffs": 85,
+          "biomesoplenty:lavender_field": 86,
+          "biomesoplenty:lavender_forest": 87,
+          "biomesoplenty:lush_desert": 88,
+          "biomesoplenty:lush_savanna": 89,
+          "biomesoplenty:marsh": 90,
+          "biomesoplenty:muskeg": 93,
+          "biomesoplenty:mystic_grove": 94,
+          "biomesoplenty:ominous_woods": 96,
+          "biomesoplenty:orchard": 56,
+          "biomesoplenty:origin_valley": 98,
+          "biomesoplenty:prairie": 99,
+          "biomesoplenty:rainforest": 101,
+          "biomesoplenty:redwood_forest": 104,
+          "biomesoplenty:scrubland": 106,
+          "biomesoplenty:seasonal_forest": 107,
+          "biomesoplenty:shrubland": 111,
+          "biomesoplenty:snowy_coniferous_forest": 113,
+          "biomesoplenty:snowy_fir_clearing": 115,
+          "biomesoplenty:tropics": 117,
+          "biomesoplenty:tundra": 118,
+          "biomesoplenty:undergrowth": 135,
+          "biomesoplenty:visceral_heap": 136,
+          "biomesoplenty:volcanic_plains": 55,
+          "biomesoplenty:volcano": 121,
+          "biomesoplenty:wasteland": 122,
+          "biomesoplenty:wetland": 123,
+          "biomesoplenty:withered_abyss": 137,
+          "biomesoplenty:woodland": 126,
+          "minecraft:badlands": 37,
+          "minecraft:badlands_plateau": 39,
+          "minecraft:bamboo_jungle": 168,
+          "minecraft:bamboo_jungle_hills": 169,
+          "minecraft:basalt_deltas": 173,
+          "minecraft:beach": 16,
+          "minecraft:birch_forest": 27,
+          "minecraft:birch_forest_hills": 28,
+          "minecraft:cold_ocean": 46,
+          "minecraft:crimson_forest": 171,
+          "minecraft:dark_forest": 29,
+          "minecraft:dark_forest_hills": 157,
+          "minecraft:deep_cold_ocean": 49,
+          "minecraft:deep_frozen_ocean": 50,
+          "minecraft:deep_lukewarm_ocean": 48,
+          "minecraft:deep_ocean": 24,
+          "minecraft:deep_warm_ocean": 47,
+          "minecraft:desert": 2,
+          "minecraft:desert_hills": 17,
+          "minecraft:desert_lakes": 130,
+          "minecraft:end_barrens": 43,
+          "minecraft:end_highlands": 42,
+          "minecraft:end_midlands": 41,
+          "minecraft:eroded_badlands": 165,
+          "minecraft:flower_forest": 132,
+          "minecraft:forest": 4,
+          "minecraft:frozen_ocean": 10,
+          "minecraft:frozen_river": 11,
+          "minecraft:giant_spruce_taiga": 160,
+          "minecraft:giant_spruce_taiga_hills": 161,
+          "minecraft:giant_tree_taiga": 32,
+          "minecraft:giant_tree_taiga_hills": 33,
+          "minecraft:gravelly_mountains": 131,
+          "minecraft:ice_spikes": 140,
+          "minecraft:jungle": 21,
+          "minecraft:jungle_edge": 23,
+          "minecraft:jungle_hills": 22,
+          "minecraft:lukewarm_ocean": 45,
+          "minecraft:modified_badlands_plateau": 167,
+          "minecraft:modified_gravelly_mountains": 162,
+          "minecraft:modified_jungle": 149,
+          "minecraft:modified_jungle_edge": 151,
+          "minecraft:modified_wooded_badlands_plateau": 166,
+          "minecraft:mountain_edge": 20,
+          "minecraft:mountains": 3,
+          "minecraft:mushroom_field_shore": 15,
+          "minecraft:mushroom_fields": 14,
+          "minecraft:nether_wastes": 8,
+          "minecraft:ocean": 0,
+          "minecraft:plains": 1,
+          "minecraft:river": 7,
+          "minecraft:savanna": 35,
+          "minecraft:savanna_plateau": 36,
+          "minecraft:shattered_savanna": 163,
+          "minecraft:shattered_savanna_plateau": 164,
+          "minecraft:small_end_islands": 40,
+          "minecraft:snowy_beach": 26,
+          "minecraft:snowy_mountains": 13,
+          "minecraft:snowy_taiga": 30,
+          "minecraft:snowy_taiga_hills": 31,
+          "minecraft:snowy_taiga_mountains": 158,
+          "minecraft:snowy_tundra": 12,
+          "minecraft:soul_sand_valley": 170,
+          "minecraft:stone_shore": 25,
+          "minecraft:sunflower_plains": 129,
+          "minecraft:swamp": 6,
+          "minecraft:swamp_hills": 134,
+          "minecraft:taiga": 5,
+          "minecraft:taiga_hills": 19,
+          "minecraft:taiga_mountains": 133,
+          "minecraft:tall_birch_forest": 155,
+          "minecraft:tall_birch_hills": 156,
+          "minecraft:the_end": 9,
+          "minecraft:the_void": 127,
+          "minecraft:warm_ocean": 44,
+          "minecraft:warped_forest": 172,
+          "minecraft:wooded_badlands_plateau": 38,
+          "minecraft:wooded_hills": 18,
+          "minecraft:wooded_mountains": 34
+        }
+      },
+      "native_biome_contract": {
+        "path": "src/test/resources/fixtures/forward-1.16.5-family/native-source-biomes.json",
+        "sha256": "0AD3DBEFC1CC9B26F9AF8EAB860779C54FDED059F8DEDD83957C64FAF9A5FC7F",
+        "checked_cells": 672768,
+        "renamed_cells": 0
+      },
+      "forge45_registry_proof": {
+        "path": "src/test/resources/fixtures/forward-1.16.5-family/forge-45-registry-notices.json",
+        "sha256": "B1EBDC131ED2147722F0CF5B8DE0830B0D22D458BE3FFEC4E5F1464C9B2ABF6E"
+      }
+    },
+    "932180D7BA3AECF1E5506ECCB691BAF813284E5805CB198BAB3813C031EF6262": {
+      "sha256": "932180D7BA3AECF1E5506ECCB691BAF813284E5805CB198BAB3813C031EF6262",
+      "fixture": "src/test/resources/fixtures/forward-1.17.1-family/world.zip",
+      "manifest_sha256": "051D5AE9906706B9CC825872186641B71FB8F1F86299CF023138DB5D5ADE90EA",
+      "source_artifacts": [
+        {
+          "name": "SkysTerrainSmoother-BiomesOPlenty-Addon-0.1.0.117011.jar",
+          "sha256": "F1CAF9222515C67CFB30DBD31676FE14DA6DFAF6F38269CB416397CE75E53AEB"
+        },
+        {
+          "name": "SkysGrassSlabs-1.2.0.117011.jar",
+          "sha256": "5A5EC232E9EB05B870315F7080B2F2B66003F2D66755607135E559B1D1E0D506"
+        },
+        {
+          "name": "SkysBuildingPieces-0.3.8.117011.jar",
+          "sha256": "40ACD56C59F50C9C5DC484781B7FEA180E1C45FAB5470735CA27983E14258240"
+        },
+        {
+          "name": "SkysTerrainSmoother-0.1.0.117011.jar",
+          "sha256": "35D6C37E24C3F02FC2BCABF7833FEF44B8A79586507DB5E8C6B26274C2739434"
+        },
+        {
+          "name": "SkysBuildingPieces-BiomesOPlenty-Addon-0.2.4.117011.jar",
+          "sha256": "4BD869BCFE8ABAC82D3D073E51982D8726076B3E0B8B510EEF075E242129E99F"
+        }
+      ],
+      "inspected_nbt_records": 1830,
+      "saved_uses": 0,
+      "non_biome_saved_uses": 0,
+      "mappings": {
+        "minecraft:point_of_interest_type": {
+          "minecraft:nitwit": 11,
+          "minecraft:unemployed": 0
+        },
+        "minecraft:worldgen/biome": {
+          "biomesoplenty:bayou": 60,
+          "biomesoplenty:cherry_blossom_grove": 62,
+          "biomesoplenty:cold_desert": 63,
+          "biomesoplenty:coniferous_forest": 64,
+          "biomesoplenty:crystalline_chasm": 128,
+          "biomesoplenty:dead_forest": 66,
+          "biomesoplenty:dryland": 70,
+          "biomesoplenty:erupting_inferno": 139,
+          "biomesoplenty:fir_clearing": 72,
+          "biomesoplenty:fungal_jungle": 75,
+          "biomesoplenty:glowing_grotto": 141,
+          "biomesoplenty:grassland": 77,
+          "biomesoplenty:highland": 82,
+          "biomesoplenty:highland_moor": 84,
+          "biomesoplenty:jade_cliffs": 85,
+          "biomesoplenty:lavender_field": 86,
+          "biomesoplenty:lavender_forest": 87,
+          "biomesoplenty:lush_desert": 88,
+          "biomesoplenty:lush_savanna": 89,
+          "biomesoplenty:marsh": 90,
+          "biomesoplenty:muskeg": 93,
+          "biomesoplenty:mystic_grove": 94,
+          "biomesoplenty:ominous_woods": 96,
+          "biomesoplenty:orchard": 56,
+          "biomesoplenty:origin_valley": 98,
+          "biomesoplenty:prairie": 99,
+          "biomesoplenty:rainforest": 101,
+          "biomesoplenty:redwood_forest": 104,
+          "biomesoplenty:scrubland": 106,
+          "biomesoplenty:seasonal_forest": 107,
+          "biomesoplenty:shrubland": 111,
+          "biomesoplenty:snowy_coniferous_forest": 113,
+          "biomesoplenty:snowy_fir_clearing": 115,
+          "biomesoplenty:spider_nest": 142,
+          "biomesoplenty:tropics": 117,
+          "biomesoplenty:tundra": 118,
+          "biomesoplenty:undergrowth": 135,
+          "biomesoplenty:visceral_heap": 136,
+          "biomesoplenty:volcanic_plains": 55,
+          "biomesoplenty:volcano": 121,
+          "biomesoplenty:wasteland": 122,
+          "biomesoplenty:wetland": 123,
+          "biomesoplenty:withered_abyss": 137,
+          "biomesoplenty:woodland": 126,
+          "minecraft:badlands": 37,
+          "minecraft:badlands_plateau": 39,
+          "minecraft:bamboo_jungle": 168,
+          "minecraft:bamboo_jungle_hills": 169,
+          "minecraft:basalt_deltas": 173,
+          "minecraft:beach": 16,
+          "minecraft:birch_forest": 27,
+          "minecraft:birch_forest_hills": 28,
+          "minecraft:cold_ocean": 46,
+          "minecraft:crimson_forest": 171,
+          "minecraft:dark_forest": 29,
+          "minecraft:dark_forest_hills": 157,
+          "minecraft:deep_cold_ocean": 49,
+          "minecraft:deep_frozen_ocean": 50,
+          "minecraft:deep_lukewarm_ocean": 48,
+          "minecraft:deep_ocean": 24,
+          "minecraft:deep_warm_ocean": 47,
+          "minecraft:desert": 2,
+          "minecraft:desert_hills": 17,
+          "minecraft:desert_lakes": 130,
+          "minecraft:dripstone_caves": 174,
+          "minecraft:end_barrens": 43,
+          "minecraft:end_highlands": 42,
+          "minecraft:end_midlands": 41,
+          "minecraft:eroded_badlands": 165,
+          "minecraft:flower_forest": 132,
+          "minecraft:forest": 4,
+          "minecraft:frozen_ocean": 10,
+          "minecraft:frozen_river": 11,
+          "minecraft:giant_spruce_taiga": 160,
+          "minecraft:giant_spruce_taiga_hills": 161,
+          "minecraft:giant_tree_taiga": 32,
+          "minecraft:giant_tree_taiga_hills": 33,
+          "minecraft:gravelly_mountains": 131,
+          "minecraft:ice_spikes": 140,
+          "minecraft:jungle": 21,
+          "minecraft:jungle_edge": 23,
+          "minecraft:jungle_hills": 22,
+          "minecraft:lukewarm_ocean": 45,
+          "minecraft:lush_caves": 175,
+          "minecraft:modified_badlands_plateau": 167,
+          "minecraft:modified_gravelly_mountains": 162,
+          "minecraft:modified_jungle": 149,
+          "minecraft:modified_jungle_edge": 151,
+          "minecraft:modified_wooded_badlands_plateau": 166,
+          "minecraft:mountain_edge": 20,
+          "minecraft:mountains": 3,
+          "minecraft:mushroom_field_shore": 15,
+          "minecraft:mushroom_fields": 14,
+          "minecraft:nether_wastes": 8,
+          "minecraft:ocean": 0,
+          "minecraft:plains": 1,
+          "minecraft:river": 7,
+          "minecraft:savanna": 35,
+          "minecraft:savanna_plateau": 36,
+          "minecraft:shattered_savanna": 163,
+          "minecraft:shattered_savanna_plateau": 164,
+          "minecraft:small_end_islands": 40,
+          "minecraft:snowy_beach": 26,
+          "minecraft:snowy_mountains": 13,
+          "minecraft:snowy_taiga": 30,
+          "minecraft:snowy_taiga_hills": 31,
+          "minecraft:snowy_taiga_mountains": 158,
+          "minecraft:snowy_tundra": 12,
+          "minecraft:soul_sand_valley": 170,
+          "minecraft:stone_shore": 25,
+          "minecraft:sunflower_plains": 129,
+          "minecraft:swamp": 6,
+          "minecraft:swamp_hills": 134,
+          "minecraft:taiga": 5,
+          "minecraft:taiga_hills": 19,
+          "minecraft:taiga_mountains": 133,
+          "minecraft:tall_birch_forest": 155,
+          "minecraft:tall_birch_hills": 156,
+          "minecraft:the_end": 9,
+          "minecraft:the_void": 127,
+          "minecraft:warm_ocean": 44,
+          "minecraft:warped_forest": 172,
+          "minecraft:wooded_badlands_plateau": 38,
+          "minecraft:wooded_hills": 18,
+          "minecraft:wooded_mountains": 34
+        }
+      },
+      "native_biome_contract": {
+        "path": "src/test/resources/fixtures/forward-1.17.1-family/native-source-biomes.json",
+        "sha256": "975BE56AFE794E2FB122032630DFAF8B8E180CD203471015D34120C4F9A512C8",
+        "checked_cells": 891904,
+        "renamed_cells": 0
+      },
+      "forge45_registry_proof": {
+        "path": "src/test/resources/fixtures/forward-1.17.1-family/forge-45-registry-notices.json",
+        "sha256": "99801D321647C6525D8D457D28A77C08E330D6AAB9EADD4ACC379F6153758F53"
+      }
+    }
+  },
+  "forge45_native": "Exact saved registry names and numbers, non-biome source census and live biome cell verification."
+}

@@ -1,5 +1,6 @@
 package zone.moddev.mc.skysterrainsmootherbop.probe;
 
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -23,7 +24,7 @@ final class BopRecoveryChecks {
             String material = "biomesoplenty:" + rock;
             BlockState full = Pieces.nativeState(
                     zone.moddev.mc.skysbuildingpieces.catalogue.Catalogue.INSTANCE.materials.get(material), "full");
-            boolean mineralogyOwnsRock = full.getBlock().getRegistryName().getNamespace().equals("mineralogy");
+            boolean mineralogyOwnsRock = ForgeRegistries.BLOCKS.getKey(full.getBlock()).getNamespace().equals("mineralogy");
             RuntimeProbe.require(zone.moddev.mc.skysterrainsmoother.api.TerrainSmoothingApi
                             .hasMaterial(new net.minecraft.resources.ResourceLocation(material)) != mineralogyOwnsRock,
                     "BOP rock mappings defer to Mineralogy without bypassing its configuration");
@@ -52,7 +53,7 @@ final class BopRecoveryChecks {
                 RuntimeProbe.require(!target.hasBlockEntity() && target.getFluidState().isEmpty(),
                         "Recovered pieces are dry and have no block entity");
                 RuntimeProbe.require(target.getBlock() == zone.moddev.mc.skysterrainsmootherbop.CoarseDirtSlab.BLOCK
-                                || !target.getBlock().getRegistryName().getNamespace().equals("skysterrainsmootherbop"),
+                                || !ForgeRegistries.BLOCKS.getKey(target.getBlock()).getNamespace().equals("skysterrainsmootherbop"),
                         "A removed soil becomes an available playable piece");
                 int orientation = metadata % palette.orientations;
                 int lower = palette.shape == Shape.SLAB ? 15
@@ -107,7 +108,7 @@ final class BopRecoveryChecks {
                 named.put("Properties", properties);
                 named.putString("Unrelated", "kept");
                 LegacySoils.recover(named);
-                RuntimeProbe.require(NbtUtils.readBlockState(named).equals(target),
+                RuntimeProbe.require(NbtUtils.readBlockState(world.holderLookup(net.minecraft.core.registries.Registries.BLOCK), named).equals(target),
                         "Named states preserve the exact target geometry");
                 RuntimeProbe.require(named.getString("Unrelated").equals("kept"), "Unrelated state data survives");
                 CompoundTag namedOnce = named.copy();
@@ -155,7 +156,7 @@ final class BopRecoveryChecks {
             if (!recipe.getId().getNamespace().equals("skysterrainsmootherbop")) {
                 continue;
             }
-            RuntimeProbe.require(!recipe.isSpecial() && !recipe.getResultItem().isEmpty(),
+            RuntimeProbe.require(!recipe.isSpecial() && !recipe.getResultItem(world.registryAccess()).isEmpty(),
                     "Replacement recipes remain visible in the native recipe book");
             RuntimeProbe.require(recipe.getIngredients().stream()
                     .anyMatch(ingredient -> ingredient != net.minecraft.world.item.crafting.Ingredient.EMPTY),

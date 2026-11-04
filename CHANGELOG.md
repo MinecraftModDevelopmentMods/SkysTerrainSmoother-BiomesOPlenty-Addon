@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.0.119041 (unreleased)
+
+- Update to Minecraft 1.19.4 and Biomes O' Plenty 17.3.
+
 ## 0.1.0.118021 (unreleased)
 
 - Bring BOP terrain smoothing and saved soil pieces to Minecraft 1.18.2.

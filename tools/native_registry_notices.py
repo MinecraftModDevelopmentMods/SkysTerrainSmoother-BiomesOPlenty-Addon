@@ -13,7 +13,7 @@ def profile_for(directory):
         return None
     source = json.loads(manifest.read_text(encoding="utf-8"))
     root = Path(__file__).resolve().parent.parent
-    policy = json.loads((root / "tools/native-log-profiles.json").read_text(encoding="utf-8"))
+    policy = json.loads((root / "tools/forge-45-log-profiles.json").read_text(encoding="utf-8"))
     profiles = policy["profiles"]
     profile = profiles.get(source.get("world_sha256"))
     if profile is None:
@@ -37,13 +37,29 @@ def profile_for(directory):
                 or data["native_renamed_cells"] != proof["renamed_cells"]
                 or profile["saved_uses"] != proof["renamed_cells"]):
             raise ValueError("The complete biome proof does not match this fixture")
+    forge45 = profile.get("forge45_registry_proof")
+    if forge45 is None:
+        raise ValueError("The Forge 45 registry notice proof is missing")
+    else:
+        path = root / forge45["path"]
+        receipt = json.loads(path.read_text(encoding="utf-8"))
+        unused = {name for registry, names in profile["mappings"].items()
+                  if registry != "minecraft:worldgen/biome" for name in names}
+        if (hashlib.sha256(path.read_bytes()).hexdigest().upper() != forge45["sha256"]
+                or receipt["target"] != "Forge 45.4.0"
+                or receipt["source_world_sha256"] != profile["sha256"]
+                or receipt["snapshot_entries"] != profile["mappings"]
+                or receipt["unused_non_biome_ids"] != dict.fromkeys(unused, 0)
+                or receipt["inspected_nbt_records"] != profile["inspected_nbt_records"]
+                or receipt["inspected_string_values"] <= 0
+                or proof is None or receipt["native_biome_contract_sha256"] != proof["sha256"]
+                or receipt["checked_biome_cells"] != proof["checked_cells"]
+                or receipt["native_renamed_cells"] != proof["renamed_cells"]
+                or not 0 <= receipt["noticed_biome_cells"] <= proof["checked_cells"]):
+            raise ValueError("The Forge 45 registry notice proof does not match the saved fixture")
     if source.get("mode") == "client":
-        control = policy["native_client_notice_contract"]
-        if (control["target"] != "Forge 40.3.0" or not control["completed_native_world"]
-                or control["production_log_filter"] or control["notice_reads"] != 1
-                or control["notice_thread"] != "Render thread"):
-            raise ValueError("The native client notice contract is not qualified")
-        profile = dict(profile, notice_thread="Render thread", notice_reads=1)
+        # Client notice order is qualified separately from the server.
+        return None
     return profile
 
 
@@ -99,7 +115,7 @@ def audit_text(text, profile=None, completed_native_client=False):
         for row in body.splitlines():
             if not row.strip():
                 continue
-            entry = re.fullmatch(r"\s*(minecraft:[a-z_.]+|biomesoplenty:boat(?:_bop)?): (\d+)", row)
+            entry = re.fullmatch(r"\s*([a-z0-9_.-]+:[a-z0-9_/.-]+): (\d+)", row)
             if not entry or entry[1] in entries:
                 raise ValueError("Malformed or repeated registry entry: " + row)
             entries[entry[1]] = int(entry[2])

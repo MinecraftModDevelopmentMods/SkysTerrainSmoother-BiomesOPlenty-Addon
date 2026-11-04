@@ -148,8 +148,10 @@ class NativeServerFilesTest(unittest.TestCase):
         self.assertEqual(audit_server(self.directory, 'test')['native_server_config_notices'], 0)
 
     def test_changed_defaults_fail(self):
-        self.config.write_text(self.config.read_text().replace('fixAdvancementLoading = true',
-                                                              'fixAdvancementLoading = false'))
+        original = self.config.read_text(encoding='utf-8')
+        changed = original.replace('fullBoundingBoxLadders = false', 'fullBoundingBoxLadders = true')
+        self.assertNotEqual(original, changed)
+        self.config.write_text(changed, encoding='utf-8')
         with self.assertRaises(ValueError):
             audit_server(self.directory, 'test')
 

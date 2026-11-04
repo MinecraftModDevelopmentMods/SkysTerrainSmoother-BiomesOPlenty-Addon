@@ -25,33 +25,33 @@ side="BOTH"
 [[dependencies.${mod_id}]]
 modId="skysgrassslabs"
 mandatory=true
-versionRange="[1.2.0.118021,1.3)"
+versionRange="[1.2.0.119041,1.3)"
 ordering="AFTER"
 side="BOTH"
 [[dependencies.${mod_id}]]
 modId="skysbuildingpieces"
 mandatory=true
-versionRange="[0.3.8.118021,0.4)"
+versionRange="[0.3.8.119041,0.4)"
 ordering="AFTER"
 side="BOTH"
 
 [[dependencies.${mod_id}]]
 modId="skysterrainsmoother"
 mandatory=true
-versionRange="[0.1.0.118021,0.2)"
+versionRange="[0.1.0.119041,0.2)"
 ordering="AFTER"
 side="BOTH"
 
 [[dependencies.${mod_id}]]
 modId="skysbuildingpiecesbop"
 mandatory=true
-versionRange="[0.2.4.118021,0.3)"
+versionRange="[0.2.4.119041,0.3)"
 ordering="AFTER"
 side="BOTH"
 
 [[dependencies.${mod_id}]]
 modId="biomesoplenty"
 mandatory=true
-versionRange="[1.18.2-16,1.18.2-17)"
+versionRange="[17.3,18)"
 ordering="AFTER"
 side="BOTH"
