@@ -157,27 +157,31 @@ class NativeClientFilesTest(unittest.TestCase):
             audit(self.directory, "control", True)
 
 
-class Forge45RegistryProfileTest(unittest.TestCase):
-    def test_client_binding_requires_the_exact_artifact_set(self):
+class NativeRegistryProfileTest(unittest.TestCase):
+    def test_server_proof_does_not_authorise_client_notices(self):
         import json
         import tempfile
         from native_registry_notices import profile_for
 
         root = Path(__file__).resolve().parent.parent
         policy = json.loads((root / "tools/forge-45-log-profiles.json").read_text(encoding="utf-8"))
-        profile = next(profile for profile in policy["profiles"].values() if "client" in profile)
+        profile = policy["profiles"]["BA2421F2A9D2E746401DF3FDA2AAB524E8E8A2537F6332815C9AA913BD72E161"]
         with tempfile.TemporaryDirectory() as temporary:
             directory = Path(temporary)
-            (directory / "source-inputs.json").write_text(json.dumps({
+            manifest = directory / "source-inputs.json"
+            source = {
                 "world_sha256": profile["sha256"],
                 "manifest_sha256": profile["manifest_sha256"],
-                "mode": "client",
-            }), encoding="utf-8")
+                "mode": "server",
+            }
+            manifest.write_text(json.dumps(source), encoding="utf-8")
+            self.assertEqual(profile_for(directory), profile)
+
+            source["mode"] = "client"
+            manifest.write_text(json.dumps(source), encoding="utf-8")
             self.assertIsNone(profile_for(directory))
-            artifacts = directory / "artifact-inputs.json"
-            artifacts.write_text(json.dumps(profile["client"]["artifact_inputs"]), encoding="utf-8")
-            self.assertEqual(profile_for(directory)["notice_thread"], "Render thread")
-            artifacts.write_text("[]", encoding="utf-8")
+            (directory / "artifact-inputs.json").write_text(
+                json.dumps(profile["source_artifacts"]), encoding="utf-8")
             self.assertIsNone(profile_for(directory))
 
 

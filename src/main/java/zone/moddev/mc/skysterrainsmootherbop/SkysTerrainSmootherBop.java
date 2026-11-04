@@ -7,7 +7,7 @@ import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.event.CreativeModeTabEvent;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -20,7 +20,7 @@ import zone.moddev.mc.skysbuildingpieces.api.BuildingPiecesApi;
 @Mod(SkysTerrainSmootherBop.ID)
 public final class SkysTerrainSmootherBop {
     public static final String ID = "skysterrainsmootherbop";
-    public static final String VERSION = "0.1.0.119041";
+    public static final String VERSION = "0.1.0.120011";
 
     public SkysTerrainSmootherBop() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
@@ -71,8 +71,8 @@ public final class SkysTerrainSmootherBop {
         }
 
         @SubscribeEvent
-        public static void creativeTab(CreativeModeTabEvent.BuildContents event) {
-            if (event.getTab() == CreativeModeTabs.BUILDING_BLOCKS) {
+        public static void creativeTab(BuildCreativeModeTabContentsEvent event) {
+            if (CreativeModeTabs.BUILDING_BLOCKS.equals(event.getTabKey())) {
                 event.accept(CoarseDirtSlab.item);
             }
         }

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.0.120011 (unreleased)
+
+- Update to Minecraft 1.20.1 and Biomes O’ Plenty 19.
+
 ## 0.1.0.119041 (unreleased)
 
 - Update to Minecraft 1.19.4 and Biomes O' Plenty 17.3.

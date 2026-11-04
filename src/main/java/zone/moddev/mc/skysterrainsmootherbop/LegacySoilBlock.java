@@ -3,7 +3,7 @@ package zone.moddev.mc.skysterrainsmootherbop;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.SnowyDirtBlock;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -20,7 +20,7 @@ final class LegacySoilBlock extends Block {
     private final LegacySoils.Palette palette;
 
     LegacySoilBlock(LegacySoils.Palette palette) {
-        super(Block.Properties.of(Material.DIRT).strength(.5f));
+        super(Block.Properties.of().mapColor(MapColor.DIRT).strength(.5f));
         this.palette = palette;
         registerDefaultState(stateDefinition.any().setValue(META, 0)
                 .setValue(SnowyDirtBlock.SNOWY, false).setValue(LOWERED_SUPPORT, false));

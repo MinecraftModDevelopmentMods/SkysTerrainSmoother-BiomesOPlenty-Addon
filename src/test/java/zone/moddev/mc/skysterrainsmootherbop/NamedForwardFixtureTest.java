@@ -11,18 +11,25 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import static org.junit.jupiter.api.Assertions.*;
 
 class NamedForwardFixtureTest {
-    @Test
-    void actual118SaveKeepsAllFiveModsAndTheFullSavedBiomeVolume() throws Exception {
-        Path root = Paths.get("src/test/resources/fixtures/forward-1.18.2-family");
+    @ParameterizedTest
+    @CsvSource({
+            "1.18.2,2975,62E490F819BB2794F1AE663C28296CE5AD28361917B5347A94C10B7BAB27A77D,fa8cf9fd9fbb6f6649b4a7c11dd36a948e983e73",
+            "1.19.4,3337,BA2421F2A9D2E746401DF3FDA2AAB524E8E8A2537F6332815C9AA913BD72E161,6fdcef020420eb5cd4d03276e09120c15bb7f43d"
+    })
+    void nativeSaveKeepsAllFiveModsAndTheFullSavedBiomeVolume(String version, int dataVersion,
+            String archiveHash, String sourceCommit) throws Exception {
+        Path root = Paths.get("src/test/resources/fixtures/forward-" + version + "-family");
         JsonObject source = json(root.resolve("provenance.json"));
         String checksum = digest(root.resolve("world.zip"));
-        assertEquals("62E490F819BB2794F1AE663C28296CE5AD28361917B5347A94C10B7BAB27A77D", checksum);
+        assertEquals(archiveHash, checksum);
         assertEquals(checksum, source.get("world_sha256").getAsString());
-        assertEquals("1.18.2", source.get("source_minecraft").getAsString());
-        assertEquals(2975, source.get("source_data_version").getAsInt());
+        assertEquals(version, source.get("source_minecraft").getAsString());
+        assertEquals(dataVersion, source.get("source_data_version").getAsInt());
         assertEquals(4700, source.get("source_saved_states").getAsInt());
         assertEquals(12, source.get("native_sand_states").getAsInt());
         assertEquals(6, source.get("wet_sand_states").getAsInt());
@@ -31,9 +38,12 @@ class NamedForwardFixtureTest {
         assertEquals(source.get("manifest_sha256").getAsString(), digest(root.resolve("source-family-fixture.json")));
         assertEquals(source.get("native_states_sha256").getAsString(), digest(root.resolve("native-source-states.json")));
         assertEquals(source.get("native_biomes_sha256").getAsString(), digest(root.resolve("native-source-biomes.json")));
-        assertEquals("fa8cf9fd9fbb6f6649b4a7c11dd36a948e983e73", source.get("source_terrain_bop_commit").getAsString());
+        assertEquals(sourceCommit, source.get("source_terrain_bop_commit").getAsString());
         assertEquals(7, source.getAsJsonArray("source_artifacts").size());
         assertEquals(2, source.getAsJsonObject("source_log_sha256").size());
+        if (version.equals("1.19.4")) {
+            assertEquals(1, source.get("source_mud_wall_renames").getAsInt());
+        }
     }
 
     @Test

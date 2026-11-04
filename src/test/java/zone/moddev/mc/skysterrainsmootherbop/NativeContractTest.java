@@ -81,9 +81,9 @@ class NativeContractTest {
             assertTrue(Files.isRegularFile(assets.resolve("models/item/" + name + ".json")));
         }
         JsonObject pack = read(RESOURCES.resolve("pack.mcmeta")).getAsJsonObject().getAsJsonObject("pack");
-        assertEquals(13, pack.get("pack_format").getAsInt());
-        assertEquals(13, pack.get("forge:resource_pack_format").getAsInt());
-        assertEquals(12, pack.get("forge:data_pack_format").getAsInt());
+        assertEquals(15, pack.get("pack_format").getAsInt());
+        assertEquals(15, pack.get("forge:resource_pack_format").getAsInt());
+        assertEquals(15, pack.get("forge:data_pack_format").getAsInt());
     }
 
     @Test
@@ -119,22 +119,22 @@ class NativeContractTest {
                 "skysbuildingpiecesbop", "skysterrainsmoother", "biomesoplenty" }) {
             assertTrue(metadata.contains("modId=\"" + mod + "\""));
         }
-        assertTrue(metadata.contains("[17.3,18)"));
+        assertTrue(metadata.contains("[19.0.0.96]"));
         assertFalse(Files.exists(RESOURCES.resolve("META-INF/coremods.json")));
         assertFalse(Files.exists(RESOURCES.resolve("mcmod.info")));
     }
 
     @Test
-    void developmentLaunchesKeepBothMappedDependenciesAndTheirAccessRules() throws Exception {
+    void developmentLaunchesKeepAllMappedDependenciesAndTheirAccessRules() throws Exception {
         String build = text(Paths.get("build.gradle"));
         assertTrue(build.contains("systemProperty 'mixin.env.disableRefMap', 'true'"));
-        assertTrue(build.contains("accessTransformers.from(bopDevelopmentAccessRules, terraBlenderDevelopmentAccessRules)"));
-        assertTrue(build.contains("bopPiecesDevelopmentJar, bopDevelopmentJar, terraBlenderDevelopmentJar"));
+        assertTrue(build.contains("accessTransformers.from(mappedAccessRules)"));
+        assertTrue(build.contains("bopPiecesDevelopmentJar, bopDevelopmentJar, terraBlenderDevelopmentJar, glitchCoreDevelopmentJar"));
         String launcher = text(Paths.get("tools/run_packaged_checks.py"));
         assertFalse(launcher.contains("mixin.env.disableRefMap"), "Public jars retain their own refmaps");
         java.util.Properties lock = new java.util.Properties();
         lock.load(new java.io.StringReader(text(Paths.get("gradle/content-dependencies.properties"))));
-        for (String name : new String[] { "bop", "terrablender" }) {
+        for (String name : new String[] { "bop", "terrablender", "glitchcore" }) {
             assertTrue(lock.getProperty(name + ".sha256").matches("[0-9A-F]{64}"));
             assertTrue(lock.getProperty(name + ".development.sha256").matches("[0-9A-F]{64}"));
         }

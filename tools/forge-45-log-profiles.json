@@ -34,7 +34,7 @@
           "sha256": "77EFE21003E4968460652DDA1454F4777CA0A5C77FE84D698259CF4472DAFA04"
         }
       ],
-      "inspected_nbt_records": 886,
+      "inspected_nbt_records": 887,
       "saved_uses": 0,
       "non_biome_saved_uses": 0,
       "mappings": {
@@ -43,10 +43,7 @@
           "minecraft:unemployed": 0
         },
         "minecraft:worldgen/biome": {
-          "biomesoplenty:bamboo_grove": 183,
           "biomesoplenty:bayou": 60,
-          "biomesoplenty:cherry_blossom_grove": 62,
-          "biomesoplenty:clover_patch": 186,
           "biomesoplenty:cold_desert": 63,
           "biomesoplenty:coniferous_forest": 64,
           "biomesoplenty:crag": 187,
@@ -63,10 +60,8 @@
           "biomesoplenty:glowing_grotto": 141,
           "biomesoplenty:grassland": 77,
           "biomesoplenty:highland": 82,
-          "biomesoplenty:highland_moor": 84,
           "biomesoplenty:jade_cliffs": 85,
           "biomesoplenty:lavender_field": 86,
-          "biomesoplenty:lavender_forest": 87,
           "biomesoplenty:lush_desert": 88,
           "biomesoplenty:lush_savanna": 89,
           "biomesoplenty:marsh": 90,
@@ -171,53 +166,9 @@
         "checked_cells": 1337856,
         "renamed_cells": 0
       },
-      "forge45_registry_proof": {
-        "path": "src/test/resources/fixtures/forward-1.18.2-family/forge-45-registry-notices.json",
-        "sha256": "05787DDC99C0227437F5A403D55E429173CCBDA00FCB44B7C38F8C15AF72ED8B"
-      },
-      "client": {
-        "target": "Forge 45.4.0",
-        "notice_thread": "Render thread",
-        "notice_reads": 1,
-        "source_sha256": "62E490F819BB2794F1AE663C28296CE5AD28361917B5347A94C10B7BAB27A77D",
-        "artifact_inputs": [
-          {
-            "name": "SkysTerrainSmoother-BiomesOPlenty-Addon-0.1.0.119041.jar",
-            "sha256": "2D525C2F6BEC75B60A3E3854668827D162BBCA62270C0DA7AA59D1DEA3BC3ADD"
-          },
-          {
-            "name": "skysterrainsmootherbop-integration-test-reobf.jar",
-            "sha256": "81CDE0C00FAF061299C880A738458DC575B91ED69AE519A41D881D44EDCF726D"
-          },
-          {
-            "name": "SkysGrassSlabs-1.2.0.119041.jar",
-            "sha256": "3A97C2D7E1A2E1D9C33D513BE08F9B2D3611AC914185DED8C8B9138D76EF5B82"
-          },
-          {
-            "name": "SkysBuildingPieces-0.3.8.119041.jar",
-            "sha256": "A1055C3DD776D24619635D1F30700D6E2A51CBA19ECF2AEE6894E2DBBC6C6DB7"
-          },
-          {
-            "name": "SkysTerrainSmoother-0.1.0.119041.jar",
-            "sha256": "88EDD053B5A44391FE12FA9642EAABBB685DD3B17FAB845D36C7EE159AD595DA"
-          },
-          {
-            "name": "SkysBuildingPieces-BiomesOPlenty-Addon-0.2.4.119041.jar",
-            "sha256": "DCA79750EF7C078D6CE1400366817BA2C998312996BFAE7F130FE0BD46B72339"
-          },
-          {
-            "name": "BiomesOPlenty-1.19.4-17.3.0.593.jar",
-            "sha256": "325C991BF1801FDDA576EE20D356C4D3D1E69FDA5B5CB778350653773C991A20"
-          },
-          {
-            "name": "TerraBlender-forge-1.19.4-2.3.0.22.jar",
-            "sha256": "BD792CEC995BD4EBD44046B096E4BFBA4B9032BC9F36182FFB8101DFE2D2BBE2"
-          }
-        ],
-        "completed_log_sha256": {
-          "debug.log": "62BA9189B11DB30B2C16DBE222E46C068705075692C3BD2415107F8DADAF3DEF",
-          "latest.log": "184D75060A97ABA939AB9B125D1E0CB387BD336D03E24AC841E6650A8B18B1EA"
-        }
+      "forge47_registry_proof": {
+        "path": "src/test/resources/fixtures/forward-1.18.2-family/forge-47-registry-notices.json",
+        "sha256": "8FD94CD7F2B4253158AB1E1658E93BAFD5CA815F78D77877A85AEBD11780877E"
       }
     },
     "54791A41A96148B0DBF34BE88185629C8EF6C3133A56C15BFF6136BBDCF5F662": {
@@ -386,7 +337,7 @@
           "sha256": "2806139055DC330A1E8F7A4324A68B6305A9EB67CC132EF09B81BDEC5E89D9BB"
         }
       ],
-      "inspected_nbt_records": 1407,
+      "inspected_nbt_records": 1408,
       "saved_uses": 0,
       "non_biome_saved_uses": 0,
       "mappings": {
@@ -396,7 +347,6 @@
         },
         "minecraft:worldgen/biome": {
           "biomesoplenty:bayou": 60,
-          "biomesoplenty:cherry_blossom_grove": 62,
           "biomesoplenty:cold_desert": 63,
           "biomesoplenty:coniferous_forest": 64,
           "biomesoplenty:crystalline_chasm": 128,
@@ -406,10 +356,8 @@
           "biomesoplenty:fungal_jungle": 75,
           "biomesoplenty:grassland": 77,
           "biomesoplenty:highland": 82,
-          "biomesoplenty:highland_moor": 84,
           "biomesoplenty:jade_cliffs": 85,
           "biomesoplenty:lavender_field": 86,
-          "biomesoplenty:lavender_forest": 87,
           "biomesoplenty:lush_desert": 88,
           "biomesoplenty:lush_savanna": 89,
           "biomesoplenty:marsh": 90,
@@ -523,9 +471,9 @@
         "checked_cells": 672768,
         "renamed_cells": 0
       },
-      "forge45_registry_proof": {
-        "path": "src/test/resources/fixtures/forward-1.16.5-family/forge-45-registry-notices.json",
-        "sha256": "B1EBDC131ED2147722F0CF5B8DE0830B0D22D458BE3FFEC4E5F1464C9B2ABF6E"
+      "forge47_registry_proof": {
+        "path": "src/test/resources/fixtures/forward-1.16.5-family/forge-47-registry-notices.json",
+        "sha256": "5975B50358C33E16815988F287B8809C13CBD6735D2F52FAA624C19913FDFC20"
       }
     },
     "932180D7BA3AECF1E5506ECCB691BAF813284E5805CB198BAB3813C031EF6262": {
@@ -554,7 +502,7 @@
           "sha256": "4BD869BCFE8ABAC82D3D073E51982D8726076B3E0B8B510EEF075E242129E99F"
         }
       ],
-      "inspected_nbt_records": 1830,
+      "inspected_nbt_records": 1831,
       "saved_uses": 0,
       "non_biome_saved_uses": 0,
       "mappings": {
@@ -564,7 +512,6 @@
         },
         "minecraft:worldgen/biome": {
           "biomesoplenty:bayou": 60,
-          "biomesoplenty:cherry_blossom_grove": 62,
           "biomesoplenty:cold_desert": 63,
           "biomesoplenty:coniferous_forest": 64,
           "biomesoplenty:crystalline_chasm": 128,
@@ -576,10 +523,8 @@
           "biomesoplenty:glowing_grotto": 141,
           "biomesoplenty:grassland": 77,
           "biomesoplenty:highland": 82,
-          "biomesoplenty:highland_moor": 84,
           "biomesoplenty:jade_cliffs": 85,
           "biomesoplenty:lavender_field": 86,
-          "biomesoplenty:lavender_forest": 87,
           "biomesoplenty:lush_desert": 88,
           "biomesoplenty:lush_savanna": 89,
           "biomesoplenty:marsh": 90,
@@ -696,9 +641,70 @@
         "checked_cells": 891904,
         "renamed_cells": 0
       },
-      "forge45_registry_proof": {
-        "path": "src/test/resources/fixtures/forward-1.17.1-family/forge-45-registry-notices.json",
-        "sha256": "99801D321647C6525D8D457D28A77C08E330D6AAB9EADD4ACC379F6153758F53"
+      "forge47_registry_proof": {
+        "path": "src/test/resources/fixtures/forward-1.17.1-family/forge-47-registry-notices.json",
+        "sha256": "D6AD4DA1D6E30AF6F09DC669CAFA2691C0147B6EFA710A515CB13C2A606D73D0"
+      }
+    },
+    "BA2421F2A9D2E746401DF3FDA2AAB524E8E8A2537F6332815C9AA913BD72E161": {
+      "sha256": "BA2421F2A9D2E746401DF3FDA2AAB524E8E8A2537F6332815C9AA913BD72E161",
+      "fixture": "src/test/resources/fixtures/forward-1.19.4-family/world.zip",
+      "manifest_sha256": "58017E48AB5DE3E328484684D8F622D4D78C0691CF61D727BE910EE1ABE8B2D9",
+      "source_artifacts": [
+        {
+          "name": "SkysTerrainSmoother-BiomesOPlenty-Addon-0.1.0.119041.jar",
+          "sha256": "2D525C2F6BEC75B60A3E3854668827D162BBCA62270C0DA7AA59D1DEA3BC3ADD"
+        },
+        {
+          "name": "SkysGrassSlabs-1.2.0.119041.jar",
+          "sha256": "3A97C2D7E1A2E1D9C33D513BE08F9B2D3611AC914185DED8C8B9138D76EF5B82"
+        },
+        {
+          "name": "SkysBuildingPieces-0.3.8.119041.jar",
+          "sha256": "A1055C3DD776D24619635D1F30700D6E2A51CBA19ECF2AEE6894E2DBBC6C6DB7"
+        },
+        {
+          "name": "SkysTerrainSmoother-0.1.0.119041.jar",
+          "sha256": "88EDD053B5A44391FE12FA9642EAABBB685DD3B17FAB845D36C7EE159AD595DA"
+        },
+        {
+          "name": "SkysBuildingPieces-BiomesOPlenty-Addon-0.2.4.119041.jar",
+          "sha256": "DCA79750EF7C078D6CE1400366817BA2C998312996BFAE7F130FE0BD46B72339"
+        },
+        {
+          "name": "BiomesOPlenty-1.19.4-17.3.0.593.jar",
+          "sha256": "325C991BF1801FDDA576EE20D356C4D3D1E69FDA5B5CB778350653773C991A20"
+        },
+        {
+          "name": "TerraBlender-forge-1.19.4-2.3.0.22.jar",
+          "sha256": "BD792CEC995BD4EBD44046B096E4BFBA4B9032BC9F36182FFB8101DFE2D2BBE2"
+        }
+      ],
+      "inspected_nbt_records": 887,
+      "saved_uses": 0,
+      "non_biome_saved_uses": 0,
+      "mappings": {
+        "minecraft:item": {
+          "minecraft:pottery_shard_archer": 2756,
+          "minecraft:pottery_shard_arms_up": 2758,
+          "minecraft:pottery_shard_prize": 2757,
+          "minecraft:pottery_shard_skull": 2759
+        },
+        "minecraft:sound_event": {
+          "minecraft:item.brush.brush_sand_completed": 1233,
+          "minecraft:item.brush.brushing": 1232,
+          "minecraft:music.overworld.jungle_and_forest": 1370
+        }
+      },
+      "native_biome_contract": {
+        "path": "src/test/resources/fixtures/forward-1.19.4-family/native-source-biomes.json",
+        "sha256": "1128845DAD923C1D20C2F36FCDB584A3460EA882EC31F6E6082AAFAE0D3A7551",
+        "checked_cells": 1337856,
+        "renamed_cells": 0
+      },
+      "forge47_registry_proof": {
+        "path": "src/test/resources/fixtures/forward-1.19.4-family/forge-47-registry-notices.json",
+        "sha256": "56D76983846803960A1844005F49416A69990AB5490B0A935BE2E71CC87DE828"
       }
     }
   },

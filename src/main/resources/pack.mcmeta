@@ -1,8 +1,8 @@
 {
-    "pack": {
-        "pack_format": 13,
-        "description": "Sky's Terrain Smoother - Biomes O Plenty",
-        "forge:resource_pack_format": 13,
-        "forge:data_pack_format": 12
-    }
+  "pack": {
+    "pack_format": 15,
+    "description": "Sky's Terrain Smoother - Biomes O Plenty",
+    "forge:resource_pack_format": 15,
+    "forge:data_pack_format": 15
+  }
 }

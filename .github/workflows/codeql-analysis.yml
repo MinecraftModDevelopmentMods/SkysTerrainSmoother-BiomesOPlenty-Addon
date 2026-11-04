@@ -114,7 +114,7 @@ jobs:
           set -euo pipefail
           chmod +x dependencies/*/gradlew
           (cd dependencies/grass && ./gradlew assemble --no-daemon --stacktrace)
-          (cd dependencies/pieces && ./gradlew assemble -PgrassSlabsMainJar="$(realpath ../grass/build/libs/SkysGrassSlabs-1.2.0.119041.jar)" -PgrassSlabsDevelopmentJar="$(realpath ../grass/build/libs-dev/SkysGrassSlabs-1.2.0.119041-deobf.jar)" --no-daemon --stacktrace)
+          (cd dependencies/pieces && ./gradlew assemble -PgrassSlabsMainJar="$(realpath ../grass/build/libs/SkysGrassSlabs-1.2.0.120011.jar)" -PgrassSlabsDevelopmentJar="$(realpath ../grass/build/libs-dev/SkysGrassSlabs-1.2.0.120011-deobf.jar)" --no-daemon --stacktrace)
           (cd dependencies/terrain && ./gradlew assemble -PgrassSlabsDirectory=../grass -PbuildingPiecesDirectory=../pieces --no-daemon --stacktrace)
           (cd dependencies/bopPieces && ./gradlew assemble bopDevelopmentJar -PbuildingPiecesCoreDir=../pieces --no-daemon --stacktrace)
 

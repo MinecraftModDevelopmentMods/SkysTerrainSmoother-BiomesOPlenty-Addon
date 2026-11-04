@@ -37,10 +37,11 @@ class NativeRegistryNoticeProofTest {
     }
 
     @Test
-    void forge45RegistryNoticesMatchTheSourceSnapshotAndSavedBiomeCensus() throws Exception {
+    void nativeRegistryNoticesMatchTheSourceSnapshotAndSavedBiomeCensus() throws Exception {
         JsonObject profiles = JsonParser.parseString(Files.readString(Paths.get("tools/forge-45-log-profiles.json")))
                 .getAsJsonObject().getAsJsonObject("profiles");
         assertTrue(profiles.has("62E490F819BB2794F1AE663C28296CE5AD28361917B5347A94C10B7BAB27A77D"));
+        assertTrue(profiles.has("BA2421F2A9D2E746401DF3FDA2AAB524E8E8A2537F6332815C9AA913BD72E161"));
         checkProfiles(profiles);
     }
 
@@ -48,11 +49,13 @@ class NativeRegistryNoticeProofTest {
         for (java.util.Map.Entry<String, com.google.gson.JsonElement> entry : profiles.entrySet()) {
             JsonObject profile = entry.getValue().getAsJsonObject();
             JsonObject mappings = profile.getAsJsonObject("mappings");
+            boolean forge47 = profile.has("forge47_registry_proof");
             boolean forge45 = profile.has("forge45_registry_proof");
+            boolean nativeProof = forge45 || forge47;
             Set<String> names = new HashSet<>();
             for (java.util.Map.Entry<String, com.google.gson.JsonElement> registry
                     : mappings.entrySet()) {
-                if (forge45 && registry.getKey().equals("minecraft:worldgen/biome")) {
+                if (nativeProof && registry.getKey().equals("minecraft:worldgen/biome")) {
                     // The static snapshot no longer owns these dynamic biome entries.
                     continue;
                 }
@@ -80,11 +83,12 @@ class NativeRegistryNoticeProofTest {
             assertEquals(profile.get("sha256"), contract.get("source_world_sha256"));
             assertEquals(biome.get("checked_cells"), contract.get("checked_cells"));
             assertEquals(0, contract.get("native_renamed_cells").getAsInt());
-            if (forge45) {
-                JsonObject binding = profile.getAsJsonObject("forge45_registry_proof");
+            if (nativeProof) {
+                JsonObject binding = profile.getAsJsonObject(forge47 ? "forge47_registry_proof" : "forge45_registry_proof");
                 byte[] proofBytes = Files.readAllBytes(Paths.get(binding.get("path").getAsString()));
                 assertEquals(binding.get("sha256").getAsString(), checksum(proofBytes));
                 JsonObject proof = new JsonParser().parse(new String(proofBytes, StandardCharsets.UTF_8)).getAsJsonObject();
+                assertEquals(forge47 ? "Forge 47.4.10" : "Forge 45.4.0", proof.get("target").getAsString());
                 assertEquals(mappings, proof.getAsJsonObject("snapshot_entries"));
                 assertEquals(profile.get("sha256"), proof.get("source_world_sha256"));
                 assertEquals(biome.get("sha256"), proof.get("native_biome_contract_sha256"));
@@ -111,7 +115,7 @@ class NativeRegistryNoticeProofTest {
                                 // Older forced-chunk data is native, uncompressed NBT.
                                 root = NbtIo.read(new DataInputStream(new ByteArrayInputStream(bytes)));
                             }
-                            if (forge45 && label.equals("world/level.dat")) {
+                            if (nativeProof && label.equals("world/level.dat")) {
                                 checkSnapshot(root.getCompound("fml").getCompound("Registries"), mappings);
                             }
                             // Registry availability is not a saved block, entity or inventory use.

@@ -36,15 +36,15 @@ def mavenizerLicense = mavenizerToolsDirectory.file('LICENSE-MAVENIZER.txt')
 def mavenizerReadme = mavenizerToolsDirectory.file('README.md')
 def mavenizerFixtureChecksums = [
         (mavenizerCompatibilityJar.asFile):
-                '341B3FB10ABA6EA7DC612FBE519DC290A1C81867AED5DD320ACD783688AC49DE',
+                '416DCA4797BC55826F0DDCF03FDC405F1990FC15C2133FA27A1F143BF7976177',
         (mavenizerRuleManifest.asFile):
-                '33A3217261EBB8F37D45F50BD2F8CE70B221C014A5C15F4C5F8F9091AD6D1EC8',
+                '8945511DFF53B8F1A91EE44B14AF9EC7DB34C373617EA37A608C6958BFEEB22E',
         (mavenizerSourcePatch.asFile):
                 'D856190DEF5574716C5E4F4379912C451B1F5952B0B111576651A98EECF58544',
         (mavenizerLicense.asFile):
                 '20C17D8B8C48A600800DFD14F95D5CB9FF47066A9641DDEAB48DC54AEC96E331',
         (mavenizerReadme.asFile):
-                '88806D79B0FD4479FA07CCFF30A44A6D90F1BF822665EFBFCCCBD5C99F65FBB3'
+                '177C1DDEDEF9704B9FDC8EA24B8DCDF4DDCC826DD0E253E7872A00DB2EA34518'
 ]
 
 // ForgeGradle invokes Mavenizer while configuring the project. Verify the
@@ -115,8 +115,8 @@ tasks.withType(JavaCompile).configureEach {
     }
 }
 
-def grassSlabsDirectory = file(providers.gradleProperty('grassSlabsDirectory').getOrElse('../..' + '/SkysGrassSlabs119/SkysGrassSlabs'))
-def buildingPiecesDirectory = file(providers.gradleProperty('buildingPiecesDirectory').getOrElse('../..' + '/SkysBuildingPieces119/SkysBuildingPieces'))
+def grassSlabsDirectory = file(providers.gradleProperty('grassSlabsDirectory').getOrElse('../..' + '/SkysGrassSlabs1201/SkysGrassSlabs'))
+def buildingPiecesDirectory = file(providers.gradleProperty('buildingPiecesDirectory').getOrElse('../..' + '/SkysBuildingPieces1201/SkysBuildingPieces'))
 def contentLock=new Properties()
 file('gradle/content-dependencies.properties').withInputStream { contentLock.load(it) }
 
@@ -141,9 +141,9 @@ def buildingPiecesDevelopmentJar = new File(buildingPiecesDirectory,
         "build/libs-dev/SkysBuildingPieces-${piecesVersion}-deobf.jar")
 
 def terrainDirectory = file(providers.gradleProperty('terrainDirectory')
-        .getOrElse('../../SkysTerrainSmoother119/SkysTerrainSmoother'))
+        .getOrElse('../../SkysTerrainSmoother1201/SkysTerrainSmoother'))
 def bopPiecesDirectory = file(providers.gradleProperty('buildingPiecesBopDirectory')
-        .getOrElse('../../SkysBuildingPiecesBOP119/SkysBuildingPieces-BiomesOPlenty-Addon'))
+        .getOrElse('../../SkysBuildingPiecesBOP1201/SkysBuildingPieces-BiomesOPlenty-Addon'))
 def terrainVersion = contentLock.getProperty('terrain.version')
 def bopPiecesVersion = contentLock.getProperty('bopPieces.version')
 def terrainDevelopmentJar = new File(terrainDirectory,
@@ -153,44 +153,34 @@ def bopPiecesDevelopmentJar = new File(bopPiecesDirectory,
 def bopDevelopmentJar = new File(bopPiecesDirectory, 'build/development-dependencies/biomesoplenty-official.jar')
 def terraBlenderDevelopmentJar = new File(bopPiecesDirectory, 'build/development-dependencies/terrablender-official.jar')
 
-def bopDevelopmentAccessRules = file('.gradle/dependencies/biomesoplenty_at.cfg')
-if (!bopDevelopmentJar.isFile()) {
-    throw new GradleException('Build the pinned Building Pieces BOP bopDevelopmentJar task first.')
-}
-new ZipFile(bopDevelopmentJar).withCloseable { archive ->
-    def rules = archive.getEntry('META-INF/accesstransformer.cfg')
-    if (rules == null) throw new GradleException('Mapped BOP access rules are missing.')
-    bopDevelopmentAccessRules.parentFile.mkdirs()
-    archive.getInputStream(rules).withCloseable {
-        bopDevelopmentAccessRules.setText(it.getText('UTF-8'), 'UTF-8')
-    }
-}
+def glitchCoreDevelopmentJar = new File(bopPiecesDirectory, 'build/development-dependencies/glitchcore-official.jar')
+def biomeDevelopmentJars = [bop: bopDevelopmentJar, terrablender: terraBlenderDevelopmentJar,
+                           glitchcore: glitchCoreDevelopmentJar]
 
-def terraBlenderDevelopmentAccessRules = file('.gradle/dependencies/terrablender_at.cfg')
-if (!terraBlenderDevelopmentJar.isFile()) {
-    throw new GradleException('Build the pinned Building Pieces BOP bopDevelopmentJar task first.')
-}
-new ZipFile(terraBlenderDevelopmentJar).withCloseable { archive ->
-    def rules = archive.getEntry('META-INF/accesstransformer.cfg')
-    if (rules == null) throw new GradleException('Mapped TerraBlender access rules are missing.')
-    terraBlenderDevelopmentAccessRules.parentFile.mkdirs()
-    archive.getInputStream(rules).withCloseable {
-        terraBlenderDevelopmentAccessRules.setText(it.getText('UTF-8'), 'UTF-8')
+def mappedAccessRules = biomeDevelopmentJars.collect { name, File jar ->
+    if (!jar.isFile()) {
+        throw new GradleException('Build the pinned Building Pieces BOP bopDevelopmentJar task first: ' + jar.name)
     }
+    File rulesFile = file(".gradle/dependencies/${name}_at.cfg")
+    new ZipFile(jar).withCloseable { archive ->
+        def rules = archive.getEntry('META-INF/accesstransformer.cfg')
+        if (rules == null) throw new GradleException('Mapped access rules are missing: ' + jar.name)
+        rulesFile.parentFile.mkdirs()
+        archive.getInputStream(rules).withCloseable {
+            rulesFile.setText(it.getText('UTF-8'), 'UTF-8')
+        }
+    }
+    rulesFile
 }
 
 def verifyContentDependencies = tasks.register('verifyContentDependencies') {
     doLast {
-        String bopHash = MessageDigest.getInstance('SHA-256').digest(bopDevelopmentJar.bytes)
-                .encodeHex().toString().toUpperCase(Locale.ROOT)
-        if (bopHash != contentLock.getProperty('bop.development.sha256')) {
-            throw new GradleException('Mapped BOP no longer matches its lock.')
-        }
-        if (!terraBlenderDevelopmentJar.isFile() ||
-                MessageDigest.getInstance('SHA-256').digest(terraBlenderDevelopmentJar.bytes)
-                        .encodeHex().toString().toUpperCase(Locale.ROOT) !=
-                        contentLock.getProperty('terrablender.development.sha256')) {
-            throw new GradleException('Mapped TerraBlender no longer matches its lock.')
+        biomeDevelopmentJars.each { name, File jar ->
+            String checksum = MessageDigest.getInstance('SHA-256').digest(jar.bytes)
+                    .encodeHex().toString().toUpperCase(Locale.ROOT)
+            if (checksum != contentLock.getProperty(name + '.development.sha256')) {
+                throw new GradleException('Mapped dependency does not match its lock: ' + jar.name)
+            }
         }
         Map dependencies = [
                 grass: [directory: grassSlabsDirectory, version: grassVersion,
@@ -244,7 +234,7 @@ def verifyContentDependencies = tasks.register('verifyContentDependencies') {
 tasks.named('compileJava') {
     dependsOn verifyContentDependencies
     doFirst {
-        [grassSlabsDevelopmentJar, buildingPiecesDevelopmentJar, terrainDevelopmentJar, bopPiecesDevelopmentJar, bopDevelopmentJar, terraBlenderDevelopmentJar].each { dependency ->
+        [grassSlabsDevelopmentJar, buildingPiecesDevelopmentJar, terrainDevelopmentJar, bopPiecesDevelopmentJar, bopDevelopmentJar, terraBlenderDevelopmentJar, glitchCoreDevelopmentJar].each { dependency ->
             if (!dependency.isFile()) throw new GradleException("Build the coordinated content dependency first: " + dependency)
         }
     }
@@ -309,7 +299,7 @@ def prepareContentDevelopmentRun = tasks.register('prepareContentDevelopmentRun'
             }
         }
         copy {
-            from grassSlabsDevelopmentJar, buildingPiecesDevelopmentJar, terrainDevelopmentJar, bopPiecesDevelopmentJar, bopDevelopmentJar, terraBlenderDevelopmentJar
+            from grassSlabsDevelopmentJar, buildingPiecesDevelopmentJar, terrainDevelopmentJar, bopPiecesDevelopmentJar, bopDevelopmentJar, terraBlenderDevelopmentJar, glitchCoreDevelopmentJar
             into mods
         }
     }
@@ -331,7 +321,7 @@ minecraft {
                             "${mod_id}%%${buildDir}/forge-run-mod-classes/main"
             if (name.toLowerCase(Locale.ROOT).contains('client') &&
                     providers.gradleProperty('forgeClientAssets').isPresent()) {
-                environment 'assetIndex', '3'
+                environment 'assetIndex', '5'
                 environment 'assetDirectory', providers.gradleProperty('forgeClientAssets').get()
                 if (providers.gradleProperty('forgeClientNatives').isPresent()) {
                     environment 'nativesDirectory', providers.gradleProperty('forgeClientNatives').get()
@@ -438,10 +428,10 @@ repositories {
 }
 
 dependencies {
-    implementation files(grassSlabsDevelopmentJar, buildingPiecesDevelopmentJar, terrainDevelopmentJar, bopPiecesDevelopmentJar, bopDevelopmentJar, terraBlenderDevelopmentJar)
+    implementation files(grassSlabsDevelopmentJar, buildingPiecesDevelopmentJar, terrainDevelopmentJar, bopPiecesDevelopmentJar, bopDevelopmentJar, terraBlenderDevelopmentJar, glitchCoreDevelopmentJar)
     implementation minecraft.dependency(
             "net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}") {
-        accessTransformers.from(bopDevelopmentAccessRules, terraBlenderDevelopmentAccessRules)
+        accessTransformers.from(mappedAccessRules)
     }
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.10.2'
@@ -465,7 +455,7 @@ def integrationTestModJar = tasks.register('integrationTestModJar', Jar) {
     archiveFileName = 'skysterrainsmootherbop-integration-test.jar'
     destinationDirectory = layout.buildDirectory.dir('integration-test-mod')
     from integrationTestClasses
-    from 'src/integrationTest/resources'
+    from('src/integrationTest/resources') { exclude 'log4j2.xml' }
 }
 
 def packagedIntegrationTestModJar = renamer.classes(integrationTestModJar) {
@@ -509,7 +499,7 @@ def prepareIntegrationTest = tasks.register('prepareIntegrationTest') {
         mods.mkdirs()
         project.copy {
             from integrationTestModJar.flatMap { it.archiveFile }
-            from grassSlabsDevelopmentJar, buildingPiecesDevelopmentJar, terrainDevelopmentJar, bopPiecesDevelopmentJar, bopDevelopmentJar, terraBlenderDevelopmentJar
+            from grassSlabsDevelopmentJar, buildingPiecesDevelopmentJar, terrainDevelopmentJar, bopPiecesDevelopmentJar, bopDevelopmentJar, terraBlenderDevelopmentJar, glitchCoreDevelopmentJar
             into mods
         }
         new File(runDirectory, 'eula.txt').setText('eula=true\n', 'UTF-8')
@@ -519,7 +509,7 @@ def prepareIntegrationTest = tasks.register('prepareIntegrationTest') {
         new File(runDirectory, 'server.properties').setText('''\
 level-name=world
 level-seed=skys-terrain-smoother-integration
-level-type=default
+level-type=minecraft:normal
 online-mode=false
 server-ip=127.0.0.1
 server-port=0
@@ -603,7 +593,7 @@ def prepareIntegrationClient = tasks.register('prepareIntegrationClient') {
         target.mkdirs()
         copy { from 'src/bootstrapTest/defaultconfigs'; into target }
         copy {
-            from integrationTestModJar.flatMap { it.archiveFile }, grassSlabsDevelopmentJar, buildingPiecesDevelopmentJar, terrainDevelopmentJar, bopPiecesDevelopmentJar, bopDevelopmentJar, terraBlenderDevelopmentJar
+            from integrationTestModJar.flatMap { it.archiveFile }, grassSlabsDevelopmentJar, buildingPiecesDevelopmentJar, terrainDevelopmentJar, bopPiecesDevelopmentJar, bopDevelopmentJar, terraBlenderDevelopmentJar, glitchCoreDevelopmentJar
             into new File(target, 'mods')
         }
         new File(target, 'options.txt').text = 'fullscreen:false\noverrideWidth:854\noverrideHeight:480\nmaxFps:30\npauseOnLostFocus:false\nrenderDistance:6\n'
@@ -688,12 +678,12 @@ def releaseFiles = provider {
 tasks.register('verifyReleaseMetadata') {
     group = 'verification'
     doLast {
-        if (project.minecraft_version != '1.19.4' || project.forge_version != '45.4.0' ||
-                project.mapping_channel != 'official' || project.mapping_version != '1.19.4' ||
+        if (project.minecraft_version != '1.20.1' || project.forge_version != '47.4.10' ||
+                project.mapping_channel != 'official' || project.mapping_version != '1.20.1' ||
                 project.loader_name != 'forge' || project.loader_code != '1' ||
                 project.java_version != '17' || project.java_toolchain_version != '17.0.1+12' ||
                 project.mod_id != 'skysterrainsmootherbop') {
-            throw new GradleException('Unexpected 1.19.4 release metadata')
+            throw new GradleException('Unexpected 1.20.1 release metadata')
         }
     }
 }
@@ -972,6 +962,14 @@ tasks.register('verifyEclipseProductionClasspath') {
                 throw new GradleException("Eclipse must use only the selected ${stem} development jar")
             }
         }
+        biomeDevelopmentJars.values().each { expectedJar ->
+            def libraries = eclipseClasspath.classpathentry.findAll {
+                it.@kind == 'lib' && file(it.@path.text()).name == expectedJar.name
+            }*.@path*.text().collect { file(it).canonicalFile }
+            if (libraries != [expectedJar.canonicalFile]) {
+                throw new GradleException("Eclipse must use only the pinned development jar: " + expectedJar.name)
+            }
+        }
         def resourceFolders = eclipseClasspath.classpathentry.findAll { it.@kind == 'src' }*.@path*.text()
         if (resourceFolders.contains('src/main/resources') ||
                 resourceFolders.count { it == 'build/resources/main' } != 1) {
@@ -1050,7 +1048,7 @@ tasks.register('integrationClientReloadProcess', JavaExec) {
 
 ext.configureMineralogyVerificationRun = configureFromForgeRun
 ext.mineralogyProfileProbeId = 'skysterrainsmoother'
-ext.mineralogyProfileAdditionalMods = files(grassSlabsDevelopmentJar, buildingPiecesDevelopmentJar, terrainDevelopmentJar, bopPiecesDevelopmentJar, bopDevelopmentJar, terraBlenderDevelopmentJar)
+ext.mineralogyProfileAdditionalMods = files(grassSlabsDevelopmentJar, buildingPiecesDevelopmentJar, terrainDevelopmentJar, bopPiecesDevelopmentJar, bopDevelopmentJar, terraBlenderDevelopmentJar, glitchCoreDevelopmentJar)
 apply from: 'gradle/mineralogy-runs.gradle'
 
 apply from: 'gradle/recipe-advancements.gradle'
@@ -1089,7 +1087,7 @@ def prepareFamilyForward = tasks.register('prepareFamilyForwardFixture') {
         copy { from new File(fixture, 'source-family-fixture.json'); into target }
         copy { from 'src/bootstrapTest/defaultconfigs'; into target }
         copy {
-            from integrationTestModJar.flatMap { it.archiveFile }, grassSlabsDevelopmentJar, buildingPiecesDevelopmentJar, terrainDevelopmentJar, bopPiecesDevelopmentJar, bopDevelopmentJar, terraBlenderDevelopmentJar
+            from integrationTestModJar.flatMap { it.archiveFile }, grassSlabsDevelopmentJar, buildingPiecesDevelopmentJar, terrainDevelopmentJar, bopPiecesDevelopmentJar, bopDevelopmentJar, terraBlenderDevelopmentJar, glitchCoreDevelopmentJar
             into new File(target, 'mods')
         }
         new File(target, 'eula.txt').setText('eula=true\n', 'UTF-8')

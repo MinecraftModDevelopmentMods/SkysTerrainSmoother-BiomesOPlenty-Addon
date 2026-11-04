@@ -6,7 +6,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SnowyDirtBlock;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -28,7 +28,7 @@ public final class CoarseDirtSlab extends LegacySlabBlock {
     static Item item;
 
     CoarseDirtSlab() {
-        super(Material.DIRT, SoundType.GRAVEL, .5f, true);
+        super(MapColor.DIRT, SoundType.GRAVEL, .5f, true);
         registerDefaultState(defaultBlockState().setValue(SnowyDirtBlock.SNOWY, false));
     }
 
