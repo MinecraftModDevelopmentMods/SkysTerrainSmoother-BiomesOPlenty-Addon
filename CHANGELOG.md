@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.0.120061 (unreleased)
+
+- Bring Biomes O' Plenty smoothing and legacy piece recovery to Minecraft 1.20.6.
+
 ## 0.1.0.120011 (unreleased)
 
 - Update to Minecraft 1.20.1 and Biomes O’ Plenty 19.

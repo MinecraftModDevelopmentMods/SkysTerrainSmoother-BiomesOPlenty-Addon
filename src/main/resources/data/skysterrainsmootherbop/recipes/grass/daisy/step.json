@@ -12,7 +12,7 @@
     }
   },
   "result": {
-    "item": "skysbuildingpieces:grass_step",
+    "id": "skysbuildingpieces:grass_step",
     "count": 4
   }
 }

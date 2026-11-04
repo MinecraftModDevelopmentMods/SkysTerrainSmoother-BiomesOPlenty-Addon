@@ -17,14 +17,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.common.util.FakePlayerFactory;
 import zone.moddev.mc.skysbuildingpieces.content.Pieces;
 import zone.moddev.mc.skysterrainsmootherbop.CoarseDirtSlab;
 
 /** Real item placement and fluid checks for the retained coarse soil slab. */
 final class CoarseSlabChecks {
     static int run(ServerLevel world) {
-        ServerPlayer player = FakePlayerFactory.getMinecraft(world);
+        ServerPlayer player = ProbeItems.player(world, new com.mojang.authlib.GameProfile(java.util.UUID.fromString("adcb6240-23dd-4444-bba9-c3b6d4e106a1"), "CoarseSlabTest"));
         player.getAbilities().instabuild = false;
         BlockPos position = new BlockPos(40008, 220, 40008);
         world.getChunkAt(position);

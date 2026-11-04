@@ -91,9 +91,11 @@ final class BopRecoveryChecks {
                 root.put("Items", nested);
                 LegacySoils.recover(root);
                 ItemStack expected = Pieces.stack(target, 23);
-                ItemStack actual = ItemStack.of(stack);
+                ItemStack actual = ProbeItems.readPreComponentStack(world, stack);
                 RuntimeProbe.require(actual.getItem() == expected.getItem() && actual.getCount() == 23,
                         "Nested inventory identity and count survive");
+                RuntimeProbe.require(ProbeItems.custom(actual).equals(custom),
+                        "Nested inventory custom data survives the native item conversion");
                 RuntimeProbe.require(stack.getByte("Slot") == 7 && stack.getCompound("tag").equals(custom),
                         "Inventory slot and unrelated custom NBT survive");
                 CompoundTag once = root.copy();
@@ -152,8 +154,9 @@ final class BopRecoveryChecks {
                     "A count outside the saved-byte range stops without changing the stack");
         }
         int recipes = 0;
-        for (net.minecraft.world.item.crafting.Recipe<?> recipe : world.getRecipeManager().getRecipes()) {
-            if (!recipe.getId().getNamespace().equals("skysterrainsmootherbop")) {
+        for (var holder : world.getRecipeManager().getRecipes()) {
+            var recipe = holder.value();
+            if (!holder.id().getNamespace().equals("skysterrainsmootherbop")) {
                 continue;
             }
             RuntimeProbe.require(!recipe.isSpecial() && !recipe.getResultItem(world.registryAccess()).isEmpty(),

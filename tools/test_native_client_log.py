@@ -165,7 +165,7 @@ class NativeRegistryProfileTest(unittest.TestCase):
 
         root = Path(__file__).resolve().parent.parent
         policy = json.loads((root / "tools/forge-45-log-profiles.json").read_text(encoding="utf-8"))
-        profile = policy["profiles"]["BA2421F2A9D2E746401DF3FDA2AAB524E8E8A2537F6332815C9AA913BD72E161"]
+        profile = policy["forge50_profiles"]["992B6A69E3586634B5C4EE10037BE045D63DECCE7295411D9B6DDE6629B228C6"]
         with tempfile.TemporaryDirectory() as temporary:
             directory = Path(temporary)
             manifest = directory / "source-inputs.json"

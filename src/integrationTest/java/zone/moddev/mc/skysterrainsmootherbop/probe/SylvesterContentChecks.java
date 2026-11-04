@@ -56,7 +56,7 @@ final class SylvesterContentChecks {
         CompoundTag prior = null;
         if (reload) {
             try (FileInputStream stream = new FileInputStream(output)) {
-                prior = NbtIo.readCompressed(stream);
+                prior = NbtIo.readCompressed(stream, net.minecraft.nbt.NbtAccounter.unlimitedHeap());
             }
         }
         ListTag converted = new ListTag();
@@ -70,7 +70,7 @@ final class SylvesterContentChecks {
             CompoundTag fixed = (CompoundTag) world.getServer().getFixerUpper().update(References.ITEM_STACK,
                     new Dynamic<>(NbtOps.INSTANCE, source), reload ? targetVersion : 1343, targetVersion).getValue();
             LegacyBridge.finalizeNbt(fixed, targetVersion);
-            ItemStack stack = ItemStack.of(fixed);
+            ItemStack stack = ProbeItems.read(world, fixed);
             RuntimeProbe.require(!stack.isEmpty() && stack.getCount() == (original.getByte("Count") & 255),
                     "Actual saved Sky stack keeps its count: " + original);
             for (String key : original.getAllKeys()) {
@@ -83,7 +83,7 @@ final class SylvesterContentChecks {
             for (String key : originalTag.getAllKeys()) {
                 if (!key.equals("display") && !key.equals("ench") && !key.equals("StoredEnchantments")
                         && !key.equals("Items") && !key.equals("BasketOpen")) {
-                    RuntimeProbe.require(originalTag.get(key).equals(fixed.getCompound("tag").get(key)),
+                    RuntimeProbe.require(originalTag.get(key).equals(ProbeItems.custom(stack).get(key)),
                             "Unrelated item tag survives: " + key);
                 }
             }
@@ -120,14 +120,14 @@ final class SylvesterContentChecks {
             }
         }
         if (id.equals("skysgrassslabs:turf")) {
-            return ModBlocks.TURF.defaultBlockState();
+            return ModBlocks.TURF.get().defaultBlockState();
         }
         if (id.equals("skysterrainsmoother:sand_slab")) {
             return zone.moddev.mc.skysterrainsmoother.content.SandContent.legacyState(metadata);
         }
-        net.minecraft.world.level.block.Block block = id.equals("skysgrassslabs:grass_slab") ? ModBlocks.GRASS_SLAB
-                : id.equals("skysgrassslabs:dirt_slab") ? ModBlocks.DIRT_SLAB
-                : id.equals(ForgeRegistries.BLOCKS.getKey(ModBlocks.PATH_SLAB).toString()) ? ModBlocks.PATH_SLAB : null;
+        net.minecraft.world.level.block.Block block = id.equals("skysgrassslabs:grass_slab") ? ModBlocks.GRASS_SLAB.get()
+                : id.equals("skysgrassslabs:dirt_slab") ? ModBlocks.DIRT_SLAB.get()
+                : id.equals(ForgeRegistries.BLOCKS.getKey(ModBlocks.PATH_SLAB.get()).toString()) ? ModBlocks.PATH_SLAB.get() : null;
         return block == null ? null : block.defaultBlockState().setValue(SlabBlock.TYPE,
                 (metadata & 1) == 0 ? SlabType.TOP : SlabType.BOTTOM);
     }

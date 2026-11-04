@@ -218,8 +218,8 @@ public final class LegacySoils {
                         orientation == 0 ? SlabType.TOP : SlabType.BOTTOM);
             } else if (shape == Shape.SLAB && (material.equals("minecraft:grass")
                     || material.equals("minecraft:dirt") || material.equals("minecraft:grass_path"))) {
-                Block block = material.equals("minecraft:grass") ? ModBlocks.GRASS_SLAB
-                        : material.equals("minecraft:dirt") ? ModBlocks.DIRT_SLAB : ModBlocks.PATH_SLAB;
+                Block block = material.equals("minecraft:grass") ? ModBlocks.GRASS_SLAB.get()
+                        : material.equals("minecraft:dirt") ? ModBlocks.DIRT_SLAB.get() : ModBlocks.PATH_SLAB.get();
                 target = block.defaultBlockState().setValue(SlabBlock.TYPE,
                         orientation == 0 ? SlabType.TOP : SlabType.BOTTOM);
             } else {
