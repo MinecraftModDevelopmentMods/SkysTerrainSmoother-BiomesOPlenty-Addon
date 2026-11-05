@@ -176,7 +176,7 @@ public final class ClientProbe extends ProbeProxy {
         int states = 0;
         for (String name : zone.moddev.mc.skysterrainsmootherbop.LegacySoils.PALETTES.keySet()) {
             net.minecraft.world.level.block.Block block = net.minecraft.core.registries.BuiltInRegistries.BLOCK
-                    .get(new net.minecraft.resources.ResourceLocation(name));
+                    .get(net.minecraft.resources.ResourceLocation.parse(name));
             RuntimeProbe.require(block != null, "The saved soil palette remains registered: " + name);
             for (net.minecraft.world.level.block.state.BlockState state : block.getStateDefinition().getPossibleStates()) {
                 checkModel(client, state);

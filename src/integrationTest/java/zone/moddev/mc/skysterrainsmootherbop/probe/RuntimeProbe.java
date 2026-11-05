@@ -69,7 +69,7 @@ public final class RuntimeProbe {
     }
 
     public void registerProbeOre(net.neoforged.neoforge.registries.RegisterEvent event) {
-        ResourceLocation id = new ResourceLocation("bopterrainsmootherprobe", "ore_support");
+        ResourceLocation id = ResourceLocation.fromNamespaceAndPath("bopterrainsmootherprobe", "ore_support");
         event.register(net.minecraft.core.registries.Registries.BLOCK, registry -> {
             probeOre = new Block(Block.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.STONE));
             registry.register(id, probeOre);
@@ -92,7 +92,7 @@ public final class RuntimeProbe {
                     BuildingPiecesApi.TerrainShape.CORNER, directions[directionIndex]);
         }
 
-        ResourceLocation registryId = new ResourceLocation("probe:obsidian");
+        ResourceLocation registryId = ResourceLocation.parse("probe:obsidian");
 
         TerrainSmoothingApi.registerMaterial(new TerrainMaterial(registryId,
                 Collections.singleton(Blocks.OBSIDIAN.defaultBlockState()), BuildingPiecesApi
@@ -126,7 +126,7 @@ public final class RuntimeProbe {
         int eligible = 0;
         int excluded = 0;
         var smoothing = net.minecraft.core.registries.BuiltInRegistries.FEATURE.get(
-                new ResourceLocation("skysterrainsmoother", "terrain_smoothing"));
+                ResourceLocation.fromNamespaceAndPath("skysterrainsmoother", "terrain_smoothing"));
         require(smoothing instanceof TerrainSmoothingFeature, "The registered terrain smoothing feature is missing");
         int vegetation = net.minecraft.world.level.levelgen.GenerationStep.Decoration.VEGETAL_DECORATION.ordinal();
         var biomes = server.registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.BIOME);
@@ -683,13 +683,13 @@ public final class RuntimeProbe {
                                                 if (biomeId.getNamespace().equals("biomesoplenty")) {
                                                     bopPieces++;
                                                 }
-                                                if (new ResourceLocation("biomesoplenty:lush_desert").equals(biomeId)) {
+                                                if (ResourceLocation.parse("biomesoplenty:lush_desert").equals(biomeId)) {
                                                     if (terrainMaterial.id
-                                                            .equals(new ResourceLocation("minecraft:hardened_clay"))) {
+                                                            .equals(ResourceLocation.parse("minecraft:hardened_clay"))) {
                                                         lushClay++;
                                                     }
                                                     if (terrainMaterial.id
-                                                            .equals(new ResourceLocation("minecraft:grass"))) {
+                                                            .equals(ResourceLocation.parse("minecraft:grass"))) {
                                                         lushGrass++;
                                                     }
                                                 }

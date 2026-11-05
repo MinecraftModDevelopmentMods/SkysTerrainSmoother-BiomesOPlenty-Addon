@@ -21,8 +21,9 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.server.level.ServerLevel;
-import net.neoforged.neoforge.common.ToolAction;
-import net.neoforged.neoforge.common.ToolActions;
+import net.neoforged.neoforge.common.ItemAbilities;
+import net.neoforged.neoforge.common.ItemAbility;
+import net.neoforged.neoforge.common.util.TriState;
 import zone.moddev.mc.skysgrassslabs.init.ModBlocks;
 
 /** Retains the old coarse-soil slab without turning it into spreading dirt. */
@@ -30,7 +31,7 @@ public final class CoarseDirtSlab extends SlabBlock {
     private static final MapCodec<CoarseDirtSlab> CODEC = simpleCodec(CoarseDirtSlab::new);
 
     public static final String BLOCK_ID = SkysTerrainSmootherBop.ID + ":dirt_slab_00";
-    // Forge creates block holders only while the block registry is open.
+    // Create the holder while the block registry is open.
     public static CoarseDirtSlab BLOCK;
     static Item item;
 
@@ -50,9 +51,9 @@ public final class CoarseDirtSlab extends SlabBlock {
     }
 
     @Override
-    public BlockState getToolModifiedState(BlockState state, UseOnContext context, ToolAction action,
+    public BlockState getToolModifiedState(BlockState state, UseOnContext context, ItemAbility action,
             boolean simulate) {
-        if (action != ToolActions.SHOVEL_FLATTEN || !context.getItemInHand().canPerformAction(action)
+        if (action != ItemAbilities.SHOVEL_FLATTEN || !context.getItemInHand().canPerformAction(action)
                 || state.getValue(WATERLOGGED)) {
             return super.getToolModifiedState(state, context, action, simulate);
         }
@@ -105,11 +106,19 @@ public final class CoarseDirtSlab extends SlabBlock {
     }
 
     @Override
-    public boolean canSustainPlant(BlockState state, BlockGetter world, BlockPos position, Direction face,
-            net.neoforged.neoforge.common.IPlantable plant) {
-        BlockState full = Blocks.COARSE_DIRT.defaultBlockState();
-        return state.getValue(TYPE) == SlabType.TOP && face == Direction.UP
-                && full.getBlock().canSustainPlant(full, world, position, face, plant);
+    public TriState canSustainPlant(BlockState state, BlockGetter world, BlockPos position, Direction face,
+            BlockState plant) {
+        if (state.getValue(TYPE) != SlabType.TOP || face != Direction.UP) {
+            return TriState.FALSE;
+        }
+        BlockState coarseDirt = Blocks.COARSE_DIRT.defaultBlockState();
+        TriState support = coarseDirt.canSustainPlant(world, position, face, plant);
+        if (!support.isDefault() || !(world instanceof LevelReader level)) {
+            return support;
+        }
+        // Let the plant check the original soil without replacing the slab in the world.
+        LevelReader soil = new PlantSoilView(level, position, coarseDirt);
+        return plant.canSurvive(soil, position.above()) ? TriState.TRUE : TriState.FALSE;
     }
 
     private static boolean snowy(BlockGetter world, BlockPos position) {

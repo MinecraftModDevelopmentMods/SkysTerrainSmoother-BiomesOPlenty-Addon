@@ -1,7 +1,7 @@
 # Building from source
 
 Use the Gradle 9.2.1 wrapper and Temurin 21.0.7+6. This branch builds with
-NeoGradle 7.1.38 for NeoForge 20.6.139. The log checks use Python 3.11 or newer.
+NeoGradle 7.1.38 for NeoForge 21.1.247. The log checks use Python 3.11 or newer.
 
 Build the four commits in `gradle/content-dependencies.properties` with
 `assemble`. Build Grass Slabs and Building Pieces first, then the Building

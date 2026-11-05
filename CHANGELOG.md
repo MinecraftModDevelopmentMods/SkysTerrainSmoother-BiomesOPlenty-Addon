@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.0.121012
+
+- Bring Biomes O' Plenty terrain smoothing to Minecraft 1.21.1 on NeoForge.
+
 ## 0.1.0.120062 (unreleased)
 
 - Bring BOP terrain support to Minecraft 1.20.6 on NeoForge.

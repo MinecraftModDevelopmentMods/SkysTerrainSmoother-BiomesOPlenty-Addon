@@ -147,7 +147,9 @@ class NamedForwardFixtureTest {
     @ParameterizedTest
     @CsvSource({
             "1.20.1-neo, neoforge-47.1.106, 3465, 7, 8B03BD6F77DEE1FE95D1ED2169D98210EABAF5AF9956E47D1AA203D2C546CD5D",
-            "1.20.6-forge, forge-50.2.0, 3839, 8, AC610FA3D1420FE7DBE5BA98C6870B56A9BB737AE1919998F50E394345AFD275"
+            "1.20.6-forge, forge-50.2.0, 3839, 8, AC610FA3D1420FE7DBE5BA98C6870B56A9BB737AE1919998F50E394345AFD275",
+            "1.20.6-neo, neoforge-20.6.139, 3839, 8, F99F14EFDF786DFA86C37E668D2751F1E7B63A2E0B9D2CB755ECA63CAB997F75",
+            "1.21.1-forge, forge-52.1.0, 3955, 8, D3EEA5CB94E3BDA5F1BD94CE306D2F6F64F28D7CC65FF146E814FF48A73919DA"
     })
     void nativeTransitionFixturesRetainTheWholeCheckedBiomeVolume(String version, String loader,
             int dataVersion, int artifactCount, String checksum) throws Exception {

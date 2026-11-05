@@ -39,7 +39,7 @@ class NativeContractTest {
 
     @Test
     void playableCoarseDirtSlabsUseTheNativeShovelTag() throws Exception {
-        JsonArray values = read(RESOURCES.resolve("data/minecraft/tags/blocks/mineable/shovel.json"))
+        JsonArray values = read(RESOURCES.resolve("data/minecraft/tags/block/mineable/shovel.json"))
                 .getAsJsonObject().getAsJsonArray("values");
         assertEquals(1, values.size());
         assertEquals("skysterrainsmootherbop:dirt_slab_00", values.get(0).getAsString());
@@ -53,7 +53,7 @@ class NativeContractTest {
         for (JsonElement row : manifest) {
             String id = row.getAsJsonObject().get("recipe").getAsString();
             assertTrue(ids.add(id));
-            Path path = RESOURCES.resolve("data/skysterrainsmootherbop/recipes/"
+            Path path = RESOURCES.resolve("data/skysterrainsmootherbop/recipe/"
                     + id.substring(id.indexOf(':') + 1) + ".json");
             JsonObject recipe = read(path).getAsJsonObject();
             assertEquals("minecraft:crafting_shaped", recipe.get("type").getAsString());
@@ -81,9 +81,9 @@ class NativeContractTest {
             assertTrue(Files.isRegularFile(assets.resolve("models/item/" + name + ".json")));
         }
         JsonObject pack = read(RESOURCES.resolve("pack.mcmeta")).getAsJsonObject().getAsJsonObject("pack");
-        assertEquals(32, pack.get("pack_format").getAsInt());
-        assertEquals(32, pack.getAsJsonObject("supported_formats").get("min_inclusive").getAsInt());
-        assertEquals(41, pack.getAsJsonObject("supported_formats").get("max_inclusive").getAsInt());
+        assertEquals(48, pack.get("pack_format").getAsInt());
+        assertEquals(34, pack.getAsJsonObject("supported_formats").get("min_inclusive").getAsInt());
+        assertEquals(48, pack.getAsJsonObject("supported_formats").get("max_inclusive").getAsInt());
     }
 
     @Test
@@ -119,7 +119,7 @@ class NativeContractTest {
                 "skysbuildingpiecesbop", "skysterrainsmoother", "biomesoplenty" }) {
             assertTrue(metadata.contains("modId=\"" + mod + "\""));
         }
-        assertTrue(metadata.contains("[18.4.0.8]"));
+        assertTrue(metadata.contains("[21.1.0.14]"));
         assertFalse(Files.exists(RESOURCES.resolve("META-INF/coremods.json")));
         assertFalse(Files.exists(RESOURCES.resolve("mcmod.info")));
     }
