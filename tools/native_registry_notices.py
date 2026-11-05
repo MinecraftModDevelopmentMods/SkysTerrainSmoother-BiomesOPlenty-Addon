@@ -13,8 +13,10 @@ def profile_for(directory):
         return None
     source = json.loads(manifest.read_text(encoding="utf-8"))
     root = Path(__file__).resolve().parent.parent
-    policy = json.loads((root / "tools/forge-45-log-profiles.json").read_text(encoding="utf-8"))
-    profile = policy["forge50_profiles"].get(source.get("world_sha256"))
+    if source.get("mode") != "server":
+        return None
+    policy = json.loads((root / "tools/forge-52-registry-notices.json").read_text(encoding="utf-8"))
+    profile = policy.get(source.get("world_sha256"))
     if profile is None:
         return None
     fixture = root / profile["fixture"]
@@ -36,41 +38,25 @@ def profile_for(directory):
                 or data["native_renamed_cells"] != proof["renamed_cells"]
                 or profile["saved_uses"] != proof["renamed_cells"]):
             raise ValueError("The complete biome proof does not match this fixture")
-    registry_proofs = [(target, profile[key]) for target, key in
-                       (("Forge 45.4.0", "forge45_registry_proof"),
-                        ("Forge 47.4.10", "forge47_registry_proof"),
-                        ("Forge 50.2.0", "forge50_registry_proof")) if key in profile]
-    if len(registry_proofs) != 1:
-        raise ValueError("Exactly one native registry notice proof is required")
-    for target, registry_proof in registry_proofs:
-        path = root / registry_proof["path"]
-        receipt = json.loads(path.read_text(encoding="utf-8"))
-        unused = {name for registry, names in profile["mappings"].items()
-                  if registry != "minecraft:worldgen/biome" for name in names}
-        if (hashlib.sha256(path.read_bytes()).hexdigest().upper() != registry_proof["sha256"]
-                or receipt["target"] != target
-                or receipt["source_world_sha256"] != profile["sha256"]
-                or receipt["snapshot_entries"] != profile["mappings"]
-                or receipt["unused_non_biome_ids"] != dict.fromkeys(unused, 0)
-                or receipt["inspected_nbt_records"] != profile["inspected_nbt_records"]
-                or receipt.get("inspected_string_values", receipt.get("inspected_nbt_values", 0)) <= 0
-                or proof is None or receipt["native_biome_contract_sha256"] != proof["sha256"]
-                or receipt["checked_biome_cells"] != proof["checked_cells"]
-                or receipt["native_renamed_cells"] != proof["renamed_cells"]
-                or not 0 <= receipt["noticed_biome_cells"] <= proof["checked_cells"]):
-            raise ValueError("The " + target + " registry notice proof does not match the saved fixture")
-    if source.get("mode") == "client":
-        control = profile.get("client")
-        if control is None:
-            return None
-        inputs = Path(directory) / "artifact-inputs.json"
-        if (control["target"] != "Forge 45.4.0" or control["notice_thread"] != "Render thread"
-                or control["notice_reads"] != 1 or control["source_sha256"] != profile["sha256"]
-                or set(control["completed_log_sha256"]) != {"latest.log", "debug.log"}
-                or not inputs.is_file()
-                or json.loads(inputs.read_text(encoding="utf-8")) != control["artifact_inputs"]):
-            return None
-        profile = dict(profile, notice_thread=control["notice_thread"], notice_reads=control["notice_reads"])
+    if profile["target"] != "Forge 52.1.0":
+        raise ValueError("The registry notice proof is for another Forge version")
+    # A spelling can occur in more than one registry. The save census must
+    # distinguish those uses rather than treating a water block as a painting.
+    known_uses = {
+        ("minecraft:painting_variant", "minecraft:water"): "block_or_fluid_not_painting",
+        ("minecraft:painting_variant", "minecraft:skeleton"): "spawner_entity_not_painting",
+        ("minecraft:painting_variant", "minecraft:stage"): "block_property_not_painting",
+    }
+    for name, typed in profile["typed_uses"].items():
+        kind = typed["kind"]
+        if kind == "native_saved_biome_volume" and name in profile["mappings"].get("minecraft:worldgen/biome", {}):
+            if proof and typed["cells"] == proof["checked_cells"] and typed["renamed"] == proof["renamed_cells"]:
+                continue
+        elif any(kind == expected and name == entry and entry in profile["mappings"].get(registry, {})
+                 for (registry, entry), expected in known_uses.items()):
+            if typed["before"] >= 0 and typed["after"] >= 0 and typed["before"] + typed["after"] > 0:
+                continue
+        raise ValueError("Unverified saved use of an unidentified registry entry: " + name)
     return profile
 
 
@@ -163,7 +149,11 @@ def audit_text(text, profile=None, completed_native_client=False):
                     "MissingModsException", "NoSuchMethodError", "NoClassDefFoundError",
                     "ExceptionInInitializerError", "cascading worldgen lag", "Unable to load model",
                     "Unable to load blockstate", "outside of the generating region",
-                    "java.lang.AssertionError", "java.lang.IllegalStateException:"):
+                    "java.lang.IllegalStateException:"):
         if problem in text:
             raise ValueError("Unexpected native failure: " + problem)
+    # ModLauncher logs class discovery at DEBUG. Only a thrown assertion is
+    # a failure; a class name in a transform message is ordinary startup.
+    if re.search(r"(?m)^\s*(?:(?:Caused by|Suppressed): )?java\.lang\.AssertionError(?::|\s*$)", text):
+        raise ValueError("Unexpected native failure: java.lang.AssertionError")
     return sorted(headers)

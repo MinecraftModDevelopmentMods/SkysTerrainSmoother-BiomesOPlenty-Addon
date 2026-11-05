@@ -26,7 +26,7 @@ final class BopRecoveryChecks {
                     zone.moddev.mc.skysbuildingpieces.catalogue.Catalogue.INSTANCE.materials.get(material), "full");
             boolean mineralogyOwnsRock = ForgeRegistries.BLOCKS.getKey(full.getBlock()).getNamespace().equals("mineralogy");
             RuntimeProbe.require(zone.moddev.mc.skysterrainsmoother.api.TerrainSmoothingApi
-                            .hasMaterial(new net.minecraft.resources.ResourceLocation(material)) != mineralogyOwnsRock,
+                            .hasMaterial(net.minecraft.resources.ResourceLocation.parse(material)) != mineralogyOwnsRock,
                     "BOP rock mappings defer to Mineralogy without bypassing its configuration");
             checked++;
         }

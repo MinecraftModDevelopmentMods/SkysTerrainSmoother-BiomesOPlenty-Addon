@@ -20,7 +20,8 @@ class NamedForwardFixtureTest {
     @CsvSource({
             "1.18.2,2975,62E490F819BB2794F1AE663C28296CE5AD28361917B5347A94C10B7BAB27A77D,fa8cf9fd9fbb6f6649b4a7c11dd36a948e983e73",
             "1.19.4,3337,BA2421F2A9D2E746401DF3FDA2AAB524E8E8A2537F6332815C9AA913BD72E161,6fdcef020420eb5cd4d03276e09120c15bb7f43d",
-            "1.20.1,3465,992B6A69E3586634B5C4EE10037BE045D63DECCE7295411D9B6DDE6629B228C6,4fc9d191fdf0cb6a6dd0bfb5695ef836832693eb"
+            "1.20.1,3465,992B6A69E3586634B5C4EE10037BE045D63DECCE7295411D9B6DDE6629B228C6,4fc9d191fdf0cb6a6dd0bfb5695ef836832693eb",
+            "1.20.6,3839,AC610FA3D1420FE7DBE5BA98C6870B56A9BB737AE1919998F50E394345AFD275,85d168aa945471067e25c1ef5121fa00000e121f"
     })
     void nativeSaveKeepsAllFiveModsAndTheFullSavedBiomeVolume(String version, int dataVersion,
             String archiveHash, String sourceCommit) throws Exception {
@@ -40,10 +41,12 @@ class NamedForwardFixtureTest {
         assertEquals(source.get("native_states_sha256").getAsString(), digest(root.resolve("native-source-states.json")));
         assertEquals(source.get("native_biomes_sha256").getAsString(), digest(root.resolve("native-source-biomes.json")));
         assertEquals(sourceCommit, source.get("source_terrain_bop_commit").getAsString());
-        assertEquals(version.equals("1.20.1") ? 8 : 7, source.getAsJsonArray("source_artifacts").size());
+        assertEquals(version.equals("1.20.1") || version.equals("1.20.6") ? 8 : 7, source.getAsJsonArray("source_artifacts").size());
         assertEquals(2, source.getAsJsonObject("source_log_sha256").size());
         if (version.equals("1.20.1")) {
             assertEquals("forge-47.4.10", source.get("source_loader").getAsString());
+        } else if (version.equals("1.20.6")) {
+            assertEquals("forge-50.2.0", source.get("source_loader").getAsString());
         }
         if (version.equals("1.19.4")) {
             assertEquals(1, source.get("source_mud_wall_renames").getAsInt());

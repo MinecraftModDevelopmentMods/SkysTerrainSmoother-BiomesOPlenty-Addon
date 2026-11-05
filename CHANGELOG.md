@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.0.121011 (unreleased)
+
+- Bring Biomes O' Plenty terrain smoothing to Minecraft 1.21.1 on Forge.
+- Use the matching versions of the Sky mods and Biomes O' Plenty.
+
 ## 0.1.0.120061 (unreleased)
 
 - Bring Biomes O' Plenty smoothing and legacy piece recovery to Minecraft 1.20.6.

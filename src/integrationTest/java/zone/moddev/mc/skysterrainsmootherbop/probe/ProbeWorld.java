@@ -32,7 +32,7 @@ final class ProbeWorld {
         ChunkLoadTrace.active = Boolean.getBoolean("skysterrainsmoother.traceChunkLoads");
         try {
             queue(world, origin.getX() >> 4, origin.getZ() >> 4);
-            MinecraftForge.EVENT_BUS.post(new TickEvent.LevelTickEvent(LogicalSide.SERVER, TickEvent.Phase.END, world, () -> true));
+            MinecraftForge.EVENT_BUS.post(new TickEvent.LevelTickEvent.Post(LogicalSide.SERVER, world, () -> true));
         } finally {
             ChunkLoadTrace.active = false;
         }

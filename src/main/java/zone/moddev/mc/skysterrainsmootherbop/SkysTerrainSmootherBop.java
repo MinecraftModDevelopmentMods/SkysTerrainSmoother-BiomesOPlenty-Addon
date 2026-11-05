@@ -20,7 +20,7 @@ import zone.moddev.mc.skysbuildingpieces.api.BuildingPiecesApi;
 @Mod(SkysTerrainSmootherBop.ID)
 public final class SkysTerrainSmootherBop {
     public static final String ID = "skysterrainsmootherbop";
-    public static final String VERSION = "0.1.0.120061";
+    public static final String VERSION = "0.1.0.121011";
 
     public SkysTerrainSmootherBop(FMLJavaModLoadingContext context) {
         context.getModEventBus().addListener(this::setup);
@@ -47,13 +47,13 @@ public final class SkysTerrainSmootherBop {
                     } else {
                         palette.holder = new LegacySoilBlock(palette);
                     }
-                    registry.register(new ResourceLocation(palette.id), palette.holder);
+                    registry.register(ResourceLocation.parse(palette.id), palette.holder);
                 }
             });
 
             event.register(ForgeRegistries.Keys.ITEMS, registry -> {
                 for (LegacySoils.Palette palette : LegacySoils.PALETTES.values()) {
-                    registry.register(new ResourceLocation(palette.id),
+                    registry.register(ResourceLocation.parse(palette.id),
                             new BlockItem(palette.holder, new Item.Properties()));
                 }
 
@@ -64,7 +64,7 @@ public final class SkysTerrainSmootherBop {
                                 Component.translatable(Blocks.COARSE_DIRT.getDescriptionId()));
                     }
                 };
-                registry.register(new ResourceLocation(ID, "coarse_dirt_slab"), coarse);
+                registry.register(ResourceLocation.fromNamespaceAndPath(ID, "coarse_dirt_slab"), coarse);
                 CoarseDirtSlab.item = coarse;
                 BuildingPiecesApi.registerStateItems(CoarseDirtSlab.BLOCK, state -> coarse);
             });

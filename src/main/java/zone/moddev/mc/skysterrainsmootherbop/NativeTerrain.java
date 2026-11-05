@@ -18,7 +18,7 @@ final class NativeTerrain {
 
     static void register() {
         Direction[] directions = { Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST };
-        ResourceLocation coarseId = new ResourceLocation("minecraft:coarse_dirt");
+        ResourceLocation coarseId = ResourceLocation.parse("minecraft:coarse_dirt");
         if (!TerrainSmoothingApi.hasMaterial(coarseId)) {
             BlockState[] steps = new BlockState[4];
             BlockState[] corners = new BlockState[4];
@@ -48,7 +48,7 @@ final class NativeTerrain {
                 corners[direction] = BuildingPiecesApi.bottomPiece(material,
                         BuildingPiecesApi.TerrainShape.CORNER, directions[direction]);
             }
-            TerrainSmoothingApi.registerMaterial(new TerrainMaterial(new ResourceLocation(material),
+            TerrainSmoothingApi.registerMaterial(new TerrainMaterial(ResourceLocation.parse(material),
                     Collections.singleton(full), BuildingPiecesApi.bottomPiece(material,
                             BuildingPiecesApi.TerrainShape.SLAB, Direction.NORTH), steps, corners, false, null));
         }
