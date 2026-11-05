@@ -6,9 +6,7 @@
     "XXX"
   ],
   "key": {
-    "X": {
-      "item": "minecraft:mossy_cobblestone"
-    }
+    "X": "minecraft:mossy_cobblestone"
   },
   "result": {
     "id": "minecraft:mossy_cobblestone_slab",

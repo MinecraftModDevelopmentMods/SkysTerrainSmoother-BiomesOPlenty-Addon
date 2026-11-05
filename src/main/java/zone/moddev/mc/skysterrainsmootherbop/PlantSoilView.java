@@ -23,9 +23,26 @@ import net.minecraft.world.level.lighting.LevelLightEngine;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.util.TriState;
 
 /** Shows a plant the full soil beneath it while keeping its real surroundings. */
 record PlantSoilView(LevelReader world, BlockPos soilPosition, BlockState soil) implements LevelReader {
+    @Override
+    public net.minecraft.world.attribute.EnvironmentAttributeReader environmentAttributes() {
+        return world.environmentAttributes();
+    }
+
+    static TriState supports(BlockState soil, BlockGetter world, BlockPos position, Direction face,
+            BlockState plant) {
+        TriState support = soil.canSustainPlant(world, position, face, plant);
+        if (!support.isDefault() || !(world instanceof LevelReader level)) {
+            return support;
+        }
+        // Ask the plant about the full soil without changing the actual block.
+        return plant.canSurvive(new PlantSoilView(level, position, soil), position.relative(face))
+                ? TriState.TRUE : TriState.FALSE;
+    }
+
     @Override
     public BlockState getBlockState(BlockPos position) {
         return soilPosition.equals(position) ? soil : world.getBlockState(position);

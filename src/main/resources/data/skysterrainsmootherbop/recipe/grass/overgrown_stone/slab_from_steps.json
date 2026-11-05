@@ -7,9 +7,7 @@
     "X"
   ],
   "key": {
-    "X": {
-      "item": "skysbuildingpieces:mossy_cobblestone_horizontal_step"
-    }
+    "X": "skysbuildingpieces:mossy_cobblestone_horizontal_step"
   },
   "result": {
     "id": "minecraft:mossy_cobblestone_slab",

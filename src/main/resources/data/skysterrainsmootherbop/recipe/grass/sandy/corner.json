@@ -6,9 +6,7 @@
     "XX"
   ],
   "key": {
-    "X": {
-      "item": "skysbuildingpieces:grass_step"
-    }
+    "X": "skysbuildingpieces:grass_step"
   },
   "result": {
     "id": "skysbuildingpieces:grass_corner",

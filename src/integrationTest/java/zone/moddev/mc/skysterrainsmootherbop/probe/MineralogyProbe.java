@@ -1,11 +1,10 @@
 package zone.moddev.mc.skysterrainsmootherbop.probe;
 
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.fml.ModList;
 import zone.moddev.mc.skysterrainsmoother.SkysTerrainSmoother;
 import zone.moddev.mc.skysterrainsmoother.api.TerrainMaterial;
@@ -26,8 +25,8 @@ public final class MineralogyProbe {
             if (!material.mineralogy) {
                 continue;
             }
-            ResourceLocation slabId = ResourceLocation.fromNamespaceAndPath("mineralogy", material.id.getPath() + "_slab");
-            require(net.minecraft.core.registries.BuiltInRegistries.BLOCK.get(slabId) == material.slab.getBlock(), "native slab identity");
+            Identifier slabId = Identifier.fromNamespaceAndPath("mineralogy", material.id.getPath() + "_slab");
+            require(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getValue(slabId) == material.slab.getBlock(), "native slab identity");
             boolean bottom = false;
             for (Property<?> property : material.slab.getProperties()) {
                 if (property.getName().equals("facing")) {
@@ -38,7 +37,7 @@ public final class MineralogyProbe {
             for (int direction = 0; direction < 4; direction++) {
                 require(material.step(direction) != null && material.corner(direction) != null,
                         "built-in steps and corners exist in every direction");
-                require(BuiltInRegistries.BLOCK.getKey(material.step(direction).getBlock()).toString()
+                require(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(material.step(direction).getBlock()).toString()
                                 .startsWith("skysbuildingpieces:mineralogy_"),
                         "the core owns the rock pieces");
             }

@@ -1,5 +1,8 @@
 package zone.moddev.mc.skysterrainsmootherbop;
 
+import net.neoforged.neoforge.common.ItemAbilities;
+import net.neoforged.neoforge.common.ItemAbility;
+import net.minecraft.util.TriState;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
@@ -17,13 +20,13 @@ import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.ScheduledTickAccess;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.server.level.ServerLevel;
-import net.neoforged.neoforge.common.ItemAbilities;
-import net.neoforged.neoforge.common.ItemAbility;
-import net.neoforged.neoforge.common.util.TriState;
 import zone.moddev.mc.skysgrassslabs.init.ModBlocks;
 
 /** Retains the old coarse-soil slab without turning it into spreading dirt. */
@@ -31,12 +34,13 @@ public final class CoarseDirtSlab extends SlabBlock {
     private static final MapCodec<CoarseDirtSlab> CODEC = simpleCodec(CoarseDirtSlab::new);
 
     public static final String BLOCK_ID = SkysTerrainSmootherBop.ID + ":dirt_slab_00";
-    // Create the holder while the block registry is open.
+    // Forge creates block holders only while the block registry is open.
     public static CoarseDirtSlab BLOCK;
     static Item item;
 
     CoarseDirtSlab() {
         this(Properties.of().mapColor(MapColor.DIRT).strength(.5f).sound(SoundType.GRAVEL)
+                .setId(ResourceKey.create(Registries.BLOCK, Identifier.parse(BLOCK_ID)))
                 .noOcclusion().randomTicks());
     }
 
@@ -89,15 +93,16 @@ public final class CoarseDirtSlab extends SlabBlock {
     }
 
     @Override
-    public BlockState updateShape(BlockState state, Direction facing, BlockState neighbour,
-            LevelAccessor world, BlockPos position, BlockPos neighbourPosition) {
-        return super.updateShape(state, facing, neighbour, world, position, neighbourPosition)
+    public BlockState updateShape(BlockState state, LevelReader world, ScheduledTickAccess ticks,
+            BlockPos position, Direction facing, BlockPos neighbourPosition, BlockState neighbour,
+            RandomSource random) {
+        return super.updateShape(state, world, ticks, position, facing, neighbourPosition, neighbour, random)
                 .setValue(SnowyDirtBlock.SNOWY, snowy(world, position));
     }
 
     @Override
     public void tick(BlockState state, ServerLevel world, BlockPos position, RandomSource random) {
-        if (!world.isClientSide) {
+        if (!world.isClientSide()) {
             BlockState updated = state.setValue(SnowyDirtBlock.SNOWY, snowy(world, position));
             if (updated != state) {
                 world.setBlock(position, updated, 2 | 16);

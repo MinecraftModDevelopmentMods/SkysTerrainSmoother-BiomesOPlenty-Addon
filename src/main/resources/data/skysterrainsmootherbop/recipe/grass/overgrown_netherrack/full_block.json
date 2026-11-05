@@ -6,9 +6,7 @@
     "XX"
   ],
   "key": {
-    "X": {
-      "item": "skysbuildingpieces:netherrack_slab"
-    }
+    "X": "skysbuildingpieces:netherrack_slab"
   },
   "result": {
     "id": "minecraft:netherrack",

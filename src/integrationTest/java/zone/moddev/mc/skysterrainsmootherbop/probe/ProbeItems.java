@@ -21,12 +21,12 @@ final class ProbeItems {
     }
 
     static ItemStack read(ServerLevel world, CompoundTag data) {
-        return ItemStack.parse(world.registryAccess(), data)
+        return ItemStack.CODEC.parse(world.registryAccess().createSerializationContext(NbtOps.INSTANCE), data).result()
                 .orElseThrow(() -> new AssertionError("The recovered item could not be read: " + data));
     }
 
     static ItemStack readPreComponentStack(ServerLevel world, CompoundTag data) {
-        int targetVersion = net.minecraft.SharedConstants.getCurrentVersion().getDataVersion().getVersion();
+        int targetVersion = net.minecraft.SharedConstants.getCurrentVersion().dataVersion().version();
         CompoundTag converted = (CompoundTag) world.getServer().getFixerUpper().update(References.ITEM_STACK,
                 new Dynamic<>(NbtOps.INSTANCE, data), 3700, targetVersion).getValue();
         return read(world, converted);

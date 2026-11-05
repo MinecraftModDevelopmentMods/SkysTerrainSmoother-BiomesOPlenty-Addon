@@ -6,9 +6,7 @@
     "XXX"
   ],
   "key": {
-    "X": {
-      "item": "minecraft:grass_block"
-    }
+    "X": "minecraft:grass_block"
   },
   "result": {
     "id": "skysgrassslabs:grass_slab",

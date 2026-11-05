@@ -11,7 +11,7 @@ from native_client_log import audit, classify, classify_server
 
 LOGIN = ("[Server thread/INFO]: TerrainChecks logged in with entity id 21 at (0, 64, 0)\n"
          "[Server thread/INFO]: TerrainChecks joined the game")
-START = "[Server thread/INFO] [MinecraftServer/]: Preparing start region for dimension minecraft:overworld"
+START = "[Server thread/INFO] [MinecraftServer/]: Starting integrated minecraft server version 1.21.11"
 NOTICE = "[Thread-1/FATAL] [net.minecraftforge.common.ForgeConfig/CORE]: Forge config just got changed on the file system!"
 PAYLOAD = "[Client thread/ERROR] [net.minecraftforge.fml.network.simple.IndexedMessageCodec/SIMPLENET]: Received empty payload on channel fml:handshake"
 REGISTRY_NOTICE = ("[00:00:00] [main/ERROR] [net.minecraftforge.registries.GameData/REGISTRIES]: "
@@ -21,7 +21,7 @@ REGISTRY_NOTICE = ("[00:00:00] [main/ERROR] [net.minecraftforge.registries.GameD
 
 class NativeServerLogTest(unittest.TestCase):
     def test_notice_from_earlier_loader_does_not_pass(self):
-        startup = START + '\n[Server thread/INFO]: Done (1s)!'
+        startup = '[Server thread/INFO]: Preparing level "world"\n[Server thread/INFO]: Done (1s)!'
         self.assertEqual(classify_server(startup, "Debug log", True)["notices"], [])
         with self.assertRaisesRegex(ValueError, "Unexpected missing registry entries"):
             classify_server(REGISTRY_NOTICE + startup, "Debug log", True)
@@ -70,6 +70,17 @@ class NativeClientLogTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             classify("\n".join((START, LOGIN, "[STDERR/]: java.lang.IllegalStateException")), True)
 
+
+    def test_only_the_packaged_offline_authentication_notice_is_accepted(self):
+        auth = ("[00:00:00] [Download-2/ERROR] [minecraft/Minecraft]: Failed to fetch user properties\n"
+                "com.mojang.authlib.exceptions.InvalidCredentialsException: Status: 401")
+        log = "\n".join((auth, START, LOGIN))
+        self.assertEqual(classify(log, True, packaged_offline=True)["notices"],
+                         ["Failed to fetch user properties"])
+        with self.assertRaises(ValueError):
+            classify(log, True)
+        with self.assertRaises(ValueError):
+            classify(log.replace("Status: 401", "Status: 503"), True, packaged_offline=True)
 
 class NativeClientFilesTest(unittest.TestCase):
     def setUp(self):

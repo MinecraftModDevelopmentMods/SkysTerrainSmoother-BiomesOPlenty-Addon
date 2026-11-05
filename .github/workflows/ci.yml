@@ -225,7 +225,8 @@ jobs:
 
       - name: Build, test, and audit release artifacts
         run: >-
-          ./gradlew clean check build javadoc preparePackagedIntegrationProbe verifyReleaseArtifacts writeReleaseChecksums
+          ./gradlew clean --no-daemon --stacktrace
+          ./gradlew check build javadoc preparePackagedIntegrationProbe verifyReleaseArtifacts writeReleaseChecksums
           verifyEclipseProductionClasspath -PgrassSlabsDirectory=dependencies/grass -PbuildingPiecesDirectory=dependencies/pieces -PterrainDirectory=dependencies/terrain -PbuildingPiecesBopDirectory=dependencies/bopPieces --no-daemon --stacktrace
 
       - name: Replay artifact checks offline

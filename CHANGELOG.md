@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.0.121112
+
+- Bring the add-on to Minecraft 1.21.11 on NeoForge.
+- Keep matching coarse soil and rock transitions, and recover saved pieces from older BOP worlds.
+
 ## 0.1.0.121012
 
 - Bring Biomes O' Plenty terrain smoothing to Minecraft 1.21.1 on NeoForge.

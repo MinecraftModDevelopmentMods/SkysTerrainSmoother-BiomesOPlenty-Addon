@@ -1,6 +1,5 @@
 package zone.moddev.mc.skysterrainsmootherbop.probe;
 
-import net.minecraft.core.registries.BuiltInRegistries;
 import java.util.*;
 import java.security.MessageDigest;
 import net.minecraft.world.level.block.state.BlockState;
@@ -9,7 +8,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.neoforged.neoforge.common.NeoForge;
 import zone.moddev.mc.skysbuildingpieces.api.BuildingPiecesApi;
 import zone.moddev.mc.skysgrassslabs.api.GrassSlabsApi;
 import zone.moddev.mc.skysterrainsmoother.SkysTerrainSmoother;
@@ -206,7 +204,7 @@ final class LateTerrainProbe {
                                         128 + (blockZ >> 4));
 
                                 chunk.setBlockState(new BlockPos((origin << 4) + blockX, height, (128 << 4) + blockZ),
-                                        Blocks.GRASS_BLOCK.defaultBlockState(), false);
+                                        Blocks.GRASS_BLOCK.defaultBlockState(), 0);
                             }
                         }
                     }
@@ -222,7 +220,7 @@ final class LateTerrainProbe {
                                 BlockState state = world.getBlockState(
                                         new BlockPos((origin << 4) + blockX, blockY, (128 << 4) + blockZ));
 
-                                digest.update((BuiltInRegistries.BLOCK.getKey(state.getBlock()) + "/"
+                                digest.update((net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(state.getBlock()) + "/"
                                         + state.toString() + "\n").getBytes("UTF-8"));
                             }
                         }
