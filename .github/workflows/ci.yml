@@ -17,8 +17,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  cold-forge-bootstrap:
-    name: Cold NeoForge bootstrap
+  cold-neoforge-bootstrap:
+    name: Cold Forge bootstrap
     runs-on: ubuntu-latest
     timeout-minutes: 60
 
@@ -26,35 +26,23 @@ jobs:
       - name: Check out source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - name: Install pinned Java 25 ForgeGradle Mavenizer runtime
+      - name: Install pinned Java 21 compilation toolchain
         uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
         with:
           distribution: temurin
-          java-version: '25.0.3+9.0.LTS'
+          java-version: '21.0.7+6.0.LTS'
 
-      - name: Install pinned Java 8 compilation toolchain
+      - name: Install pinned Java 21 Gradle runtime
         uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
         with:
           distribution: temurin
-          java-version: '8.0.502+7'
-
-      - name: Install pinned Java 17 compilation toolchain
-        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
-        with:
-          distribution: temurin
-          java-version: '17.0.1+12'
-
-      - name: Install pinned Java 17 Gradle runtime
-        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
-        with:
-          distribution: temurin
-          java-version: '17.0.1+12'
+          java-version: '21.0.7+6.0.LTS'
 
       - name: Pin cold-cache production Java
         run: |
-          echo "SGS_JAVA17_HOME=$JAVA_HOME" >> "$GITHUB_ENV"
-          echo "SBP_JAVA17_HOME=$JAVA_HOME" >> "$GITHUB_ENV"
-          echo "STS_JAVA17_HOME=$JAVA_HOME" >> "$GITHUB_ENV"
+          echo "SGS_JAVA21_HOME=$JAVA_HOME" >> "$GITHUB_ENV"
+          echo "SBP_JAVA21_HOME=$JAVA_HOME" >> "$GITHUB_ENV"
+          echo "STS_JAVA21_HOME=$JAVA_HOME" >> "$GITHUB_ENV"
 
       - name: Read pinned dependency sources
         id: content
@@ -101,9 +89,13 @@ jobs:
           set -euo pipefail
           chmod +x dependencies/*/gradlew
           (cd dependencies/grass && ./gradlew assemble --no-daemon --stacktrace)
-          (cd dependencies/pieces && ./gradlew assemble -PgrassSlabsMainJar="$(realpath ../grass/build/libs/SkysGrassSlabs-1.2.0.120012.jar)" -PgrassSlabsDeobfJar="$(realpath ../grass/build/libs-dev/SkysGrassSlabs-1.2.0.120012-deobf.jar)" --no-daemon --stacktrace)
+          grass="$(sed -n 's/^grass.version=//p' gradle/content-dependencies.properties)"
+          grass_jar="$GITHUB_WORKSPACE/dependencies/grass/build/libs/SkysGrassSlabs-$grass.jar"
+          export ORG_GRADLE_PROJECT_grassSlabsMainJar="$grass_jar"
+          export ORG_GRADLE_PROJECT_grassSlabsDeobfJar="$grass_jar"
+          (cd dependencies/pieces && ./gradlew assemble --no-daemon --stacktrace)
           (cd dependencies/terrain && ./gradlew assemble -PgrassSlabsDirectory=../grass -PbuildingPiecesDirectory=../pieces --no-daemon --stacktrace)
-          (cd dependencies/bopPieces && ./gradlew assemble bopDevelopmentJar -PbuildingPiecesCoreDir=../pieces --no-daemon --stacktrace)
+          (cd dependencies/bopPieces && ./gradlew assemble verifyNativeBopDependencies -PbuildingPiecesCoreDir=../pieces --no-daemon --stacktrace)
 
       - name: Bootstrap NeoForge from an empty cache
         shell: bash
@@ -116,13 +108,14 @@ jobs:
           mkdir -p "$GRADLE_USER_HOME"
           chmod +x ./gradlew
           gradle_args=(
-            classes test -PgrassSlabsDirectory=dependencies/grass -PbuildingPiecesDirectory=dependencies/pieces -PterrainDirectory=dependencies/terrain -PbuildingPiecesBopDirectory=dependencies/bopPieces
+            classes test assemble verifyReleaseArtifacts writeReleaseChecksums -PgrassSlabsDirectory=dependencies/grass -PbuildingPiecesDirectory=dependencies/pieces -PterrainDirectory=dependencies/terrain -PbuildingPiecesBopDirectory=dependencies/bopPieces
             --no-daemon --no-build-cache --stacktrace --max-workers=2
-            -Dorg.gradle.java.installations.paths="$JAVA_HOME,$JAVA_HOME_17_X64,$JAVA_HOME_8_X64,$JAVA_HOME_25_X64"
+            -Dorg.gradle.java.installations.paths="$JAVA_HOME"
             -Dorg.gradle.java.installations.auto-detect=false
             -Dorg.gradle.java.installations.auto-download=false
           )
           ./gradlew "${gradle_args[@]}"
+          cp build/release/SHA256SUMS "$RUNNER_TEMP/terrain-bop-cold-SHA256SUMS"
 
       - name: Verify same-cache bootstrap offline
         shell: bash
@@ -131,13 +124,15 @@ jobs:
         run: |
           set -euo pipefail
           gradle_args=(
-            classes test -PgrassSlabsDirectory=dependencies/grass -PbuildingPiecesDirectory=dependencies/pieces -PterrainDirectory=dependencies/terrain -PbuildingPiecesBopDirectory=dependencies/bopPieces
+            classes test assemble verifyReleaseArtifacts writeReleaseChecksums -PgrassSlabsDirectory=dependencies/grass -PbuildingPiecesDirectory=dependencies/pieces -PterrainDirectory=dependencies/terrain -PbuildingPiecesBopDirectory=dependencies/bopPieces
             --rerun-tasks --offline --no-daemon --no-build-cache --stacktrace --max-workers=2
-            -Dorg.gradle.java.installations.paths="$JAVA_HOME,$JAVA_HOME_17_X64,$JAVA_HOME_8_X64,$JAVA_HOME_25_X64"
+            -Dorg.gradle.java.installations.paths="$JAVA_HOME"
             -Dorg.gradle.java.installations.auto-detect=false
             -Dorg.gradle.java.installations.auto-download=false
           )
+          ./gradlew clean --offline --no-daemon --no-build-cache
           ./gradlew "${gradle_args[@]}"
+          cmp build/release/SHA256SUMS "$RUNNER_TEMP/terrain-bop-cold-SHA256SUMS"
 
   build:
     name: Build, test, and audit
@@ -162,30 +157,11 @@ jobs:
           echo "gradle_java_version=$(value gradle_java_toolchain_version)" >> "$GITHUB_OUTPUT"
           echo "artifact_prefix=SkysTerrainSmoother-BiomesOPlenty-Addon-$(value mod_version)" >> "$GITHUB_OUTPUT"
 
-      - name: Install ForgeGradle Mavenizer Java
-        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
-        with:
-          distribution: temurin
-          java-version: '25.0.3+9.0.LTS'
-
       - name: Install target Java toolchain
         uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
         with:
           distribution: temurin
           java-version: ${{ steps.target.outputs.java_setup_version }}
-
-      - name: Pin production Java
-        if: steps.target.outputs.java_version == '17'
-        run: |
-          echo "SGS_JAVA17_HOME=$JAVA_HOME" >> "$GITHUB_ENV"
-          echo "SBP_JAVA17_HOME=$JAVA_HOME" >> "$GITHUB_ENV"
-          echo "STS_JAVA17_HOME=$JAVA_HOME" >> "$GITHUB_ENV"
-
-      - name: Install Java for Gradle
-        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
-        with:
-          distribution: temurin
-          java-version: ${{ steps.target.outputs.gradle_java_version }}
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@9c971963bec38e04b3d30dcc455b5382be2fdbfb # v6
@@ -236,21 +212,41 @@ jobs:
           set -euo pipefail
           chmod +x dependencies/*/gradlew
           (cd dependencies/grass && ./gradlew assemble --no-daemon --stacktrace)
-          (cd dependencies/pieces && ./gradlew assemble -PgrassSlabsMainJar="$(realpath ../grass/build/libs/SkysGrassSlabs-1.2.0.120012.jar)" -PgrassSlabsDeobfJar="$(realpath ../grass/build/libs-dev/SkysGrassSlabs-1.2.0.120012-deobf.jar)" --no-daemon --stacktrace)
+          grass="$(sed -n 's/^grass.version=//p' gradle/content-dependencies.properties)"
+          grass_jar="$GITHUB_WORKSPACE/dependencies/grass/build/libs/SkysGrassSlabs-$grass.jar"
+          export ORG_GRADLE_PROJECT_grassSlabsMainJar="$grass_jar"
+          export ORG_GRADLE_PROJECT_grassSlabsDeobfJar="$grass_jar"
+          (cd dependencies/pieces && ./gradlew assemble --no-daemon --stacktrace)
           (cd dependencies/terrain && ./gradlew assemble -PgrassSlabsDirectory=../grass -PbuildingPiecesDirectory=../pieces --no-daemon --stacktrace)
-          (cd dependencies/bopPieces && ./gradlew assemble bopDevelopmentJar -PbuildingPiecesCoreDir=../pieces --no-daemon --stacktrace)
+          (cd dependencies/bopPieces && ./gradlew assemble verifyNativeBopDependencies -PbuildingPiecesCoreDir=../pieces --no-daemon --stacktrace)
 
       - name: Make the wrapper executable
         run: chmod +x ./gradlew
 
       - name: Build, test, and audit release artifacts
         run: >-
-          ./gradlew clean check integrationTest build javadoc verifyReleaseArtifacts writeReleaseChecksums
+          ./gradlew clean check build javadoc preparePackagedIntegrationProbe verifyReleaseArtifacts writeReleaseChecksums
           verifyEclipseProductionClasspath -PgrassSlabsDirectory=dependencies/grass -PbuildingPiecesDirectory=dependencies/pieces -PterrainDirectory=dependencies/terrain -PbuildingPiecesBopDirectory=dependencies/bopPieces --no-daemon --stacktrace
 
       - name: Replay artifact checks offline
         run: >-
           ./gradlew assemble verifyReleaseArtifacts writeReleaseChecksums -PgrassSlabsDirectory=dependencies/grass -PbuildingPiecesDirectory=dependencies/pieces -PterrainDirectory=dependencies/terrain -PbuildingPiecesBopDirectory=dependencies/bopPieces --offline --no-daemon --stacktrace
+
+      - name: Check fresh BOP terrain and reload in NeoGradle
+        shell: bash
+        run: |
+          set -euo pipefail
+          common=(
+            --mode server --directory build/ci-generation-run
+            --probe build/integration-test-mod/skysterrainsmootherbop-integration-test.jar
+            --gradle-argument=-PgrassSlabsDirectory=dependencies/grass
+            --gradle-argument=-PbuildingPiecesDirectory=dependencies/pieces
+            --gradle-argument=-PterrainDirectory=dependencies/terrain
+            --gradle-argument=-PbuildingPiecesBopDirectory=dependencies/bopPieces
+          )
+          for dependency in run/mods/*.jar; do common+=(--extra-mod "$dependency"); done
+          python3 tools/run_development_checks.py "${common[@]}" --phase fresh --fresh
+          python3 tools/run_development_checks.py "${common[@]}" --phase reload
 
       - name: Upload audited release candidate
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
@@ -259,9 +255,9 @@ jobs:
           if-no-files-found: error
           retention-days: 30
           path: |
-            build/libs/SkysTerrainSmoother-BiomesOPlenty-Addon-0.1.0.120012.jar
-            build/libs/SkysTerrainSmoother-BiomesOPlenty-Addon-0.1.0.120012-sources.jar
-            build/libs/SkysTerrainSmoother-BiomesOPlenty-Addon-0.1.0.120012-javadoc.jar
+            build/libs/SkysTerrainSmoother-BiomesOPlenty-Addon-0.1.0.120062.jar
+            build/libs/SkysTerrainSmoother-BiomesOPlenty-Addon-0.1.0.120062-sources.jar
+            build/libs/SkysTerrainSmoother-BiomesOPlenty-Addon-0.1.0.120062-javadoc.jar
             build/release/SHA256SUMS
             CHANGELOG.md
 

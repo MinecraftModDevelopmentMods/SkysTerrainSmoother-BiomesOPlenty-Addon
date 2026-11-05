@@ -1,30 +1,29 @@
 # Building from source
 
-Build with the Gradle 9.6.1 wrapper and Temurin 17.0.1+12. Set
-STS_JAVA17_HOME to that Java installation. Java 25 is needed by ForgeGradle's
-Mavenizer tool; Gradle, compilation and Minecraft use Java 17.
+Use the Gradle 9.2.1 wrapper and Temurin 21.0.7+6. This branch builds with
+NeoGradle 7.1.38 for NeoForge 20.6.139. The log checks use Python 3.11 or newer.
 
-Build the exact four clean source commits in gradle/content-dependencies.properties.
-Run assemble for Grass Slabs and Building Pieces, then Terrain Smoother and the
-Building Pieces BOP add-on. Also run the latter's bopDevelopmentJar task, which
-prepares BOP and TerraBlender for development. The
-build verifies their commits, versions and main/development jar hashes. These
-dependencies are checked before compilation and development runs.
+Build the four commits in `gradle/content-dependencies.properties` with
+`assemble`. Build Grass Slabs and Building Pieces first, then the Building
+Pieces BOP add-on and Terrain Smoother. The same jars are used for development
+and packaged games. The build checks their commits and hashes and verifies
+the pinned BOP, TerraBlender and GlitchCore downloads.
 
-The default layout uses sibling version folders. Alternative locations use
--PgrassSlabsDirectory, -PbuildingPiecesDirectory, -PterrainDirectory and
--PbuildingPiecesBopDirectory. Normal client/server launches include only the
-production mod and these matching dependencies, not unit tests or runtime probes.
+By default the checkouts sit in sibling version folders. To use a different
+layout, pass `-PgrassSlabsDirectory`, `-PbuildingPiecesDirectory`,
+`-PbuildingPiecesBopDirectory` and `-PterrainDirectory` with their paths.
 
-Run clean separately, then check build javadoc genEclipseRuns eclipse
-verifyEclipseProductionClasspath verifyReleaseArtifacts writeReleaseChecksums.
-Packaged checks can load the sealed 1.12.2 and 1.14.4 through 1.19.4 family
-fixtures. They verify first load and reload, including saved biomes, states,
-counters and sidecars. Run tools/run_packaged_checks.py --help for the fixture
-and client/server options. Archive old disposable runtime evidence before
-repeating a check.
+```text
+gradlew check build javadoc verifyReleaseArtifacts writeReleaseChecksums
+gradlew verifyEclipseProductionClasspath
+```
 
-Development uses mapped BOP bytes from the pinned Building Pieces BOP build,
-including mapped access rules for BOP and TerraBlender. Packaged runs use
-their unchanged public jars. No dependency classes or textures are bundled in
-this mod.
+If Python isn't on your path, pass `-PpythonExecutable=<python>`. Eclipse
+launches use the processed resources and keep the tests out of ordinary play.
+The Mineralogy launches have their own game folder and use the pinned
+NeoForge Mineralogy and OreSpawn jars.
+
+Use `preparePackagedIntegrationProbe` to build the disposable runtime probe.
+The tools in `tools/` check native games and saved fixtures without changing
+the original worlds. Use a fresh directory under `build/` for each first
+load so older logs remain available.

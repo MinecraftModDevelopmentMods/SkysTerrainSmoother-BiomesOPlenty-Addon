@@ -11,19 +11,18 @@ class PublicationContractTest {
     void hostedBuildsPinTheDeclaredProductionToolchainBeforeStartingGradle() throws Exception {
         java.util.Properties metadata = new java.util.Properties();
         metadata.load(new java.io.StringReader(text("gradle.properties")));
-        assertEquals("17.0.1+12", metadata.getProperty("java_toolchain_version"));
-        assertEquals("17.0.1+12", metadata.getProperty("gradle_java_toolchain_version"));
+        assertEquals("21.0.7+6", metadata.getProperty("java_toolchain_version"));
+        assertEquals("21.0.7+6", metadata.getProperty("gradle_java_toolchain_version"));
+        assertEquals("21.0.7+6.0.LTS", metadata.getProperty("java_setup_version"));
         for (String name : new String[] { "ci.yml", "codeql-analysis.yml" }) {
             String workflow = text(".github/workflows/" + name);
             int install = workflow.indexOf("- name: Install target Java toolchain");
-            int pin = workflow.indexOf("- name: Pin production Java");
-            int gradle = workflow.indexOf("- name: Install Java for Gradle", pin);
-            assertTrue(install >= 0 && install < pin && pin < gradle, name);
-            assertTrue(workflow.substring(install, pin).contains("steps.target.outputs.java_setup_version"));
-            assertTrue(workflow.substring(pin, gradle).contains("STS_JAVA17_HOME=$JAVA_HOME"));
+            int build = workflow.indexOf("./gradlew", install);
+            assertTrue(install >= 0 && install < build, name);
+            assertTrue(workflow.substring(install, build).contains("steps.target.outputs.java_setup_version"));
         }
         String ci = text(".github/workflows/ci.yml");
-        assertTrue(ci.contains("java-version: '17.0.1+12'"));
+        assertTrue(ci.contains("java-version: '21.0.7+6.0.LTS'"));
         assertEquals("neoforge", metadata.getProperty("loader_name"));
         assertTrue(ci.contains("Bootstrap NeoForge from an empty cache"));
         assertTrue(ci.contains("-PterrainDirectory=dependencies/terrain"));
@@ -85,7 +84,10 @@ class PublicationContractTest {
         assertTrue(ciWorkflow.contains("  push:"));
         assertTrue(ciWorkflow.contains("  pull_request:"));
         assertTrue(ciWorkflow.contains("if-no-files-found: error"));
-        assertTrue(ciWorkflow.contains("integrationTest"));
+        assertTrue(ciWorkflow.contains("preparePackagedIntegrationProbe"));
+        assertTrue(ciWorkflow.contains("tools/run_development_checks.py"));
+        assertTrue(ciWorkflow.contains("--phase fresh --fresh"));
+        assertTrue(ciWorkflow.contains("--phase reload"));
         assertTrue(ciWorkflow.contains("--offline"));
     }
 

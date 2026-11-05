@@ -1,6 +1,6 @@
 package zone.moddev.mc.skysterrainsmootherbop.probe;
 
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraft.core.registries.BuiltInRegistries;
 import java.util.*;
 import java.security.MessageDigest;
 import net.minecraft.world.level.block.state.BlockState;
@@ -9,7 +9,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.neoforge.common.NeoForge;
 import zone.moddev.mc.skysbuildingpieces.api.BuildingPiecesApi;
 import zone.moddev.mc.skysgrassslabs.api.GrassSlabsApi;
 import zone.moddev.mc.skysterrainsmoother.SkysTerrainSmoother;
@@ -101,7 +101,7 @@ final class LateTerrainProbe {
                     checks += 4;
 
                     // Small grass may give way in this tracked fresh owner; trees and other occupied blocks may not.
-                    for (BlockState occupied : new BlockState[] { Blocks.GRASS.defaultBlockState(),
+                    for (BlockState occupied : new BlockState[] { Blocks.SHORT_GRASS.defaultBlockState(),
                             Blocks.OAK_SAPLING.defaultBlockState(),
                             Blocks.WATER.defaultBlockState(), Blocks.GLASS.defaultBlockState() }) {
                         fixture(world, floor, Blocks.GRAVEL.defaultBlockState());
@@ -110,7 +110,7 @@ final class LateTerrainProbe {
                         world.setBlock(floor.offset(DX[direction], 1, DZ[direction]), clay, 2);
                         world.setBlock(floor.above(), occupied, 2);
                         post(world, owner);
-                        boolean replacePlant = occupied.getBlock() == Blocks.GRASS
+                        boolean replacePlant = occupied.getBlock() == Blocks.SHORT_GRASS
                                 && GrassSlabsApi.grassGenerationAllowed();
                         RuntimeProbe.require(world.getBlockState(floor.above()).equals(replacePlant ? expected : occupied),
                                 "late pass only replaces small grass at a valid transition: " + occupied);
@@ -222,7 +222,7 @@ final class LateTerrainProbe {
                                 BlockState state = world.getBlockState(
                                         new BlockPos((origin << 4) + blockX, blockY, (128 << 4) + blockZ));
 
-                                digest.update((ForgeRegistries.BLOCKS.getKey(state.getBlock()) + "/"
+                                digest.update((BuiltInRegistries.BLOCK.getKey(state.getBlock()) + "/"
                                         + state.toString() + "\n").getBytes("UTF-8"));
                             }
                         }

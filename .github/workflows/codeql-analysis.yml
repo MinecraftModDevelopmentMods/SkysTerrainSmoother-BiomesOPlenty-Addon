@@ -40,30 +40,11 @@ jobs:
           echo "gradle_java_version=$(value gradle_java_toolchain_version)" >> "$GITHUB_OUTPUT"
           echo "artifact_prefix=SkysTerrainSmoother-BiomesOPlenty-Addon-$(value mod_version)" >> "$GITHUB_OUTPUT"
 
-      - name: Install ForgeGradle Mavenizer Java
-        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
-        with:
-          distribution: temurin
-          java-version: '25.0.3+9.0.LTS'
-
       - name: Install target Java toolchain
         uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
         with:
           distribution: temurin
           java-version: ${{ steps.target.outputs.java_setup_version }}
-
-      - name: Pin production Java
-        if: steps.target.outputs.java_version == '17'
-        run: |
-          echo "SGS_JAVA17_HOME=$JAVA_HOME" >> "$GITHUB_ENV"
-          echo "SBP_JAVA17_HOME=$JAVA_HOME" >> "$GITHUB_ENV"
-          echo "STS_JAVA17_HOME=$JAVA_HOME" >> "$GITHUB_ENV"
-
-      - name: Install Java for Gradle
-        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
-        with:
-          distribution: temurin
-          java-version: ${{ steps.target.outputs.gradle_java_version }}
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@9c971963bec38e04b3d30dcc455b5382be2fdbfb # v6
@@ -114,9 +95,13 @@ jobs:
           set -euo pipefail
           chmod +x dependencies/*/gradlew
           (cd dependencies/grass && ./gradlew assemble --no-daemon --stacktrace)
-          (cd dependencies/pieces && ./gradlew assemble -PgrassSlabsMainJar="$(realpath ../grass/build/libs/SkysGrassSlabs-1.2.0.120012.jar)" -PgrassSlabsDeobfJar="$(realpath ../grass/build/libs-dev/SkysGrassSlabs-1.2.0.120012-deobf.jar)" --no-daemon --stacktrace)
+          grass="$(sed -n 's/^grass.version=//p' gradle/content-dependencies.properties)"
+          grass_jar="$GITHUB_WORKSPACE/dependencies/grass/build/libs/SkysGrassSlabs-$grass.jar"
+          export ORG_GRADLE_PROJECT_grassSlabsMainJar="$grass_jar"
+          export ORG_GRADLE_PROJECT_grassSlabsDeobfJar="$grass_jar"
+          (cd dependencies/pieces && ./gradlew assemble --no-daemon --stacktrace)
           (cd dependencies/terrain && ./gradlew assemble -PgrassSlabsDirectory=../grass -PbuildingPiecesDirectory=../pieces --no-daemon --stacktrace)
-          (cd dependencies/bopPieces && ./gradlew assemble bopDevelopmentJar -PbuildingPiecesCoreDir=../pieces --no-daemon --stacktrace)
+          (cd dependencies/bopPieces && ./gradlew assemble verifyNativeBopDependencies -PbuildingPiecesCoreDir=../pieces --no-daemon --stacktrace)
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@db488ddef3bf6cb639b32c2e9a7c0a7ea8271d28 # v4

@@ -1,6 +1,6 @@
 package zone.moddev.mc.skysterrainsmootherbop;
 
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraft.core.registries.BuiltInRegistries;
 import java.util.Collections;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.Direction;
@@ -35,7 +35,7 @@ final class NativeTerrain {
         for (String rock : new String[] { "crag_rock", "limestone", "shale", "siltstone" }) {
             String material = "biomesoplenty:" + rock;
             BlockState full = Pieces.nativeState(Catalogue.INSTANCE.materials.get(material), "full");
-            ResourceLocation resolved = ForgeRegistries.BLOCKS.getKey(full.getBlock());
+            ResourceLocation resolved = BuiltInRegistries.BLOCK.getKey(full.getBlock());
             // The core owns Mineralogy, including its disabled or unavailable slab forms.
             if (resolved.getNamespace().equals("mineralogy") || TerrainSmoothingApi.hasMaterial(resolved)) {
                 continue;

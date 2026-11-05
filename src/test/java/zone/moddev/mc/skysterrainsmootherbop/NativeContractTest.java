@@ -81,9 +81,9 @@ class NativeContractTest {
             assertTrue(Files.isRegularFile(assets.resolve("models/item/" + name + ".json")));
         }
         JsonObject pack = read(RESOURCES.resolve("pack.mcmeta")).getAsJsonObject().getAsJsonObject("pack");
-        assertEquals(15, pack.get("pack_format").getAsInt());
-        assertEquals(15, pack.get("forge:resource_pack_format").getAsInt());
-        assertEquals(15, pack.get("forge:data_pack_format").getAsInt());
+        assertEquals(32, pack.get("pack_format").getAsInt());
+        assertEquals(32, pack.getAsJsonObject("supported_formats").get("min_inclusive").getAsInt());
+        assertEquals(41, pack.getAsJsonObject("supported_formats").get("max_inclusive").getAsInt());
     }
 
     @Test
@@ -114,29 +114,29 @@ class NativeContractTest {
 
     @Test
     void nativeMetadataKeepsAllRequiredDependenciesAndNoExtraTransformer() throws Exception {
-        String metadata = text(RESOURCES.resolve("META-INF/mods.toml"));
-        for (String mod : new String[] { "forge", "minecraft", "skysgrassslabs", "skysbuildingpieces",
+        String metadata = text(RESOURCES.resolve("META-INF/neoforge.mods.toml"));
+        for (String mod : new String[] { "neoforge", "minecraft", "skysgrassslabs", "skysbuildingpieces",
                 "skysbuildingpiecesbop", "skysterrainsmoother", "biomesoplenty" }) {
             assertTrue(metadata.contains("modId=\"" + mod + "\""));
         }
-        assertTrue(metadata.contains("[18.0.0.598]"));
+        assertTrue(metadata.contains("[18.4.0.8]"));
         assertFalse(Files.exists(RESOURCES.resolve("META-INF/coremods.json")));
         assertFalse(Files.exists(RESOURCES.resolve("mcmod.info")));
     }
 
     @Test
-    void developmentLaunchesKeepAllMappedDependenciesAndTheirAccessRules() throws Exception {
+    void developmentLaunchesUseTheSamePinnedBopJarsAsPackagedGames() throws Exception {
         String build = text(Paths.get("build.gradle"));
-        assertTrue(build.contains("systemProperty 'mixin.env.disableRefMap', 'true'"));
-        assertTrue(build.contains("accessTransformers.from(mappedAccessRules)"));
-        assertTrue(build.contains("bopPiecesDevelopmentJar, bopDevelopmentJar, terraBlenderDevelopmentJar"));
+        assertFalse(build.contains("mixin.env.disableRefMap"));
+        assertFalse(build.contains("mappedAccessRules"));
+        assertTrue(build.contains("bopPiecesDevelopmentJar, bopDevelopmentJar, terraBlenderDevelopmentJar, glitchCoreDevelopmentJar"));
         String launcher = text(Paths.get("tools/run_packaged_checks.py"));
         assertFalse(launcher.contains("mixin.env.disableRefMap"), "Public jars retain their own refmaps");
         java.util.Properties lock = new java.util.Properties();
         lock.load(new java.io.StringReader(text(Paths.get("gradle/content-dependencies.properties"))));
-        for (String name : new String[] { "bop", "terrablender" }) {
+        for (String name : new String[] { "bop", "terrablender", "glitchcore" }) {
             assertTrue(lock.getProperty(name + ".sha256").matches("[0-9A-F]{64}"));
-            assertTrue(lock.getProperty(name + ".development.sha256").matches("[0-9A-F]{64}"));
+            assertEquals(lock.getProperty(name + ".sha256"), lock.getProperty(name + ".development.sha256"));
         }
     }
 

@@ -1,6 +1,6 @@
 package zone.moddev.mc.skysterrainsmootherbop.probe;
 
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -24,7 +24,7 @@ final class BopRecoveryChecks {
             String material = "biomesoplenty:" + rock;
             BlockState full = Pieces.nativeState(
                     zone.moddev.mc.skysbuildingpieces.catalogue.Catalogue.INSTANCE.materials.get(material), "full");
-            boolean mineralogyOwnsRock = ForgeRegistries.BLOCKS.getKey(full.getBlock()).getNamespace().equals("mineralogy");
+            boolean mineralogyOwnsRock = BuiltInRegistries.BLOCK.getKey(full.getBlock()).getNamespace().equals("mineralogy");
             RuntimeProbe.require(zone.moddev.mc.skysterrainsmoother.api.TerrainSmoothingApi
                             .hasMaterial(new net.minecraft.resources.ResourceLocation(material)) != mineralogyOwnsRock,
                     "BOP rock mappings defer to Mineralogy without bypassing its configuration");
@@ -53,7 +53,7 @@ final class BopRecoveryChecks {
                 RuntimeProbe.require(!target.hasBlockEntity() && target.getFluidState().isEmpty(),
                         "Recovered pieces are dry and have no block entity");
                 RuntimeProbe.require(target.getBlock() == zone.moddev.mc.skysterrainsmootherbop.CoarseDirtSlab.BLOCK
-                                || !ForgeRegistries.BLOCKS.getKey(target.getBlock()).getNamespace().equals("skysterrainsmootherbop"),
+                                || !BuiltInRegistries.BLOCK.getKey(target.getBlock()).getNamespace().equals("skysterrainsmootherbop"),
                         "A removed soil becomes an available playable piece");
                 int orientation = metadata % palette.orientations;
                 int lower = palette.shape == Shape.SLAB ? 15
@@ -91,9 +91,11 @@ final class BopRecoveryChecks {
                 root.put("Items", nested);
                 LegacySoils.recover(root);
                 ItemStack expected = Pieces.stack(target, 23);
-                ItemStack actual = ItemStack.of(stack);
+                ItemStack actual = ProbeItems.readPreComponentStack(world, stack);
                 RuntimeProbe.require(actual.getItem() == expected.getItem() && actual.getCount() == 23,
                         "Nested inventory identity and count survive");
+                RuntimeProbe.require(ProbeItems.custom(actual).equals(custom),
+                        "Nested inventory custom data survives the native item conversion");
                 RuntimeProbe.require(stack.getByte("Slot") == 7 && stack.getCompound("tag").equals(custom),
                         "Inventory slot and unrelated custom NBT survive");
                 CompoundTag once = root.copy();
@@ -152,8 +154,9 @@ final class BopRecoveryChecks {
                     "A count outside the saved-byte range stops without changing the stack");
         }
         int recipes = 0;
-        for (net.minecraft.world.item.crafting.Recipe<?> recipe : world.getRecipeManager().getRecipes()) {
-            if (!recipe.getId().getNamespace().equals("skysterrainsmootherbop")) {
+        for (var holder : world.getRecipeManager().getRecipes()) {
+            var recipe = holder.value();
+            if (!holder.id().getNamespace().equals("skysterrainsmootherbop")) {
                 continue;
             }
             RuntimeProbe.require(!recipe.isSpecial() && !recipe.getResultItem(world.registryAccess()).isEmpty(),

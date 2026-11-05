@@ -103,11 +103,9 @@ class NativeRegistryNoticeProofTest {
                 JsonObject biomeMappings = mappings.getAsJsonObject("minecraft:worldgen/biome");
                 checkBiomeCensus(contract, biomeMappings, proof);
                 if (neo47) {
-                    java.util.Properties lock = new java.util.Properties();
-                    try (var input = Files.newInputStream(Paths.get("gradle/content-dependencies.properties"))) {
-                        lock.load(input);
-                    }
-                    assertEquals(lock.getProperty("bop.sha256"), proof.get("target_bop_jar_sha256").getAsString());
+                    // This receipt is for the earlier NeoForge 47 run with BOP 18.0.0.598.
+                    assertEquals("71EB3DDB35C1C2DB6C15F80F001A6655508435A5F3828C7E2F666EADA616C19D",
+                            proof.get("target_bop_jar_sha256").getAsString());
                     assertEquals(0, proof.get("added_biome_saved_cells").getAsInt());
                     var added = proof.getAsJsonArray("added_live_bop_biomes");
                     assertFalse(added.isEmpty());
@@ -134,7 +132,7 @@ class NativeRegistryNoticeProofTest {
                             byte[] bytes = readAll(input);
                             CompoundTag root;
                             if (bytes.length >= 2 && (bytes[0] & 255) == 31 && (bytes[1] & 255) == 139) {
-                                root = NbtIo.readCompressed(new ByteArrayInputStream(bytes));
+                                root = NbtIo.readCompressed(new ByteArrayInputStream(bytes), net.minecraft.nbt.NbtAccounter.unlimitedHeap());
                             } else {
                                 // Older forced-chunk data is native, uncompressed NBT.
                                 root = NbtIo.read(new DataInputStream(new ByteArrayInputStream(bytes)));

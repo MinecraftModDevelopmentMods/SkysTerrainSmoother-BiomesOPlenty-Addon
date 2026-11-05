@@ -7,38 +7,38 @@ import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegisterEvent;
+import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.registries.RegisterEvent;
 import zone.moddev.mc.skysbuildingpieces.api.BuildingPiecesApi;
 
 /** Keeps old BOP terrain pieces recoverable and adds the remaining rock mappings. */
 @Mod(SkysTerrainSmootherBop.ID)
 public final class SkysTerrainSmootherBop {
     public static final String ID = "skysterrainsmootherbop";
-    public static final String VERSION = "0.1.0.120012";
+    public static final String VERSION = "0.1.0.120062";
 
-    public SkysTerrainSmootherBop() {
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+    public SkysTerrainSmootherBop(IEventBus modBus) {
+        modBus.addListener(this::setup);
     }
 
     private void setup(FMLCommonSetupEvent event) {
         NativeTerrain.register();
     }
 
-    @Mod.EventBusSubscriber(modid = ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+    @EventBusSubscriber(modid = ID, bus = EventBusSubscriber.Bus.MOD)
     public static final class Registries {
         private Registries() {
         }
 
         @SubscribeEvent
         public static void register(RegisterEvent event) {
-            event.register(ForgeRegistries.Keys.BLOCKS, registry -> {
-                // The content catalogue is ready by the time Forge opens its registries.
+            event.register(net.minecraft.core.registries.Registries.BLOCK, registry -> {
+                // The content catalogue is ready by the time NeoForge opens its registries.
                 LegacySoils.register();
                 for (LegacySoils.Palette palette : LegacySoils.PALETTES.values()) {
                     if (palette.id.equals(CoarseDirtSlab.BLOCK_ID)) {
@@ -51,7 +51,7 @@ public final class SkysTerrainSmootherBop {
                 }
             });
 
-            event.register(ForgeRegistries.Keys.ITEMS, registry -> {
+            event.register(net.minecraft.core.registries.Registries.ITEM, registry -> {
                 for (LegacySoils.Palette palette : LegacySoils.PALETTES.values()) {
                     registry.register(new ResourceLocation(palette.id),
                             new BlockItem(palette.holder, new Item.Properties()));

@@ -1,13 +1,16 @@
 package zone.moddev.mc.skysterrainsmootherbop;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.SnowyDirtBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.SlabType;
@@ -18,18 +21,45 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.server.level.ServerLevel;
-import zone.moddev.mc.skysgrassslabs.block.LegacySlabBlock;
+import net.neoforged.neoforge.common.ToolAction;
+import net.neoforged.neoforge.common.ToolActions;
+import zone.moddev.mc.skysgrassslabs.init.ModBlocks;
 
 /** Retains the old coarse-soil slab without turning it into spreading dirt. */
-public final class CoarseDirtSlab extends LegacySlabBlock {
+public final class CoarseDirtSlab extends SlabBlock {
+    private static final MapCodec<CoarseDirtSlab> CODEC = simpleCodec(CoarseDirtSlab::new);
+
     public static final String BLOCK_ID = SkysTerrainSmootherBop.ID + ":dirt_slab_00";
     // Forge creates block holders only while the block registry is open.
     public static CoarseDirtSlab BLOCK;
     static Item item;
 
     CoarseDirtSlab() {
-        super(MapColor.DIRT, SoundType.GRAVEL, .5f, true);
+        this(Properties.of().mapColor(MapColor.DIRT).strength(.5f).sound(SoundType.GRAVEL)
+                .noOcclusion().randomTicks());
+    }
+
+    private CoarseDirtSlab(Properties properties) {
+        super(properties);
         registerDefaultState(defaultBlockState().setValue(SnowyDirtBlock.SNOWY, false));
+    }
+
+    @Override
+    public MapCodec<CoarseDirtSlab> codec() {
+        return CODEC;
+    }
+
+    @Override
+    public BlockState getToolModifiedState(BlockState state, UseOnContext context, ToolAction action,
+            boolean simulate) {
+        if (action != ToolActions.SHOVEL_FLATTEN || !context.getItemInHand().canPerformAction(action)
+                || state.getValue(WATERLOGGED)) {
+            return super.getToolModifiedState(state, context, action, simulate);
+        }
+        return state.getValue(TYPE) == SlabType.DOUBLE
+                ? Blocks.DIRT_PATH.defaultBlockState()
+                : ModBlocks.PATH_SLAB.get().defaultBlockState()
+                        .setValue(TYPE, state.getValue(TYPE)).setValue(WATERLOGGED, false);
     }
 
     @Override
@@ -76,7 +106,7 @@ public final class CoarseDirtSlab extends LegacySlabBlock {
 
     @Override
     public boolean canSustainPlant(BlockState state, BlockGetter world, BlockPos position, Direction face,
-            net.minecraftforge.common.IPlantable plant) {
+            net.neoforged.neoforge.common.IPlantable plant) {
         BlockState full = Blocks.COARSE_DIRT.defaultBlockState();
         return state.getValue(TYPE) == SlabType.TOP && face == Direction.UP
                 && full.getBlock().canSustainPlant(full, world, position, face, plant);

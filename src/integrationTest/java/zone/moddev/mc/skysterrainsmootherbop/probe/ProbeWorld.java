@@ -7,10 +7,9 @@ import net.minecraft.core.SectionPos;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.DataLayer;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.level.ChunkEvent;
-import net.minecraftforge.fml.LogicalSide;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.neoforged.neoforge.event.level.ChunkEvent;
 import zone.moddev.mc.skysterrainsmoother.SkysTerrainSmoother;
 
 /** Native events and controlled fixture writes, used only by the runtime checks. */
@@ -25,14 +24,14 @@ final class ProbeWorld {
     }
 
     static void queue(Level world, int chunkX, int chunkZ) {
-        MinecraftForge.EVENT_BUS.post(new ChunkEvent.Load(world.getChunk(chunkX, chunkZ), false));
+        NeoForge.EVENT_BUS.post(new ChunkEvent.Load(world.getChunk(chunkX, chunkZ), false));
     }
 
     static void repair(Level world, BlockPos origin) {
         ChunkLoadTrace.active = Boolean.getBoolean("skysterrainsmoother.traceChunkLoads");
         try {
             queue(world, origin.getX() >> 4, origin.getZ() >> 4);
-            MinecraftForge.EVENT_BUS.post(new TickEvent.LevelTickEvent(LogicalSide.SERVER, TickEvent.Phase.END, world, () -> true));
+            NeoForge.EVENT_BUS.post(new LevelTickEvent.Post(() -> true, world));
         } finally {
             ChunkLoadTrace.active = false;
         }
@@ -64,7 +63,7 @@ final class ProbeWorld {
         if (state.hasBlockEntity() || state.liquid()) {
             return false;
         }
-        return state.is(net.minecraftforge.common.Tags.Blocks.ORES);
+        return state.is(net.neoforged.neoforge.common.Tags.Blocks.ORES);
     }
 
     static net.minecraft.world.level.chunk.LevelChunkSection emptySection(Level world) {

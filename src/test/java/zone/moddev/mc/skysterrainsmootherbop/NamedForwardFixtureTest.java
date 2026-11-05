@@ -144,6 +144,33 @@ class NamedForwardFixtureTest {
         assertTrue(artifacts.contains("8A0A1DEA2A4A6C069519C7B1BCF28331186FF2DF6284DB72C2FFDB8178FC84D4"));
     }
 
+    @ParameterizedTest
+    @CsvSource({
+            "1.20.1-neo, neoforge-47.1.106, 3465, 7, 8B03BD6F77DEE1FE95D1ED2169D98210EABAF5AF9956E47D1AA203D2C546CD5D",
+            "1.20.6-forge, forge-50.2.0, 3839, 8, AC610FA3D1420FE7DBE5BA98C6870B56A9BB737AE1919998F50E394345AFD275"
+    })
+    void nativeTransitionFixturesRetainTheWholeCheckedBiomeVolume(String version, String loader,
+            int dataVersion, int artifactCount, String checksum) throws Exception {
+        Path root = Paths.get("src/test/resources/fixtures/forward-" + version + "-family");
+        JsonObject source = json(root.resolve("provenance.json"));
+        Path biomes = root.resolve("native-source-biomes.json");
+
+        assertEquals(checksum, digest(root.resolve("world.zip")));
+        assertEquals(checksum, source.get("world_sha256").getAsString());
+        assertEquals(loader, source.get("source_loader").getAsString());
+        assertEquals(dataVersion, source.get("source_data_version").getAsInt());
+        assertEquals(artifactCount, source.getAsJsonArray("source_artifacts").size());
+        assertEquals(4700, source.get("source_saved_states").getAsInt());
+        assertEquals(12, source.get("native_sand_states").getAsInt());
+        assertEquals(6, source.get("wet_sand_states").getAsInt());
+        assertTrue(source.get("source_world_unchanged").getAsBoolean());
+        assertEquals(source.get("manifest_sha256").getAsString(), digest(root.resolve("source-family-fixture.json")));
+        assertEquals(source.get("native_states_sha256").getAsString(), digest(root.resolve("native-source-states.json")));
+        assertEquals(source.get("native_biomes_sha256").getAsString(), digest(biomes));
+        assertEquals(871, json(biomes).getAsJsonArray("chunks").size());
+        assertEquals(1337856, json(biomes).get("checked_cells").getAsInt());
+    }
+
     private JsonObject json(Path path) throws Exception {
         return new JsonParser().parse(new String(Files.readAllBytes(path), StandardCharsets.UTF_8)).getAsJsonObject();
     }

@@ -4,8 +4,8 @@ package zone.moddev.mc.skysterrainsmootherbop.probe;
 final class ChunkLoadTrace {
     static boolean active;
 
-    @net.minecraftforge.eventbus.api.SubscribeEvent
-    public static void loaded(net.minecraftforge.event.level.ChunkEvent.Load event) {
+    @net.neoforged.bus.api.SubscribeEvent
+    public static void loaded(net.neoforged.neoforge.event.level.ChunkEvent.Load event) {
         if (active) {
             zone.moddev.mc.skysterrainsmoother.SkysTerrainSmoother.logger.info("BOP_PROBE_CHUNK_LOAD " + event.getChunk().getPos());
             new Exception("Scoped chunk-load caller").printStackTrace(System.out);

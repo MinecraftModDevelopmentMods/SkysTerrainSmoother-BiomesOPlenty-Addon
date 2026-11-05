@@ -1,6 +1,6 @@
 package zone.moddev.mc.skysterrainsmootherbop.probe;
 
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SlabBlock;
@@ -17,14 +17,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.common.util.FakePlayerFactory;
 import zone.moddev.mc.skysbuildingpieces.content.Pieces;
 import zone.moddev.mc.skysterrainsmootherbop.CoarseDirtSlab;
 
 /** Real item placement and fluid checks for the retained coarse soil slab. */
 final class CoarseSlabChecks {
     static int run(ServerLevel world) {
-        ServerPlayer player = FakePlayerFactory.getMinecraft(world);
+        ServerPlayer player = ProbeItems.player(world, new com.mojang.authlib.GameProfile(java.util.UUID.fromString("adcb6240-23dd-4444-bba9-c3b6d4e106a1"), "CoarseSlabTest"));
         player.getAbilities().instabuild = false;
         BlockPos position = new BlockPos(40008, 220, 40008);
         world.getChunkAt(position);
@@ -32,11 +31,11 @@ final class CoarseSlabChecks {
         for (SlabType half : new SlabType[] { SlabType.BOTTOM, SlabType.TOP }) {
             world.setBlock(position, CoarseDirtSlab.BLOCK.defaultBlockState().setValue(SlabBlock.TYPE, half), 18);
             ItemStack held = Pieces.stack(world.getBlockState(position), 2);
-            RuntimeProbe.require(ForgeRegistries.ITEMS.getKey(held.getItem()).toString().equals("skysterrainsmootherbop:coarse_dirt_slab"),
+            RuntimeProbe.require(BuiltInRegistries.ITEM.getKey(held.getItem()).toString().equals("skysterrainsmootherbop:coarse_dirt_slab"),
                     "The coarse slab uses its flat playable item, not the hidden carrier");
             RuntimeProbe.require(CoarseDirtSlab.BLOCK.asItem() == held.getItem(),
                     "Coarse slab item identity is stable after registry reload: block="
-                            + ForgeRegistries.ITEMS.getKey(CoarseDirtSlab.BLOCK.asItem()) + " held=" + ForgeRegistries.ITEMS.getKey(held.getItem()));
+                            + BuiltInRegistries.ITEM.getKey(CoarseDirtSlab.BLOCK.asItem()) + " held=" + BuiltInRegistries.ITEM.getKey(held.getItem()));
             player.setItemInHand(InteractionHand.MAIN_HAND, held);
             Direction face = half == SlabType.BOTTOM ? Direction.UP : Direction.DOWN;
             InteractionResult used = held.useOn(new UseOnContext(player, InteractionHand.MAIN_HAND,

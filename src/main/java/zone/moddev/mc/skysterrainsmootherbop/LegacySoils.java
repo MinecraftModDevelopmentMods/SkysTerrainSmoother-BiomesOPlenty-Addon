@@ -1,6 +1,6 @@
 package zone.moddev.mc.skysterrainsmootherbop;
 
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraft.core.registries.BuiltInRegistries;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -88,7 +88,7 @@ public final class LegacySoils {
         for (Change change : changes) {
             if (change.item) {
                 ItemStack target = Pieces.stack(change.state, 1);
-                change.saved.putString("id", ForgeRegistries.ITEMS.getKey(target.getItem()).toString());
+                change.saved.putString("id", BuiltInRegistries.ITEM.getKey(target.getItem()).toString());
                 change.saved.remove("Damage");
             } else {
                 CompoundTag target = NbtUtils.writeBlockState(change.state);
@@ -218,8 +218,8 @@ public final class LegacySoils {
                         orientation == 0 ? SlabType.TOP : SlabType.BOTTOM);
             } else if (shape == Shape.SLAB && (material.equals("minecraft:grass")
                     || material.equals("minecraft:dirt") || material.equals("minecraft:grass_path"))) {
-                Block block = material.equals("minecraft:grass") ? ModBlocks.GRASS_SLAB
-                        : material.equals("minecraft:dirt") ? ModBlocks.DIRT_SLAB : ModBlocks.PATH_SLAB;
+                Block block = material.equals("minecraft:grass") ? ModBlocks.GRASS_SLAB.get()
+                        : material.equals("minecraft:dirt") ? ModBlocks.DIRT_SLAB.get() : ModBlocks.PATH_SLAB.get();
                 target = block.defaultBlockState().setValue(SlabBlock.TYPE,
                         orientation == 0 ? SlabType.TOP : SlabType.BOTTOM);
             } else {

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.0.120062 (unreleased)
+
+- Bring BOP terrain support to Minecraft 1.20.6 on NeoForge.
+- Use the matching Terrain Smoother and Building Pieces BOP builds.
+- Keep older BOP soil pieces recoverable while using current BOP terrain.
+
 ## 0.1.0.120012 (unreleased)
 
 - Add a NeoForge 1.20.1 build for Biomes O’ Plenty 18.

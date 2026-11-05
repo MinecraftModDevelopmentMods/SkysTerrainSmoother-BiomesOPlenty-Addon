@@ -1,12 +1,12 @@
 package zone.moddev.mc.skysterrainsmootherbop.probe;
 
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fml.ModList;
+import net.neoforged.fml.ModList;
 import zone.moddev.mc.skysterrainsmoother.SkysTerrainSmoother;
 import zone.moddev.mc.skysterrainsmoother.api.TerrainMaterial;
 import zone.moddev.mc.skysterrainsmoother.internal.MaterialCatalogue;
@@ -27,7 +27,7 @@ public final class MineralogyProbe {
                 continue;
             }
             ResourceLocation slabId = new ResourceLocation("mineralogy", material.id.getPath() + "_slab");
-            require(net.minecraftforge.registries.ForgeRegistries.BLOCKS.getValue(slabId) == material.slab.getBlock(), "native slab identity");
+            require(net.minecraft.core.registries.BuiltInRegistries.BLOCK.get(slabId) == material.slab.getBlock(), "native slab identity");
             boolean bottom = false;
             for (Property<?> property : material.slab.getProperties()) {
                 if (property.getName().equals("facing")) {
@@ -38,7 +38,7 @@ public final class MineralogyProbe {
             for (int direction = 0; direction < 4; direction++) {
                 require(material.step(direction) != null && material.corner(direction) != null,
                         "built-in steps and corners exist in every direction");
-                require(ForgeRegistries.BLOCKS.getKey(material.step(direction).getBlock()).toString()
+                require(BuiltInRegistries.BLOCK.getKey(material.step(direction).getBlock()).toString()
                                 .startsWith("skysbuildingpieces:mineralogy_"),
                         "the core owns the rock pieces");
             }
