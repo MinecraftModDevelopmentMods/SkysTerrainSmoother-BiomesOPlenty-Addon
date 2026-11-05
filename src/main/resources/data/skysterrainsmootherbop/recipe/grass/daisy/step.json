@@ -7,9 +7,7 @@
     " X"
   ],
   "key": {
-    "X": {
-      "item": "skysgrassslabs:grass_slab"
-    }
+    "X": "skysgrassslabs:grass_slab"
   },
   "result": {
     "id": "skysbuildingpieces:grass_step",

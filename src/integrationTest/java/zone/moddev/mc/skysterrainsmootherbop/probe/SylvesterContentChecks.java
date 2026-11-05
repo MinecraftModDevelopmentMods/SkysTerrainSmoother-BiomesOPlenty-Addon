@@ -61,26 +61,26 @@ final class SylvesterContentChecks {
         }
         ListTag converted = new ListTag();
         int itemIndex = 0;
-        int targetVersion = net.minecraft.SharedConstants.getCurrentVersion().getDataVersion().getVersion();
+        int targetVersion = net.minecraft.SharedConstants.getCurrentVersion().dataVersion().version();
         for (JsonElement row : census.getAsJsonArray("unique_stack_nbt")) {
-            CompoundTag original = TagParser.parseTag(row.getAsString());
-            CompoundTag source = reload ? prior.getList("Items", 10).getCompound(itemIndex).copy() : original.copy();
+            CompoundTag original = TagParser.parseCompoundFully(row.getAsString());
+            CompoundTag source = reload ? prior.getList("Items").orElseThrow().getCompound(itemIndex).orElseThrow().copy() : original.copy();
             CompoundTag before = source.copy();
             LegacyBridge.prepareNbt(source);
             CompoundTag fixed = (CompoundTag) world.getServer().getFixerUpper().update(References.ITEM_STACK,
                     new Dynamic<>(NbtOps.INSTANCE, source), reload ? targetVersion : 1343, targetVersion).getValue();
             LegacyBridge.finalizeNbt(fixed, targetVersion);
             ItemStack stack = ProbeItems.read(world, fixed);
-            RuntimeProbe.require(!stack.isEmpty() && stack.getCount() == (original.getByte("Count") & 255),
+            RuntimeProbe.require(!stack.isEmpty() && stack.getCount() == (original.getIntOr("Count", 0) & 255),
                     "Actual saved Sky stack keeps its count: " + original);
-            for (String key : original.getAllKeys()) {
+            for (String key : original.keySet()) {
                 if (!key.equals("id") && !key.equals("Damage") && !key.equals("Count") && !key.equals("tag")) {
                     RuntimeProbe.require(original.get(key).equals(fixed.get(key)),
                             "Unrelated root item NBT survives: " + key);
                 }
             }
-            CompoundTag originalTag = original.getCompound("tag");
-            for (String key : originalTag.getAllKeys()) {
+            CompoundTag originalTag = original.getCompoundOrEmpty("tag");
+            for (String key : originalTag.keySet()) {
                 if (!key.equals("display") && !key.equals("ench") && !key.equals("StoredEnchantments")
                         && !key.equals("Items") && !key.equals("BasketOpen")) {
                     RuntimeProbe.require(originalTag.get(key).equals(ProbeItems.custom(stack).get(key)),

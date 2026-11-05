@@ -42,7 +42,7 @@ final class CoarseSlabChecks {
                     new BlockHitResult(new Vec3(position.getX() + .5,
                             position.getY() + (half == SlabType.BOTTOM ? .5 : 1), position.getZ() + .5),
                             face, position, false)));
-            RuntimeProbe.require(used == InteractionResult.CONSUME && held.getCount() == 1
+            RuntimeProbe.require(used.consumesAction() && held.getCount() == 1
                             && world.getBlockState(position).getBlock() == Blocks.COARSE_DIRT,
                     "Both complementary placement directions make one full coarse dirt block: half=" + half
                             + " action=" + used + " remaining=" + held.getCount()
@@ -55,8 +55,8 @@ final class CoarseSlabChecks {
             RuntimeProbe.require(world.getBlockState(position).getValue(SlabBlock.WATERLOGGED), "Water remains in the slab");
             world.setBlock(position, dry, 18);
             world.setBlock(position.east(), Blocks.SNOW_BLOCK.defaultBlockState(), 18);
-            BlockState snowy = CoarseDirtSlab.BLOCK.updateShape(dry, Direction.EAST,
-                    Blocks.SNOW_BLOCK.defaultBlockState(), world, position, position.east());
+            BlockState snowy = dry.updateShape(world, world, position, Direction.EAST, position.east(),
+                    Blocks.SNOW_BLOCK.defaultBlockState(), world.getRandom());
             RuntimeProbe.require(snowy.getValue(SnowyDirtBlock.SNOWY), "Coarse slabs keep calculated snow caps");
             world.setBlock(position.east(), Blocks.AIR.defaultBlockState(), 18);
         }

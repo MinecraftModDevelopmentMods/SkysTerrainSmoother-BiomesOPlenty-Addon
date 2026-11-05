@@ -4,7 +4,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import java.util.Collections;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import zone.moddev.mc.skysbuildingpieces.api.BuildingPiecesApi;
 import zone.moddev.mc.skysbuildingpieces.catalogue.Catalogue;
 import zone.moddev.mc.skysbuildingpieces.content.Pieces;
@@ -18,7 +18,7 @@ final class NativeTerrain {
 
     static void register() {
         Direction[] directions = { Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST };
-        ResourceLocation coarseId = ResourceLocation.parse("minecraft:coarse_dirt");
+        Identifier coarseId = Identifier.parse("minecraft:coarse_dirt");
         if (!TerrainSmoothingApi.hasMaterial(coarseId)) {
             BlockState[] steps = new BlockState[4];
             BlockState[] corners = new BlockState[4];
@@ -35,7 +35,7 @@ final class NativeTerrain {
         for (String rock : new String[] { "crag_rock", "limestone", "shale", "siltstone" }) {
             String material = "biomesoplenty:" + rock;
             BlockState full = Pieces.nativeState(Catalogue.INSTANCE.materials.get(material), "full");
-            ResourceLocation resolved = ForgeRegistries.BLOCKS.getKey(full.getBlock());
+            Identifier resolved = ForgeRegistries.BLOCKS.getKey(full.getBlock());
             // The core owns Mineralogy, including its disabled or unavailable slab forms.
             if (resolved.getNamespace().equals("mineralogy") || TerrainSmoothingApi.hasMaterial(resolved)) {
                 continue;
@@ -48,7 +48,7 @@ final class NativeTerrain {
                 corners[direction] = BuildingPiecesApi.bottomPiece(material,
                         BuildingPiecesApi.TerrainShape.CORNER, directions[direction]);
             }
-            TerrainSmoothingApi.registerMaterial(new TerrainMaterial(ResourceLocation.parse(material),
+            TerrainSmoothingApi.registerMaterial(new TerrainMaterial(Identifier.parse(material),
                     Collections.singleton(full), BuildingPiecesApi.bottomPiece(material,
                             BuildingPiecesApi.TerrainShape.SLAB, Direction.NORTH), steps, corners, false, null));
         }

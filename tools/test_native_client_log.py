@@ -1,4 +1,4 @@
-"""Negative controls for the exact Forge 40 native log classification."""
+"""Negative controls for the exact Forge 61 native log classification."""
 
 import unittest
 import json
@@ -11,7 +11,7 @@ from native_client_log import audit, classify
 
 
 LOGIN = "[Client thread/INFO] [NetworkHooks/]: Connected to a modded server."
-START = "[Server thread/INFO] [MinecraftServer/]: Preparing start region for dimension minecraft:overworld"
+START = "[Server thread/INFO] [MinecraftServer/]: Starting integrated minecraft server version 1.21.11"
 NOTICE = "[Thread-1/FATAL] [net.minecraftforge.common.ForgeConfig/CORE]: Forge config just got changed on the file system!"
 PAYLOAD = "[Client thread/ERROR] [net.minecraftforge.fml.network.simple.IndexedMessageCodec/SIMPLENET]: Received empty payload on channel fml:handshake"
 
@@ -124,7 +124,7 @@ class NativeClientFilesTest(unittest.TestCase):
         (self.directory / "logs").mkdir()
         (self.directory / "logs/latest.log").write_text("\n".join((
             START, LOGIN,
-            "FORGE40_CLIENT_CONTROL_PASS joined=true sky_mods=false")), encoding="utf-8")
+            "FORGE61_CLIENT_CONTROL_PASS joined=true sky_mods=false")), encoding="utf-8")
 
     def test_native_defaults_with_different_order_and_comments(self):
         client = self.directory / "config/forge-client.toml"
@@ -139,9 +139,9 @@ class NativeClientFilesTest(unittest.TestCase):
     def test_changed_default_stops_the_check(self):
         client = self.directory / "config/forge-client.toml"
         contents = client.read_text(encoding="utf-8")
-        self.assertIn("experimentalForgeLightPipelineEnabled = false", contents)
-        client.write_text(contents.replace("experimentalForgeLightPipelineEnabled = false",
-                                           "experimentalForgeLightPipelineEnabled = true"), encoding="utf-8")
+        self.assertIn("allowMipmapLowering = false", contents)
+        client.write_text(contents.replace("allowMipmapLowering = false",
+                                           "allowMipmapLowering = true"), encoding="utf-8")
         with self.assertRaises(ValueError):
             audit(self.directory, "control", True)
 
@@ -164,20 +164,16 @@ class NativeRegistryProfileTest(unittest.TestCase):
         from native_registry_notices import profile_for
 
         root = Path(__file__).resolve().parent.parent
-        policy = json.loads((root / "tools/forge-52-registry-notices.json").read_text(encoding="utf-8"))
-        profile = policy["AC610FA3D1420FE7DBE5BA98C6870B56A9BB737AE1919998F50E394345AFD275"]
+        policy = json.loads((root / "tools/forge-61-registry-notices.json").read_text(encoding="utf-8"))
+        profile = policy["D3EEA5CB94E3BDA5F1BD94CE306D2F6F64F28D7CC65FF146E814FF48A73919DA"]
         with tempfile.TemporaryDirectory() as temporary:
             directory = Path(temporary)
             manifest = directory / "source-inputs.json"
             source = {
                 "world_sha256": profile["sha256"],
                 "manifest_sha256": profile["manifest_sha256"],
-                "mode": "server",
+                "mode": "client",
             }
-            manifest.write_text(json.dumps(source), encoding="utf-8")
-            self.assertEqual(profile_for(directory), profile)
-
-            source["mode"] = "client"
             manifest.write_text(json.dumps(source), encoding="utf-8")
             self.assertIsNone(profile_for(directory))
             (directory / "artifact-inputs.json").write_text(

@@ -6,9 +6,7 @@
     "XX"
   ],
   "key": {
-    "X": {
-      "item": "skysbuildingpieces:dirt_horizontal_step"
-    }
+    "X": "skysbuildingpieces:dirt_horizontal_step"
   },
   "result": {
     "id": "skysbuildingpieces:dirt_corner",

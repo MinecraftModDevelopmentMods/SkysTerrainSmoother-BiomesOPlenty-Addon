@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.0.121111
+
+- Added Forge support for Minecraft 1.21.11. Update Terrain Smoother and both BOP add-ons together.
+- Saved soil pieces keep their shape and orientation when the world moves to the new version.
+
 ## 0.1.0.121011 (unreleased)
 
 - Bring Biomes O' Plenty terrain smoothing to Minecraft 1.21.1 on Forge.

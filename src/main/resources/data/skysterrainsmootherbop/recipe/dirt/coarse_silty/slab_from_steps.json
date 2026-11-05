@@ -7,9 +7,7 @@
     "X"
   ],
   "key": {
-    "X": {
-      "item": "skysbuildingpieces:dirt_coarse_horizontal_step"
-    }
+    "X": "skysbuildingpieces:dirt_coarse_horizontal_step"
   },
   "result": {
     "id": "skysterrainsmootherbop:coarse_dirt_slab",

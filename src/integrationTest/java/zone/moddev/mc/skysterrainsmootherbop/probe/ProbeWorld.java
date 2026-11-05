@@ -7,7 +7,6 @@ import net.minecraft.core.SectionPos;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.DataLayer;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.fml.LogicalSide;
@@ -25,14 +24,14 @@ final class ProbeWorld {
     }
 
     static void queue(Level world, int chunkX, int chunkZ) {
-        MinecraftForge.EVENT_BUS.post(new ChunkEvent.Load(world.getChunk(chunkX, chunkZ), false));
+        ChunkEvent.Load.BUS.post(new ChunkEvent.Load(world.getChunk(chunkX, chunkZ), false));
     }
 
     static void repair(Level world, BlockPos origin) {
         ChunkLoadTrace.active = Boolean.getBoolean("skysterrainsmoother.traceChunkLoads");
         try {
             queue(world, origin.getX() >> 4, origin.getZ() >> 4);
-            MinecraftForge.EVENT_BUS.post(new TickEvent.LevelTickEvent.Post(LogicalSide.SERVER, world, () -> true));
+            TickEvent.LevelTickEvent.Post.BUS.post(new TickEvent.LevelTickEvent.Post(LogicalSide.SERVER, world, () -> true));
         } finally {
             ChunkLoadTrace.active = false;
         }
@@ -69,7 +68,7 @@ final class ProbeWorld {
 
     static net.minecraft.world.level.chunk.LevelChunkSection emptySection(Level world) {
         return new net.minecraft.world.level.chunk.LevelChunkSection(
-                world.registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.BIOME));
+                world.palettedContainerFactory());
     }
 
     private ProbeWorld() {

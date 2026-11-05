@@ -128,37 +128,37 @@ class NativeRegistryNoticeProofTest {
                                 root = NbtIo.read(new DataInputStream(new ByteArrayInputStream(bytes)));
                             }
                             if (nativeProof && label.equals("world/level.dat")) {
-                                checkSnapshot(root.getCompound("fml").getCompound("Registries"), mappings);
+                                checkSnapshot(root.getCompound("fml").orElseThrow().getCompound("Registries").orElseThrow(), mappings);
                             }
                             // Registry availability is not a saved block, entity or inventory use.
                             root.remove("FML");
                             root.remove("fml");
                             if (label.equals("world/data/skysbuildingpiecesbop_named_registry.dat")) {
-                                assertEquals(Set.of("schema_version", "snapshots"), root.getAllKeys());
-                                assertEquals(1, root.getInt("schema_version"));
-                                CompoundTag snapshots = root.getCompound("snapshots");
-                                for (String version : snapshots.getAllKeys()) {
+                                assertEquals(Set.of("schema_version", "snapshots"), root.keySet());
+                                assertEquals(1, root.getInt("schema_version").orElseThrow().intValue());
+                                CompoundTag snapshots = root.getCompound("snapshots").orElseThrow();
+                                for (String version : snapshots.keySet()) {
                                     assertTrue(version.matches("[0-9]+"));
-                                    CompoundTag registry = snapshots.getCompound(version);
+                                    CompoundTag registry = snapshots.getCompound(version).orElseThrow();
                                     assertEquals(Set.of("aliases", "blocked", "ids", "overrides", "dummied"),
-                                            registry.getAllKeys());
-                                    for (Tag entryId : registry.getList("ids", 10)) {
+                                            registry.keySet());
+                                    for (Tag entryId : registry.getList("ids").orElseThrow()) {
                                         CompoundTag identity = (CompoundTag) entryId;
-                                        assertEquals(Set.of("K", "V"), identity.getAllKeys());
-                                        assertTrue(identity.contains("K", 8) && identity.contains("V", 3));
+                                        assertEquals(Set.of("K", "V"), identity.keySet());
+                                        assertTrue(identity.get("K") instanceof net.minecraft.nbt.StringTag && identity.get("V") instanceof net.minecraft.nbt.IntTag);
                                     }
                                 }
                                 // These are available registry identities, not saved biome cells or items.
                                 root.remove("snapshots");
                             }
                             if (label.equals("world/data/skysgrassslabs_legacy_registry.dat")) {
-                                assertEquals(java.util.Collections.singleton("Blocks"), root.getAllKeys());
-                                CompoundTag blocks = root.getCompound("Blocks");
+                                assertEquals(java.util.Collections.singleton("Blocks"), root.keySet());
+                                CompoundTag blocks = root.getCompound("Blocks").orElseThrow();
                                 assertEquals(new java.util.HashSet<>(java.util.Arrays.asList(
-                                        "aliases", "blocked", "ids", "overrides", "dummied")), blocks.getAllKeys());
-                                for (Tag row : blocks.getList("ids", 10)) {
+                                        "aliases", "blocked", "ids", "overrides", "dummied")), blocks.keySet());
+                                for (Tag row : blocks.getList("ids").orElseThrow()) {
                                     assertEquals(new java.util.HashSet<>(java.util.Arrays.asList("K", "V")),
-                                            ((CompoundTag) row).getAllKeys());
+                                            ((CompoundTag) row).keySet());
                                 }
                                 // This file contains registry availability, not placed blocks or inventories.
                                 root.remove("Blocks");
@@ -181,9 +181,9 @@ class NativeRegistryNoticeProofTest {
     private static void checkSnapshot(CompoundTag registries, JsonObject mappings) {
         for (var registry : mappings.entrySet()) {
             var saved = new java.util.HashMap<String, Integer>();
-            for (Tag row : registries.getCompound(registry.getKey()).getList("ids", 10)) {
+            for (Tag row : registries.getCompound(registry.getKey()).orElseThrow().getList("ids").orElseThrow()) {
                 CompoundTag entry = (CompoundTag) row;
-                assertNull(saved.put(entry.getString("K"), entry.getInt("V")));
+                assertNull(saved.put(entry.getString("K").orElseThrow(), entry.getInt("V").orElseThrow()));
             }
             for (var entry : registry.getValue().getAsJsonObject().entrySet()) {
                 assertEquals(entry.getValue().getAsInt(), saved.get(entry.getKey()), entry.getKey());
@@ -253,7 +253,7 @@ class NativeRegistryNoticeProofTest {
     private static void inspect(Tag value, Set<String> names, String label) {
         if (value instanceof CompoundTag) {
             CompoundTag compound = (CompoundTag) value;
-            for (String key : compound.getAllKeys()) {
+            for (String key : compound.keySet()) {
                 assertFalse(names.contains(key), "Saved registry-name key in " + label + ": " + key);
                 inspect(compound.get(key), names, label + "/" + key);
             }
@@ -262,7 +262,7 @@ class NativeRegistryNoticeProofTest {
                 inspect(entry, names, label);
             }
         } else if (value instanceof StringTag) {
-            assertFalse(names.contains(value.getAsString()), "Saved registry-name value in " + label);
+            assertFalse(names.contains(((net.minecraft.nbt.StringTag) value).value()), "Saved registry-name value in " + label);
         }
     }
 

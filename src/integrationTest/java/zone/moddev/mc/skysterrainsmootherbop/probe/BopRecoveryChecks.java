@@ -26,7 +26,7 @@ final class BopRecoveryChecks {
                     zone.moddev.mc.skysbuildingpieces.catalogue.Catalogue.INSTANCE.materials.get(material), "full");
             boolean mineralogyOwnsRock = ForgeRegistries.BLOCKS.getKey(full.getBlock()).getNamespace().equals("mineralogy");
             RuntimeProbe.require(zone.moddev.mc.skysterrainsmoother.api.TerrainSmoothingApi
-                            .hasMaterial(net.minecraft.resources.ResourceLocation.parse(material)) != mineralogyOwnsRock,
+                            .hasMaterial(net.minecraft.resources.Identifier.parse(material)) != mineralogyOwnsRock,
                     "BOP rock mappings defer to Mineralogy without bypassing its configuration");
             checked++;
         }
@@ -96,7 +96,7 @@ final class BopRecoveryChecks {
                         "Nested inventory identity and count survive");
                 RuntimeProbe.require(ProbeItems.custom(actual).equals(custom),
                         "Nested inventory custom data survives the native item conversion");
-                RuntimeProbe.require(stack.getByte("Slot") == 7 && stack.getCompound("tag").equals(custom),
+                RuntimeProbe.require(stack.getIntOr("Slot", -1) == 7 && stack.getCompoundOrEmpty("tag").equals(custom),
                         "Inventory slot and unrelated custom NBT survive");
                 CompoundTag once = root.copy();
                 LegacySoils.recover(root);
@@ -112,7 +112,7 @@ final class BopRecoveryChecks {
                 LegacySoils.recover(named);
                 RuntimeProbe.require(NbtUtils.readBlockState(world.holderLookup(net.minecraft.core.registries.Registries.BLOCK), named).equals(target),
                         "Named states preserve the exact target geometry");
-                RuntimeProbe.require(named.getString("Unrelated").equals("kept"), "Unrelated state data survives");
+                RuntimeProbe.require(named.getStringOr("Unrelated", "").equals("kept"), "Unrelated state data survives");
                 CompoundTag namedOnce = named.copy();
                 LegacySoils.recover(named);
                 RuntimeProbe.require(named.equals(namedOnce), "Current named coarse slabs are not converted twice");
@@ -154,16 +154,27 @@ final class BopRecoveryChecks {
                     "A count outside the saved-byte range stops without changing the stack");
         }
         int recipes = 0;
-        for (var holder : world.getRecipeManager().getRecipes()) {
+        for (var holder : world.getServer().getRecipeManager().getRecipes()) {
             var recipe = holder.value();
-            if (!holder.id().getNamespace().equals("skysterrainsmootherbop")) {
+            if (!holder.id().identifier().getNamespace().equals("skysterrainsmootherbop")) {
                 continue;
             }
-            RuntimeProbe.require(!recipe.isSpecial() && !recipe.getResultItem(world.registryAccess()).isEmpty(),
+            var context = net.minecraft.world.item.crafting.display.SlotDisplayContext.fromLevel(world);
+            RuntimeProbe.require(!recipe.isSpecial() && !recipe.display().isEmpty(),
                     "Replacement recipes remain visible in the native recipe book");
-            RuntimeProbe.require(recipe.getIngredients().stream()
-                    .anyMatch(ingredient -> ingredient != net.minecraft.world.item.crafting.Ingredient.EMPTY),
-                    "Replacement recipes expose native book ingredients");
+            for (var display : recipe.display()) {
+                RuntimeProbe.require(!display.result().resolveForFirstStack(context).isEmpty(),
+                        "The recipe book shows the replacement item");
+                var slots = switch (display) {
+                    case net.minecraft.world.item.crafting.display.ShapedCraftingRecipeDisplay shaped ->
+                            shaped.ingredients();
+                    case net.minecraft.world.item.crafting.display.ShapelessCraftingRecipeDisplay shapeless ->
+                            shapeless.ingredients();
+                    default -> throw new AssertionError("Unexpected BOP recipe display: " + display);
+                };
+                RuntimeProbe.require(slots.stream().anyMatch(slot -> !slot.resolveForStacks(context).isEmpty()),
+                        "Replacement recipes expose native book ingredients");
+            }
             recipes++;
         }
         RuntimeProbe.require(recipes == 84, "All original recipe identities load with available ingredients");

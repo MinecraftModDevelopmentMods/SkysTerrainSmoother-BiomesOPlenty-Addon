@@ -221,6 +221,7 @@ def auditOptionalPhase = { File directory, String phase, boolean server ->
     List<String> arguments = [providers.gradleProperty('pythonExecutable').getOrElse('python'),
             'tools/native_client_log.py', '--directory', directory.absolutePath, '--phase', phase]
     if (server) arguments.add('--server')
+    else arguments.add('--offline-probe')
     project.services.get(org.gradle.process.ExecOperations).exec { commandLine arguments }
     copy { from new File(directory, 'logs'); into new File(directory, 'phase-logs/' + phase) }
 }

@@ -57,6 +57,13 @@ class NativeContractTest {
                     + id.substring(id.indexOf(':') + 1) + ".json");
             JsonObject recipe = read(path).getAsJsonObject();
             assertEquals("minecraft:crafting_shaped", recipe.get("type").getAsString());
+            assertEquals("building", recipe.get("category").getAsString(), id);
+            recipe.getAsJsonObject("key").entrySet().forEach(ingredient -> {
+                JsonElement value = ingredient.getValue();
+                assertTrue(value.isJsonPrimitive() && value.getAsJsonPrimitive().isString(),
+                    id + " needs a named ingredient for " + ingredient.getKey());
+                assertTrue(value.getAsString().matches("#?[a-z0-9_.-]+:[a-z0-9_./-]+"), id);
+            });
             assertFalse(recipe.toString().contains("biomesoplenty:"), "Removed native items are not recipe inputs");
             assertFalse(recipe.toString().contains("\"data\""), "Recipe ingredients use flat item identities");
             assertTrue(recipe.getAsJsonObject("result").get("count").getAsInt() > 0);
@@ -79,12 +86,15 @@ class NativeContractTest {
             String name = id.substring(id.indexOf(':') + 1);
             assertTrue(Files.isRegularFile(assets.resolve("blockstates/" + name + ".json")));
             assertTrue(Files.isRegularFile(assets.resolve("models/item/" + name + ".json")));
+            JsonObject definition = read(assets.resolve("items/" + name + ".json")).getAsJsonObject()
+                    .getAsJsonObject("model");
+            assertEquals("minecraft:model", definition.get("type").getAsString());
+            assertEquals("skysterrainsmootherbop:item/" + name, definition.get("model").getAsString());
         }
         JsonObject pack = read(RESOURCES.resolve("pack.mcmeta")).getAsJsonObject().getAsJsonObject("pack");
-        assertEquals(48, pack.get("pack_format").getAsInt());
-        JsonObject formats = pack.getAsJsonObject("supported_formats");
-        assertEquals(34, formats.get("min_inclusive").getAsInt());
-        assertEquals(48, formats.get("max_inclusive").getAsInt());
+        assertEquals(94, pack.get("max_format").getAsInt());
+        assertEquals(94, pack.getAsJsonArray("min_format").get(0).getAsInt());
+        assertEquals(1, pack.getAsJsonArray("min_format").get(1).getAsInt());
     }
 
     @Test
@@ -120,7 +130,7 @@ class NativeContractTest {
                 "skysbuildingpiecesbop", "skysterrainsmoother", "biomesoplenty" }) {
             assertTrue(metadata.contains("modId=\"" + mod + "\""));
         }
-        assertTrue(metadata.contains("[21.1.0.14]"));
+        assertTrue(metadata.contains("[21.11.0.32]"));
         assertFalse(Files.exists(RESOURCES.resolve("META-INF/coremods.json")));
         assertFalse(Files.exists(RESOURCES.resolve("mcmod.info")));
     }

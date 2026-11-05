@@ -6,9 +6,7 @@
     "XX"
   ],
   "key": {
-    "X": {
-      "item": "skysterrainsmootherbop:coarse_dirt_slab"
-    }
+    "X": "skysterrainsmootherbop:coarse_dirt_slab"
   },
   "result": {
     "id": "minecraft:coarse_dirt",
