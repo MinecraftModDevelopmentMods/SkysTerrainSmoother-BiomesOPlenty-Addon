@@ -1,8 +1,8 @@
 # Building from source
 
-Build with the Gradle 9.6.1 wrapper and Temurin 21.0.7+6. Set
-STS_JAVA21_HOME to that Java installation. Java 25 is needed by ForgeGradle's
-Mavenizer tool; Gradle, compilation and Minecraft use Java 21.
+Build with the Gradle 9.6.1 wrapper and Temurin 25.0.3+9.
+Set `STS_JAVA25_HOME` to that Java installation. Gradle, ForgeGradle and
+Minecraft all use it.
 
 Build the exact four clean source commits in gradle/content-dependencies.properties.
 Run assemble for Grass Slabs and Building Pieces, then Terrain Smoother and the

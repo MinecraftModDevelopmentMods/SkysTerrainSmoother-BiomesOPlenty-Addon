@@ -11,7 +11,7 @@ from zipfile import ZipFile
 EMPTY_CAPABILITIES = "Failed to parse saved data for 'SavedDataType[capabilities]': No key data in MapLike[{}]"
 
 
-def profile_for(directory):
+def profile_for(directory, forge64=False):
     manifest = Path(directory) / "source-inputs.json"
     if not manifest.is_file():
         return None
@@ -80,24 +80,11 @@ def profile_for(directory):
                 archived = hashlib.sha256(archive.read("world/" + name)).hexdigest().upper()
                 saved = (Path(directory) / "world" / name)
                 if (not saved.is_file() or archived != expected
-                        or hashlib.sha256(saved.read_bytes()).hexdigest().upper() != rewritten[name]):
-                    raise ValueError("Forge did not rewrite the proven empty capability record: " + name)
+                        or hashlib.sha256(saved.read_bytes()).hexdigest().upper() != (expected if forge64 else rewritten[name])):
+                    raise ValueError("Unexpected changes to the saved capability record: " + name)
         profile["empty_capabilities_count"] = len(originals)
-    empty = profile.get("empty_capabilities", {})
-    if empty:
-        originals, rewritten = empty["original"], empty["rewritten"]
-        allowed = {"data/capabilities.dat", "DIM-1/data/capabilities.dat", "DIM1/data/capabilities.dat"}
-        if not originals or originals.keys() != rewritten.keys() or not originals.keys() <= allowed:
-            raise ValueError("Unexpected empty capability proof paths")
-        with ZipFile(fixture) as archive:
-            for name, expected in originals.items():
-                archived = hashlib.sha256(archive.read("world/" + name)).hexdigest().upper()
-                saved = (Path(directory) / "world" / name)
-                if (not saved.is_file() or archived != expected
-                        or hashlib.sha256(saved.read_bytes()).hexdigest().upper() != rewritten[name]):
-                    raise ValueError("Forge did not rewrite the proven empty capability record: " + name)
-        profile["empty_capabilities_count"] = len(originals)
-    return profile
+    # The new runtime keeps the original files and no longer emits the Forge 61 errors.
+    return None if forge64 else profile
 
 
 def completed_offline_client(text):

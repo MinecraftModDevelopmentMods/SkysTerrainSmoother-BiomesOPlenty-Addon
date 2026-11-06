@@ -6,7 +6,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SlabBlock;
-import net.minecraft.world.level.block.SnowyDirtBlock;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -45,7 +45,7 @@ public final class CoarseDirtSlab extends SlabBlock {
 
     private CoarseDirtSlab(Properties properties) {
         super(properties);
-        registerDefaultState(defaultBlockState().setValue(SnowyDirtBlock.SNOWY, false));
+        registerDefaultState(defaultBlockState().setValue(BlockStateProperties.SNOWY, false));
     }
 
     @Override
@@ -76,7 +76,7 @@ public final class CoarseDirtSlab extends SlabBlock {
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
-        builder.add(SnowyDirtBlock.SNOWY);
+        builder.add(BlockStateProperties.SNOWY);
     }
 
     @Override
@@ -88,7 +88,7 @@ public final class CoarseDirtSlab extends SlabBlock {
         if (state.getValue(TYPE) == SlabType.DOUBLE) {
             return Blocks.COARSE_DIRT.defaultBlockState();
         }
-        return state.setValue(SnowyDirtBlock.SNOWY, snowy(context.getLevel(), context.getClickedPos()));
+        return state.setValue(BlockStateProperties.SNOWY, snowy(context.getLevel(), context.getClickedPos()));
     }
 
     @Override
@@ -96,13 +96,13 @@ public final class CoarseDirtSlab extends SlabBlock {
             BlockPos position, Direction facing, BlockPos neighbourPosition, BlockState neighbour,
             RandomSource random) {
         return super.updateShape(state, world, ticks, position, facing, neighbourPosition, neighbour, random)
-                .setValue(SnowyDirtBlock.SNOWY, snowy(world, position));
+                .setValue(BlockStateProperties.SNOWY, snowy(world, position));
     }
 
     @Override
     public void tick(BlockState state, ServerLevel world, BlockPos position, RandomSource random) {
         if (!world.isClientSide()) {
-            BlockState updated = state.setValue(SnowyDirtBlock.SNOWY, snowy(world, position));
+            BlockState updated = state.setValue(BlockStateProperties.SNOWY, snowy(world, position));
             if (updated != state) {
                 world.setBlock(position, updated, 2 | 16);
             }

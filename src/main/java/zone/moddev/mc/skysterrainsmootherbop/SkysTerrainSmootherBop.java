@@ -22,13 +22,13 @@ import zone.moddev.mc.skysbuildingpieces.api.BuildingPiecesApi;
 @Mod(SkysTerrainSmootherBop.ID)
 public final class SkysTerrainSmootherBop {
     public static final String ID = "skysterrainsmootherbop";
-    public static final String VERSION = "0.1.0.121111";
+    public static final String VERSION = "0.1.0.2601021";
 
     public SkysTerrainSmootherBop(FMLJavaModLoadingContext context) {
         BusGroup modBus = context.getModBusGroup();
         FMLCommonSetupEvent.getBus(modBus).addListener(this::setup);
         RegisterEvent.getBus(modBus).addListener(RegistryEvents::register);
-        BuildCreativeModeTabContentsEvent.getBus(modBus).addListener(RegistryEvents::creativeTab);
+        BuildCreativeModeTabContentsEvent.BUS.addListener(RegistryEvents::creativeTab);
     }
 
     private void setup(FMLCommonSetupEvent event) {

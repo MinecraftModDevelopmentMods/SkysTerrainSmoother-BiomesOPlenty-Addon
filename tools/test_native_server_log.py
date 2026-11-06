@@ -203,7 +203,7 @@ class NativeServerFilesTest(unittest.TestCase):
         source = {'mode': 'server', 'world_sha256': profile['sha256'],
                   'manifest_sha256': profile['manifest_sha256']}
         inputs.write_text(json.dumps(source), encoding='utf-8')
-        with self.assertRaisesRegex(ValueError, "did not rewrite"):
+        with self.assertRaisesRegex(ValueError, "Unexpected changes to the saved capability record"):
             profile_for(self.directory)
         import base64
         saved = self.directory / 'world/data/capabilities.dat'
@@ -230,6 +230,17 @@ class NativeServerFilesTest(unittest.TestCase):
             audit_text(notices + warning * 2, resolved)
         with self.assertRaisesRegex(ValueError, "Unexpected native failure"):
             audit_text(notices + warning.replace("MapLike[{}]", "MapLike[{data:1}]"), resolved)
+
+        with self.assertRaises(ValueError):
+            profile_for(self.directory, forge64=True)
+        from zipfile import ZipFile
+        with ZipFile(root / profile['fixture']) as archive:
+            saved.write_bytes(archive.read('world/data/capabilities.dat'))
+        current = profile_for(self.directory, forge64=True)
+        self.assertIsNone(current)
+        for previous_error in (warning, notices):
+            with self.assertRaises(ValueError):
+                audit_text(previous_error, current)
 
         inputs.write_text(json.dumps(dict(source, mode='client')), encoding='utf-8')
         self.assertIsNone(profile_for(self.directory))

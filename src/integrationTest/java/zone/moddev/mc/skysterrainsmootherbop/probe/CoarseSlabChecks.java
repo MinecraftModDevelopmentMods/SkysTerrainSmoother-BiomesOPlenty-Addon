@@ -4,7 +4,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SlabBlock;
-import net.minecraft.world.level.block.SnowyDirtBlock;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.item.ItemStack;
@@ -57,7 +57,7 @@ final class CoarseSlabChecks {
             world.setBlock(position.east(), Blocks.SNOW_BLOCK.defaultBlockState(), 18);
             BlockState snowy = dry.updateShape(world, world, position, Direction.EAST, position.east(),
                     Blocks.SNOW_BLOCK.defaultBlockState(), world.getRandom());
-            RuntimeProbe.require(snowy.getValue(SnowyDirtBlock.SNOWY), "Coarse slabs keep calculated snow caps");
+            RuntimeProbe.require(snowy.getValue(BlockStateProperties.SNOWY), "Coarse slabs keep calculated snow caps");
             world.setBlock(position.east(), Blocks.AIR.defaultBlockState(), 18);
         }
         world.setBlock(position, Blocks.AIR.defaultBlockState(), 18);
