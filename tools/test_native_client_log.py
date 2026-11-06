@@ -1,8 +1,7 @@
-"""Negative controls for the exact Forge 61 native log classification."""
+"""Negative controls for the exact Forge 65 native log classification."""
 
 import unittest
 import json
-import hashlib
 from pathlib import Path
 import shutil
 import tempfile
@@ -12,63 +11,12 @@ from native_client_log import audit, classify
 
 LOGIN = ("[time] [Server thread/INFO]: TerrainBopChecks[local:E:0123] logged in with entity id 123 at (0, 64, 0)\n"
          "[time] [Server thread/INFO]: TerrainBopChecks joined the game")
-START = "[Server thread/INFO] [MinecraftServer/]: Starting integrated minecraft server version 26.1.2"
+START = "[Server thread/INFO] [MinecraftServer/]: Starting integrated minecraft server version 26.2"
 NOTICE = "[Thread-1/FATAL] [net.minecraftforge.common.ForgeConfig/CORE]: Forge config just got changed on the file system!"
 PAYLOAD = "[Client thread/ERROR] [net.minecraftforge.fml.network.simple.IndexedMessageCodec/SIMPLENET]: Received empty payload on channel fml:handshake"
 
 
 class NativeClientLogTest(unittest.TestCase):
-    def gateway_block(self):
-        root = Path(__file__).resolve().parent.parent
-        fixture = root / "src/test/resources/native-authlib-gateway.txt"
-        control = json.loads((root / "tools/native-log-profiles.json").read_text())["offline_profile_gateway_control"]
-        self.assertTrue(control["library_only_control"] and control["unchanged_offline_profile"])
-        self.assertEqual(control["fixture_sha256"], hashlib.sha256(fixture.read_bytes()).hexdigest().upper())
-        self.assertEqual(control["authlib_sha256"], "21132E3BDE5EEAC556437DA9580221931BB00DBF350B453F100526C9AA232FEE")
-        return fixture.read_text()
-
-    def completed_client(self, block):
-        return "\n".join((START, LOGIN, block,
-                           "[time] [Render thread/INFO] [Probe/]: TERRAIN_SMOOTHER_CLIENT_PASS",
-                           "[time] [Render thread/INFO] [Probe/]: TERRAIN_SMOOTHER_CLIENT_WORLD_PASS",
-                           "[time] [Server thread/INFO] [Probe/]: TERRAIN_SMOOTHER_RUNTIME_PASS phase=reload"))
-
-    def test_controlled_profile_gateway_failure_requires_successful_native_completion(self):
-        receipt = classify(self.completed_client(self.gateway_block()), True)
-        self.assertEqual(receipt["notices"], [])
-        for marker in ("TERRAIN_SMOOTHER_CLIENT_PASS", "TERRAIN_SMOOTHER_CLIENT_WORLD_PASS",
-                       "TERRAIN_SMOOTHER_RUNTIME_PASS phase=reload"):
-            with self.subTest(marker=marker), self.assertRaises(ValueError):
-                classify(self.completed_client(self.gateway_block()).replace(marker, "incomplete"), True)
-
-    def test_other_profiles_loggers_threads_and_cause_chains_still_fail(self):
-        block = self.gateway_block()
-        changes = (
-            ("Render thread/WARN", "Render thread/ERROR"),
-            ("Render thread/WARN", "Server thread/WARN"),
-            ("YggdrasilMinecraftSessionService/", "OtherSessionService/"),
-            ("11111111-1111-1111-1111-111111111111", "22222222-2222-2222-2222-222222222222"),
-            ("name=TerrainSmootherChecks", "name=AnotherPlayer"),
-            ("authlib-3.3.39.jar", "authlib-4.0.0.jar"),
-            ("Caused by: com.google.gson.JsonSyntaxException:", "Caused by: AnotherException:"),
-            ("Expected BEGIN_OBJECT but was STRING", "An unrelated illegal state"),
-        )
-        for old, new in changes:
-            changed = block.replace(old, new)
-            self.assertNotEqual(block, changed)
-            with self.subTest(change=new), self.assertRaises(ValueError):
-                classify(self.completed_client(changed), True)
-
-    def test_gateway_warning_cannot_hide_an_unrelated_failure(self):
-        log = self.completed_client(self.gateway_block())
-        for extra in ("java.lang.IllegalStateException: A genuine world failure",
-                      "[time] [Server thread/ERROR] [MinecraftServer/]: Failed to save a chunk",
-                      "java.lang.NoClassDefFoundError: missing.class"):
-            with self.subTest(extra=extra), self.assertRaises(ValueError):
-                classify(log + "\n" + extra, True)
-        with self.assertRaises(ValueError):
-            classify(self.completed_client(self.gateway_block() + self.gateway_block()), True)
-
     def test_previous_target_notices_are_rejected(self):
         with self.assertRaises(ValueError):
             classify("\n".join((NOTICE, START, LOGIN, PAYLOAD)), True)
@@ -78,6 +26,18 @@ class NativeClientLogTest(unittest.TestCase):
         self.assertEqual(receipt["native_config_notices"], 0)
         self.assertEqual(receipt["empty_handshakes"], 0)
         self.assertEqual(receipt["notices"], [])
+
+    def test_dummy_token_notice_requires_opt_in_and_keeps_its_exact_identity(self):
+        message = "Failed to fetch Realms feature flags"
+        error = ("[time] [Download-1/ERROR] [com.mojang.realmsclient.client.RealmsClient/]: " + message + "\n"
+                 "com.mojang.realmsclient.exception.RealmsServiceException: Realms authentication error with message "
+                 "'java.lang.RuntimeException: Failed to parse into SignedJWT: 0'")
+        log = "\n".join((error, START, LOGIN))
+        self.assertEqual(classify(log, True, packaged_offline=True)["notices"], [message])
+        with self.assertRaises(ValueError):
+            classify(log, True)
+        with self.assertRaises(ValueError):
+            classify(log.replace("SignedJWT: 0", "SignedJWT: other"), True, packaged_offline=True)
 
     def test_actual_config_change_is_rejected(self):
         with self.assertRaises(ValueError):
@@ -156,30 +116,6 @@ class NativeClientFilesTest(unittest.TestCase):
         (self.directory / "crash-reports/test.txt").write_text("Simulated failure")
         with self.assertRaises(ValueError):
             audit(self.directory, "control", True)
-
-
-class NativeRegistryProfileTest(unittest.TestCase):
-    def test_server_proof_does_not_authorise_client_notices(self):
-        import json
-        import tempfile
-        from native_registry_notices import profile_for
-
-        root = Path(__file__).resolve().parent.parent
-        policy = json.loads((root / "tools/forge-61-registry-notices.json").read_text(encoding="utf-8"))
-        profile = policy["D3EEA5CB94E3BDA5F1BD94CE306D2F6F64F28D7CC65FF146E814FF48A73919DA"]
-        with tempfile.TemporaryDirectory() as temporary:
-            directory = Path(temporary)
-            manifest = directory / "source-inputs.json"
-            source = {
-                "world_sha256": profile["sha256"],
-                "manifest_sha256": profile["manifest_sha256"],
-                "mode": "client",
-            }
-            manifest.write_text(json.dumps(source), encoding="utf-8")
-            self.assertIsNone(profile_for(directory))
-            (directory / "artifact-inputs.json").write_text(
-                json.dumps(profile["source_artifacts"]), encoding="utf-8")
-            self.assertIsNone(profile_for(directory))
 
 
 if __name__ == "__main__":

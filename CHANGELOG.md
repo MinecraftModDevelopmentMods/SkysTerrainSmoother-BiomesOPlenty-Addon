@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.0.2602001
+
+- Updated for Minecraft 26.2 on Forge. Use the matching versions of the Sky mods and Biomes O’ Plenty.
+
 ## 0.1.0.2601021
 
 - Added Forge support for Minecraft 26.1.2. Update Terrain Smoother and both BOP add-ons together.
