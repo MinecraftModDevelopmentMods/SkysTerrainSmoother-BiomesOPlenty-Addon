@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.0.2602002
+
+- Updated the add-on for Minecraft 26.2 and Biomes O' Plenty 26.2.0.0.28.
+- Smoothing still applies only to newly generated terrain.
+
 ## 0.1.0.2601022
 
 - Updated the BOP add-on for Minecraft 26.1.2 on NeoForge.
