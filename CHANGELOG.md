@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.0.2601022
+
+- Updated the BOP add-on for Minecraft 26.1.2 on NeoForge.
+- Existing terrain stays as it was. Smoothing applies as new chunks generate.
+
 ## 0.1.0.121112
 
 - Bring the add-on to Minecraft 1.21.11 on NeoForge.

@@ -11,9 +11,9 @@ class PublicationContractTest {
     void hostedBuildsPinTheDeclaredProductionToolchainBeforeStartingGradle() throws Exception {
         java.util.Properties metadata = new java.util.Properties();
         metadata.load(new java.io.StringReader(text("gradle.properties")));
-        assertEquals("21.0.7+6", metadata.getProperty("java_toolchain_version"));
-        assertEquals("21.0.7+6", metadata.getProperty("gradle_java_toolchain_version"));
-        assertEquals("21.0.7+6.0.LTS", metadata.getProperty("java_setup_version"));
+        assertEquals("25.0.3+9", metadata.getProperty("java_toolchain_version"));
+        assertEquals("25.0.3+9", metadata.getProperty("gradle_java_toolchain_version"));
+        assertEquals("25.0.3+9.0.LTS", metadata.getProperty("java_setup_version"));
         for (String name : new String[] { "ci.yml", "codeql-analysis.yml" }) {
             String workflow = text(".github/workflows/" + name);
             int install = workflow.indexOf("- name: Install target Java toolchain");
@@ -22,7 +22,7 @@ class PublicationContractTest {
             assertTrue(workflow.substring(install, build).contains("steps.target.outputs.java_setup_version"));
         }
         String ci = text(".github/workflows/ci.yml");
-        assertTrue(ci.contains("java-version: '21.0.7+6.0.LTS'"));
+        assertTrue(ci.contains("java-version: '25.0.3+9.0.LTS'"));
         assertEquals("neoforge", metadata.getProperty("loader_name"));
         assertTrue(ci.contains("Bootstrap NeoForge from an empty cache"));
         assertTrue(ci.contains("-PterrainDirectory=dependencies/terrain"));

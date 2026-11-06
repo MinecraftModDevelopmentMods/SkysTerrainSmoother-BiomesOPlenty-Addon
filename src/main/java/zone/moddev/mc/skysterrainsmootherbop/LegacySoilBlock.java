@@ -5,7 +5,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.SnowyDirtBlock;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
@@ -27,12 +27,12 @@ final class LegacySoilBlock extends Block {
                 .setId(ResourceKey.create(Registries.BLOCK, Identifier.parse(palette.id))));
         this.palette = palette;
         registerDefaultState(stateDefinition.any().setValue(META, 0)
-                .setValue(SnowyDirtBlock.SNOWY, false).setValue(LOWERED_SUPPORT, false));
+                .setValue(BlockStateProperties.SNOWY, false).setValue(LOWERED_SUPPORT, false));
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(META, SnowyDirtBlock.SNOWY, LOWERED_SUPPORT);
+        builder.add(META, BlockStateProperties.SNOWY, LOWERED_SUPPORT);
     }
 
     @Override
