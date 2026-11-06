@@ -5,12 +5,15 @@ import net.minecraft.core.component.DataComponents;
 import com.mojang.serialization.Dynamic;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.util.datafix.fixes.References;
 import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.level.block.state.BlockState;
 
 final class ProbeItems {
     private ProbeItems() {
@@ -30,6 +33,13 @@ final class ProbeItems {
         CompoundTag converted = (CompoundTag) world.getServer().getFixerUpper().update(References.ITEM_STACK,
                 new Dynamic<>(NbtOps.INSTANCE, data), 3700, targetVersion).getValue();
         return read(world, converted);
+    }
+
+    static BlockState readFixtureState(ServerLevel world, CompoundTag oldState) {
+        CompoundTag state = new CompoundTag();
+        state.putString("id", oldState.getString("Name").orElseThrow());
+        state.put("properties", oldState.getCompoundOrEmpty("Properties"));
+        return NbtUtils.readBlockState(world.holderLookup(Registries.BLOCK), state);
     }
 
     static CompoundTag custom(ItemStack stack) {

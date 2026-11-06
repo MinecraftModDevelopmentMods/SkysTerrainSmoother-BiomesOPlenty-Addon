@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.0.2603002
+
+- Updated for Minecraft 26.3 on NeoForge. Use the matching Sky mods and Biomes O' Plenty builds.
+
 ## 0.1.0.2602002
 
 - Updated the add-on for Minecraft 26.2 and Biomes O' Plenty 26.2.0.0.28.

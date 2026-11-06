@@ -14,18 +14,20 @@ import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
+import net.neoforged.neoforge.common.NeoForge;
 import zone.moddev.mc.skysbuildingpieces.api.BuildingPiecesApi;
 
 /** Keeps old BOP terrain pieces recoverable and adds the remaining rock mappings. */
 @Mod(SkysTerrainSmootherBop.ID)
 public final class SkysTerrainSmootherBop {
     public static final String ID = "skysterrainsmootherbop";
-    public static final String VERSION = "0.1.0.2602002";
+    public static final String VERSION = "0.1.0.2603002";
 
     public SkysTerrainSmootherBop(IEventBus modBus) {
         modBus.addListener(this::setup);
         modBus.addListener(RegistryEvents::register);
         modBus.addListener(RegistryEvents::creativeTab);
+        NeoForge.EVENT_BUS.addListener(CoarseDirtSlab::flatten);
     }
 
     private void setup(FMLCommonSetupEvent event) {

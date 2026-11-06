@@ -92,8 +92,10 @@ public final class LegacySoils {
                 change.saved.remove("Damage");
             } else {
                 CompoundTag target = NbtUtils.writeBlockState(change.state);
-                change.saved.putString("Name", target.getString("Name").orElseThrow());
-                change.saved.put("Properties", target.getCompoundOrEmpty("Properties"));
+                // Leave the palette in the format expected by the current stage of the upgrade.
+                boolean legacy = change.saved.contains("Name");
+                change.saved.putString(legacy ? "Name" : "id", target.getString("id").orElseThrow());
+                change.saved.put(legacy ? "Properties" : "properties", target.getCompoundOrEmpty("properties"));
             }
         }
     }
@@ -104,8 +106,11 @@ public final class LegacySoils {
         }
         if (value instanceof CompoundTag) {
             CompoundTag compound = (CompoundTag) value;
-            Palette item = PALETTES.get(compound.getStringOr("id", ""));
-            Palette block = PALETTES.get(compound.getStringOr("Name", ""));
+            String id = compound.getStringOr("id", "");
+            boolean currentState = compound.get("properties") instanceof CompoundTag
+                    && !compound.contains("Count") && !compound.contains("count");
+            Palette item = currentState ? null : PALETTES.get(id);
+            Palette block = PALETTES.get(currentState ? id : compound.getStringOr("Name", ""));
             if (item != null) {
                 if (!integer(compound, "Damage") || !integer(compound, "Count")
                         || compound.getLongOr("Count", 0L) < 1 || compound.getLongOr("Count", 0L) > 127
@@ -116,7 +121,8 @@ public final class LegacySoils {
                 changes.add(new Change(compound, item.resolve(compound.getIntOr("Damage", -1)), true));
             }
             if (block != null) {
-                BlockState target = namedState(block, compound.getCompoundOrEmpty("Properties"));
+                BlockState target = namedState(block,
+                        compound.getCompoundOrEmpty(currentState ? "properties" : "Properties"));
                 if (target != null) {
                     changes.add(new Change(compound, target, false));
                 }
