@@ -92,9 +92,8 @@ class NativeContractTest {
             assertEquals("skysterrainsmootherbop:item/" + name, definition.get("model").getAsString());
         }
         JsonObject pack = read(RESOURCES.resolve("pack.mcmeta")).getAsJsonObject().getAsJsonObject("pack");
-        assertEquals(107, pack.get("max_format").getAsInt());
-        assertEquals(107, pack.getAsJsonArray("min_format").get(0).getAsInt());
-        assertEquals(1, pack.getAsJsonArray("min_format").get(1).getAsInt());
+        assertEquals(121, pack.get("max_format").getAsInt());
+        assertEquals(121, pack.get("min_format").getAsInt());
     }
 
     @Test
@@ -130,7 +129,7 @@ class NativeContractTest {
                 "skysbuildingpiecesbop", "skysterrainsmoother", "biomesoplenty" }) {
             assertTrue(metadata.contains("modId=\"" + mod + "\""));
         }
-        assertTrue(metadata.contains("[26.2.0.0.28]"));
+        assertTrue(metadata.contains("[26.3.0.0.16]"));
         assertFalse(Files.exists(RESOURCES.resolve("META-INF/coremods.json")));
         assertFalse(Files.exists(RESOURCES.resolve("mcmod.info")));
     }

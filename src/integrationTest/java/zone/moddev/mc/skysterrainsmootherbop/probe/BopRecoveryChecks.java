@@ -5,7 +5,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -109,14 +108,26 @@ final class BopRecoveryChecks {
                 properties.putString("snowy", "false");
                 named.put("Properties", properties);
                 named.putString("Unrelated", "kept");
+                CompoundTag current = new CompoundTag();
+                current.putString("id", palette.id);
+                current.put("properties", properties.copy());
+                current.putString("Unrelated", "kept");
                 LegacySoils.recover(named);
-                RuntimeProbe.require(NbtUtils.readBlockState(world.holderLookup(net.minecraft.core.registries.Registries.BLOCK), named).equals(target),
+                LegacySoils.recover(current);
+                RuntimeProbe.require(ProbeItems.readFixtureState(world, named).equals(target),
                         "Named states preserve the exact target geometry");
                 RuntimeProbe.require(named.getStringOr("Unrelated", "").equals("kept"), "Unrelated state data survives");
+                RuntimeProbe.require(net.minecraft.nbt.NbtUtils.readBlockState(
+                                world.holderLookup(net.minecraft.core.registries.Registries.BLOCK), current).equals(target)
+                                && current.getStringOr("Unrelated", "").equals("kept"),
+                        "Modern palette compounds preserve the same geometry and unrelated data");
                 CompoundTag namedOnce = named.copy();
                 LegacySoils.recover(named);
                 RuntimeProbe.require(named.equals(namedOnce), "Current named coarse slabs are not converted twice");
-                checked += 8;
+                CompoundTag currentOnce = current.copy();
+                LegacySoils.recover(current);
+                RuntimeProbe.require(current.equals(currentOnce), "Modern coarse slabs are not mistaken for inventory stacks");
+                checked += 10;
             }
         }
         RuntimeProbe.require(states == 306, "All 306 assigned old soil and path states are covered");

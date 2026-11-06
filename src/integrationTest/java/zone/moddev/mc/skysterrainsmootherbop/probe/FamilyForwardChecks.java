@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 import java.util.UUID;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.SlabBlock;
@@ -27,6 +28,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.registries.ForgeRegistries;
 import zone.moddev.mc.skysbuildingpieces.catalogue.Shape;
+import zone.moddev.mc.skysbuildingpieces.content.PieceBlock;
 import zone.moddev.mc.skysbuildingpieces.content.Pieces;
 import zone.moddev.mc.skysbuildingpieces.legacy.PiecesWorldState;
 import zone.moddev.mc.skysgrassslabs.world.ModWorldState;
@@ -174,12 +176,15 @@ final class FamilyForwardChecks {
         if (new File("source-native-biomes.json").isFile()) {
             NativeBiomeChecks.verify(world);
         }
+        boolean namedSource = fixture.has("source_data_version");
+        // Building Pieces resolves older Level/Sections palettes before vanilla upgrades the chunk.
+        boolean modernPalette = namedSource && fixture.get("source_data_version").getAsInt() >= 2844;
         int checked = 0;
         for (JsonElement element : fixture.getAsJsonArray("blocks")) {
             JsonObject saved = element.getAsJsonObject();
             BlockPos position = position(saved);
             BlockState actual = world.getBlockState(position);
-            BlockState expected = expectedState(saved, retainedRocks);
+            BlockState expected = expectedState(saved, retainedRocks, modernPalette);
             RuntimeProbe.require(withoutSnow(actual).equals(withoutSnow(expected)),
                     "Forward block identity and orientation at " + position + ": " + actual + " expected " + expected);
             RuntimeProbe.require(actual.getFluidState().isEmpty(), "Pre-waterlogging pieces begin dry");
@@ -200,8 +205,7 @@ final class FamilyForwardChecks {
             for (JsonElement element : fixture.getAsJsonArray("native_sand_states")) {
                 JsonObject saved = element.getAsJsonObject();
                 BlockPos position = position(saved);
-                BlockState expected = net.minecraft.nbt.NbtUtils.readBlockState(
-                        world.holderLookup(net.minecraft.core.registries.Registries.BLOCK),
+                BlockState expected = ProbeItems.readFixtureState(world,
                         TagParser.parseCompoundFully(saved.get("state").getAsString()));
                 BlockState actual = world.getBlockState(position);
 
@@ -224,9 +228,7 @@ final class FamilyForwardChecks {
             CompoundTag original = TagParser.parseCompoundFully(saved.get("item").getAsString());
             JsonObject block = fixture.getAsJsonArray("blocks").get(stackIndex++)
                     .getAsJsonObject();
-            ItemStack expected = block.has("material")
-                    ? Pieces.legacyItem(block.get("id").getAsString(), block.get("meta").getAsInt(), original.getInt("Count").orElseThrow())
-                    : Pieces.stack(expectedState(block, retainedRocks), original.getInt("Count").orElseThrow());
+            ItemStack expected = expectedStack(block, original.getInt("Count").orElseThrow(), retainedRocks, namedSource);
             RuntimeProbe.require(actual.getItem() == expected.getItem() && actual.getCount() == expected.getCount(),
                     "Saved piece stack keeps material and count: " + original + " -> " + actual);
             RuntimeProbe.require(ProbeItems.custom(actual).equals(original.getCompound("tag").orElseThrow()),
@@ -311,7 +313,7 @@ final class FamilyForwardChecks {
                 CompoundTag saved = TagParser.parseCompoundFully(row.get("state").getAsString());
                 // Adding Mineralogy keeps named fallback rocks. Their bridge recipe is the explicit conversion.
                 if (saved.getStringOr("Name", "").equals("skysbuildingpiecesbop:retired_rocks")) {
-                    BlockState state = net.minecraft.nbt.NbtUtils.readBlockState(world.holderLookup(net.minecraft.core.registries.Registries.BLOCK), saved);
+                    BlockState state = ProbeItems.readFixtureState(world, saved);
                     RuntimeProbe.require(ForgeRegistries.BLOCKS.getKey(state.getBlock()).toString()
                                     .equals("skysbuildingpiecesbop:retired_rocks"),
                             "The saved fallback rock must still resolve");
@@ -368,16 +370,21 @@ final class FamilyForwardChecks {
         }
     }
 
-    private static BlockState expectedState(JsonObject saved, java.util.Map<BlockPos, BlockState> retainedRocks) {
+    private static BlockState expectedState(JsonObject saved, java.util.Map<BlockPos, BlockState> retainedRocks,
+            boolean namedSource) {
         if (retainedRocks.containsKey(position(saved))) {
             return retainedRocks.get(position(saved));
+        }
+        String id = saved.get("id").getAsString();
+        int metadata = saved.get("meta").getAsInt();
+        if (keepsSkyWoolIdentity(saved, namedSource)) {
+            PieceBlock palette = (PieceBlock) ForgeRegistries.BLOCKS.getValue(Identifier.parse(id));
+            return palette.getStateFromMeta(metadata);
         }
         if (saved.has("material")) {
             return Pieces.state(saved.get("material").getAsString(), Shape.valueOf(saved.get("shape").getAsString()),
                     saved.get("orientation").getAsInt());
         }
-        String id = saved.get("id").getAsString();
-        int metadata = saved.get("meta").getAsInt();
         zone.moddev.mc.skysterrainsmootherbop.LegacySoils.Palette soil =
                 zone.moddev.mc.skysterrainsmootherbop.LegacySoils.PALETTES.get(id);
         if (soil != null) return soil.resolve(metadata);
@@ -392,6 +399,26 @@ final class FamilyForwardChecks {
         BlockState state = ForgeRegistries.BLOCKS.getValue(Identifier.parse(id)).defaultBlockState();
         return state.hasProperty(SlabBlock.TYPE)
                 ? state.setValue(SlabBlock.TYPE, (metadata & 1) == 0 ? SlabType.TOP : SlabType.BOTTOM) : state;
+    }
+
+    private static ItemStack expectedStack(JsonObject saved, int count, java.util.Map<BlockPos, BlockState> retainedRocks,
+            boolean namedSource) {
+        if (keepsSkyWoolIdentity(saved, namedSource)) {
+            String material = Identifier.parse(saved.get("material").getAsString()).getPath();
+            String shape = saved.get("shape").getAsString().toLowerCase(Locale.ROOT);
+            return new ItemStack(Pieces.pieceItem("skysbuildingpieces:" + material + "_" + shape), count);
+        }
+        if (saved.has("material")) {
+            return Pieces.legacyItem(saved.get("id").getAsString(), saved.get("meta").getAsInt(), count);
+        }
+        return Pieces.stack(expectedState(saved, retainedRocks, namedSource), count);
+    }
+
+    private static boolean keepsSkyWoolIdentity(JsonObject saved, boolean namedSource) {
+        String id = saved.get("id").getAsString();
+        // An existing wool piece keeps its saved Sky identity when vanilla adds that shape.
+        return namedSource && (id.startsWith("skysbuildingpieces:cloth_slab_")
+                || id.startsWith("skysbuildingpieces:cloth_stairs_"));
     }
 
     private static void checkSandStack(ItemStack stack, int metadata, int count) {

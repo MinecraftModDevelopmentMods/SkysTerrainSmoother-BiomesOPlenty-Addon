@@ -1,6 +1,14 @@
 package zone.moddev.mc.skysterrainsmootherbop;
 
-import com.mojang.serialization.MapCodec;
+import net.minecraft.advancements.triggers.CriteriaTriggers;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -10,7 +18,6 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.SlabType;
@@ -24,14 +31,12 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.common.ToolAction;
-import net.minecraftforge.common.ToolActions;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import zone.moddev.mc.skysgrassslabs.init.ModBlocks;
+import zone.moddev.mc.skysgrassslabs.item.ShovelSupport;
 
 /** Retains the old coarse-soil slab without turning it into spreading dirt. */
 public final class CoarseDirtSlab extends SlabBlock {
-    private static final MapCodec<CoarseDirtSlab> CODEC = simpleCodec(CoarseDirtSlab::new);
-
     public static final String BLOCK_ID = SkysTerrainSmootherBop.ID + ":dirt_slab_00";
     // Forge creates block holders only while the block registry is open.
     public static CoarseDirtSlab BLOCK;
@@ -48,22 +53,40 @@ public final class CoarseDirtSlab extends SlabBlock {
         registerDefaultState(defaultBlockState().setValue(BlockStateProperties.SNOWY, false));
     }
 
-    @Override
-    public MapCodec<CoarseDirtSlab> codec() {
-        return CODEC;
-    }
-
-    @Override
-    public BlockState getToolModifiedState(BlockState state, UseOnContext context, ToolAction action,
-            boolean simulate) {
-        if (action != ToolActions.SHOVEL_FLATTEN || !context.getItemInHand().canPerformAction(action)
-                || state.getValue(WATERLOGGED)) {
-            return super.getToolModifiedState(state, context, action, simulate);
+    static boolean flatten(PlayerInteractEvent.RightClickBlock event) {
+        ItemStack shovel = event.getItemStack();
+        if (!ShovelSupport.isShovel(shovel) || event.getFace() == Direction.DOWN) {
+            return false;
         }
-        return state.getValue(TYPE) == SlabType.DOUBLE
+
+        var world = event.getLevel();
+        BlockPos position = event.getPos();
+        BlockState state = world.getBlockState(position);
+        if (!state.is(BLOCK) || state.getValue(WATERLOGGED) || !world.isEmptyBlock(position.above())) {
+            return false;
+        }
+
+        var player = event.getEntity();
+        if (!world.mayInteract(player, position) || !player.mayUseItemAt(position, event.getFace(), shovel)
+                || event.getHand() == InteractionHand.MAIN_HAND
+                        && player.getOffhandItem().has(DataComponents.BLOCKS_ATTACKS)
+                        && !player.isSecondaryUseActive()) {
+            return false;
+        }
+
+        BlockState path = state.getValue(TYPE) == SlabType.DOUBLE
                 ? Blocks.DIRT_PATH.defaultBlockState()
                 : ModBlocks.PATH_SLAB.get().defaultBlockState()
                         .setValue(TYPE, state.getValue(TYPE)).setValue(WATERLOGGED, false);
+        if (player instanceof ServerPlayer serverPlayer) {
+            CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger(serverPlayer, position, shovel);
+        }
+        shovel.hurtAndBreak(1, player, event.getHand().asEquipmentSlot());
+        world.setBlock(position, path, Block.UPDATE_ALL_IMMEDIATE);
+        world.playSound(player, position, SoundEvents.SHOVEL_FLATTEN.value(), SoundSource.BLOCKS, 1.0F, 1.0F);
+        world.gameEvent(GameEvent.BLOCK_CHANGE, position, GameEvent.Context.of(player, path));
+        event.setCancellationResult(InteractionResult.SUCCESS);
+        return true;
     }
 
     @Override

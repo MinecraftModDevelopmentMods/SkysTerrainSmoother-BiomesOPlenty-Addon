@@ -1,6 +1,6 @@
 # Building from source
 
-Build with the Gradle 9.6.1 wrapper and Temurin 25.0.3+9.
+Build with the Gradle 9.7.1 wrapper and Temurin 25.0.3+9.
 Set `STS_JAVA25_HOME` to that Java installation. Gradle, ForgeGradle and
 Minecraft all use it.
 
