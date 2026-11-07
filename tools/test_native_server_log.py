@@ -54,6 +54,27 @@ class NativeServerLogTest(unittest.TestCase):
             classify_server(NOTICE.replace('ForgeConfig/CORE', 'OtherConfig/CORE') + '\n' + LOG, DETAILS, True)
 
 
+class BopDevelopmentNoticeTest(unittest.TestCase):
+    def test_only_the_exact_pinned_development_notice_is_accepted(self):
+        from native_registry_notices import BOP_ALLAY_MESSAGE, audit_text
+
+        prefix = "[time] [Server thread/ERROR] [ne.ne.ne.se.ServerLifecycleHooks/]: "
+        known = prefix + BOP_ALLAY_MESSAGE + "\n\t - minecraft:allay\n"
+        self.assertEqual(audit_text(known + LOG, bop_development=True), [])
+        with self.assertRaises(ValueError):
+            audit_text(known + LOG)
+        for text in (
+            known + known + LOG,
+            LOG + "\n" + known,
+            known.replace("minecraft:allay", "minecraft:bat") + LOG,
+            known + "\t - minecraft:bat\n" + LOG,
+            known.replace("ServerLifecycleHooks", "DifferentLogger") + LOG,
+            known + "[time] [Server thread/ERROR] [Sky/]: Broken generation\n" + LOG,
+        ):
+            with self.subTest(text=text), self.assertRaises(ValueError):
+                audit_text(text, bop_development=True)
+
+
 class NativeRegistryNoticeTest(unittest.TestCase):
     def setUp(self):
         import json

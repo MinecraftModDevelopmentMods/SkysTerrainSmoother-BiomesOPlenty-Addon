@@ -127,8 +127,32 @@ def checked_offline_profile_warnings(text):
     return pattern.sub(recognise, text)
 
 
-def audit_text(text, profile=None, completed_native_client=False):
+# With the pinned BOP 21.1.0.14 stack, the development loader reports this
+# before startup even with no Sky mods installed. Keep the raw logs intact.
+BOP_ALLAY_MESSAGE = (
+    "The following entities have not registered to the RegisterSpawnPlacementsEvent, "
+    "but a spawn entry was found. This will mean that the entity doesn't have restrictions "
+    "on its spawn location, please register a spawn placement for the entity, you can "
+    "register with NO_RESTRICTIONS if you don't want any restrictions."
+)
+BOP_ALLAY_NOTICE = re.compile(
+    r"(?m)^\[[^\r\n]+\] \[Server thread/ERROR\] \["
+    r"(?:net\.neoforged\.neoforge\.server|ne\.ne\.ne\.se)\.ServerLifecycleHooks/\]: "
+    + re.escape(BOP_ALLAY_MESSAGE) + r"\n\t - minecraft:allay\n(?![ \t]+-)"
+)
+
+
+def audit_text(text, profile=None, completed_native_client=False, *, bop_development=False):
     text = text.replace("\r\n", "\n")
+    if bop_development:
+        notices = list(BOP_ALLAY_NOTICE.finditer(text))
+        if len(notices) > 1:
+            raise ValueError("Repeated BOP allay spawn diagnostic")
+        if notices:
+            notice = notices[0]
+            if "Done (" in text[:notice.start()]:
+                raise ValueError("BOP allay spawn diagnostic appeared after startup")
+            text = text[:notice.start()] + text[notice.end():]
     if completed_native_client:
         text = checked_offline_profile_warnings(text)
     observed = {}

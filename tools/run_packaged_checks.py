@@ -268,16 +268,16 @@ def prepare(options, directory):
             "manifest_sha256": digest(fixture / "source-family-fixture.json")}, indent=2) + "\n", encoding="utf-8")
 
 
-def audit_console(directory, phase):
+def audit_console(directory, phase, *, bop_development=False):
     """Include failures logged before Minecraft creates its normal logs."""
     console = (directory / (phase + "-console.log")).read_text(encoding="utf-8")
     if re.search(r"(?m)^(?:ERROR|FATAL) Status(?:Console)?Listener\b", console):
         raise ValueError("The loader reported a logging failure")
-    audit_text(console)
+    audit_text(console, bop_development=bop_development)
 
 
-def audit(directory, phase, mode):
-    audit_console(directory, phase)
+def audit(directory, phase, mode, *, bop_development=False):
+    audit_console(directory, phase, bop_development=bop_development)
     biome_contract = directory / "source-native-biomes.json"
     if biome_contract.is_file():
         contract = json.loads(biome_contract.read_text(encoding="utf-8"))
@@ -293,7 +293,7 @@ def audit(directory, phase, mode):
         shutil.copyfile(directory / "logs/debug.log", directory / (phase + "-debug.log"))
         return
     log = (directory / "logs/latest.log").read_text(encoding="utf-8")
-    audit_server(directory, phase)
+    audit_server(directory, phase, bop_development=bop_development)
     required = ("Done (", "TERRAIN_SMOOTHER_RUNTIME_PASS phase=" + ("reload" if "reload" in phase else "fresh"))
     missing = [marker for marker in required if marker not in log]
     if missing:
