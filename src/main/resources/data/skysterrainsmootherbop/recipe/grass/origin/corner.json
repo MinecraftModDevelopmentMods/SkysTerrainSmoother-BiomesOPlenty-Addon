@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "skysterrainsmootherbop/corner",
+  "pattern": [
+    "XX"
+  ],
+  "key": {
+    "X": {
+      "item": "skysbuildingpieces:grass_step"
+    }
+  },
+  "result": {
+    "id": "skysbuildingpieces:grass_corner",
+    "count": 4
+  }
+}

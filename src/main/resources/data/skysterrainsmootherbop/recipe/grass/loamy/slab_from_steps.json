@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "skysterrainsmootherbop/slab_from_steps",
+  "pattern": [
+    "X",
+    "X"
+  ],
+  "key": {
+    "X": {
+      "item": "skysbuildingpieces:grass_step"
+    }
+  },
+  "result": {
+    "id": "skysgrassslabs:grass_slab",
+    "count": 1
+  }
+}

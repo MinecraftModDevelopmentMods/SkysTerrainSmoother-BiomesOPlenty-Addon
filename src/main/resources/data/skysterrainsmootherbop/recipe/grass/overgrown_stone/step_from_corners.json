@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "skysterrainsmootherbop/step_from_corners",
+  "pattern": [
+    "X",
+    "X"
+  ],
+  "key": {
+    "X": {
+      "item": "skysbuildingpieces:mossy_cobblestone_corner"
+    }
+  },
+  "result": {
+    "id": "skysbuildingpieces:mossy_cobblestone_horizontal_step",
+    "count": 1
+  }
+}

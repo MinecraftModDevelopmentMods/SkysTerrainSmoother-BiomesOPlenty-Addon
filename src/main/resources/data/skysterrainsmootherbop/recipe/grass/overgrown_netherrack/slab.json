@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "skysterrainsmootherbop/slab",
+  "pattern": [
+    "XXX"
+  ],
+  "key": {
+    "X": {
+      "item": "minecraft:netherrack"
+    }
+  },
+  "result": {
+    "id": "skysbuildingpieces:netherrack_slab",
+    "count": 6
+  }
+}

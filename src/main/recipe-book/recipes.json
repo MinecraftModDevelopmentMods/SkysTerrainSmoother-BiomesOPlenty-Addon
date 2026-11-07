@@ -1,359 +1,12 @@
 [
   {
-    "recipe": "skysterrainsmootherbop:dirt/coarse_loamy/corner",
+    "recipe": "skysterrainsmootherbop:dirt/loamy/slab",
     "owner": "skysterrainsmootherbop",
     "ingredients": [
       {
-        "item": "skysterrainsmootherbop:dirt_step_01",
-        "data": 8
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:dirt/coarse_loamy/full_block",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "skysterrainsmootherbop:dirt_slab_00",
-        "data": 6
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:dirt/coarse_loamy/slab",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "biomesoplenty:dirt",
-        "data": 8
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:dirt/coarse_loamy/slab_from_steps",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "skysterrainsmootherbop:dirt_step_01",
-        "data": 8
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_01",
-        "data": 9
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_01",
-        "data": 10
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_01",
-        "data": 11
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_01",
-        "data": 12
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_01",
-        "data": 13
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_01",
-        "data": 14
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_01",
-        "data": 15
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:dirt/coarse_loamy/step",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "skysterrainsmootherbop:dirt_slab_00",
-        "data": 6
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:dirt/coarse_loamy/step_from_corners",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_01",
-        "data": 8
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_01",
-        "data": 9
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_01",
-        "data": 10
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_01",
-        "data": 11
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_01",
-        "data": 12
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_01",
-        "data": 13
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_01",
-        "data": 14
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_01",
-        "data": 15
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:dirt/coarse_sandy/corner",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "skysterrainsmootherbop:dirt_step_02",
-        "data": 0
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:dirt/coarse_sandy/full_block",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "skysterrainsmootherbop:dirt_slab_00",
-        "data": 8
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:dirt/coarse_sandy/slab",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "biomesoplenty:dirt",
-        "data": 9
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:dirt/coarse_sandy/slab_from_steps",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "skysterrainsmootherbop:dirt_step_02",
-        "data": 0
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_02",
-        "data": 1
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_02",
-        "data": 2
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_02",
-        "data": 3
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_02",
-        "data": 4
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_02",
-        "data": 5
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_02",
-        "data": 6
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_02",
-        "data": 7
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:dirt/coarse_sandy/step",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "skysterrainsmootherbop:dirt_slab_00",
-        "data": 8
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:dirt/coarse_sandy/step_from_corners",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_02",
-        "data": 0
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_02",
-        "data": 1
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_02",
-        "data": 2
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_02",
-        "data": 3
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_02",
-        "data": 4
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_02",
-        "data": 5
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_02",
-        "data": 6
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_02",
-        "data": 7
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:dirt/coarse_silty/corner",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "skysterrainsmootherbop:dirt_step_02",
-        "data": 8
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:dirt/coarse_silty/full_block",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "skysterrainsmootherbop:dirt_slab_00",
-        "data": 10
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:dirt/coarse_silty/slab",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "biomesoplenty:dirt",
-        "data": 10
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:dirt/coarse_silty/slab_from_steps",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "skysterrainsmootherbop:dirt_step_02",
-        "data": 8
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_02",
-        "data": 9
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_02",
-        "data": 10
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_02",
-        "data": 11
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_02",
-        "data": 12
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_02",
-        "data": 13
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_02",
-        "data": 14
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_02",
-        "data": 15
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:dirt/coarse_silty/step",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "skysterrainsmootherbop:dirt_slab_00",
-        "data": 10
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:dirt/coarse_silty/step_from_corners",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_02",
-        "data": 8
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_02",
-        "data": 9
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_02",
-        "data": 10
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_02",
-        "data": 11
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_02",
-        "data": 12
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_02",
-        "data": 13
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_02",
-        "data": 14
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_02",
-        "data": 15
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:dirt/loamy/corner",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "skysterrainsmootherbop:dirt_step_00",
-        "data": 0
+        "items": [
+          "minecraft:dirt"
+        ]
       }
     ]
   },
@@ -362,56 +15,9 @@
     "owner": "skysterrainsmootherbop",
     "ingredients": [
       {
-        "item": "skysterrainsmootherbop:dirt_slab_00",
-        "data": 0
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:dirt/loamy/slab",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "biomesoplenty:dirt",
-        "data": 0
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:dirt/loamy/slab_from_steps",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "skysterrainsmootherbop:dirt_step_00",
-        "data": 0
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_00",
-        "data": 1
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_00",
-        "data": 2
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_00",
-        "data": 3
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_00",
-        "data": 4
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_00",
-        "data": 5
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_00",
-        "data": 6
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_00",
-        "data": 7
+        "items": [
+          "skysgrassslabs:dirt_slab"
+        ]
       }
     ]
   },
@@ -420,8 +26,20 @@
     "owner": "skysterrainsmootherbop",
     "ingredients": [
       {
-        "item": "skysterrainsmootherbop:dirt_slab_00",
-        "data": 0
+        "items": [
+          "skysgrassslabs:dirt_slab"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:dirt/loamy/corner",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "items": [
+          "skysbuildingpieces:dirt_horizontal_step"
+        ]
       }
     ]
   },
@@ -430,56 +48,20 @@
     "owner": "skysterrainsmootherbop",
     "ingredients": [
       {
-        "item": "skysterrainsmootherbop:dirt_corner_00",
-        "data": 0
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_00",
-        "data": 1
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_00",
-        "data": 2
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_00",
-        "data": 3
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_00",
-        "data": 4
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_00",
-        "data": 5
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_00",
-        "data": 6
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_00",
-        "data": 7
+        "items": [
+          "skysbuildingpieces:dirt_corner"
+        ]
       }
     ]
   },
   {
-    "recipe": "skysterrainsmootherbop:dirt/sandy/corner",
+    "recipe": "skysterrainsmootherbop:dirt/loamy/slab_from_steps",
     "owner": "skysterrainsmootherbop",
     "ingredients": [
       {
-        "item": "skysterrainsmootherbop:dirt_step_00",
-        "data": 8
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:dirt/sandy/full_block",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "skysterrainsmootherbop:dirt_slab_00",
-        "data": 2
+        "items": [
+          "skysbuildingpieces:dirt_horizontal_step"
+        ]
       }
     ]
   },
@@ -488,46 +70,20 @@
     "owner": "skysterrainsmootherbop",
     "ingredients": [
       {
-        "item": "biomesoplenty:dirt",
-        "data": 1
+        "items": [
+          "minecraft:dirt"
+        ]
       }
     ]
   },
   {
-    "recipe": "skysterrainsmootherbop:dirt/sandy/slab_from_steps",
+    "recipe": "skysterrainsmootherbop:dirt/sandy/full_block",
     "owner": "skysterrainsmootherbop",
     "ingredients": [
       {
-        "item": "skysterrainsmootherbop:dirt_step_00",
-        "data": 8
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_00",
-        "data": 9
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_00",
-        "data": 10
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_00",
-        "data": 11
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_00",
-        "data": 12
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_00",
-        "data": 13
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_00",
-        "data": 14
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_00",
-        "data": 15
+        "items": [
+          "skysgrassslabs:dirt_slab"
+        ]
       }
     ]
   },
@@ -536,8 +92,20 @@
     "owner": "skysterrainsmootherbop",
     "ingredients": [
       {
-        "item": "skysterrainsmootherbop:dirt_slab_00",
-        "data": 2
+        "items": [
+          "skysgrassslabs:dirt_slab"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:dirt/sandy/corner",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "items": [
+          "skysbuildingpieces:dirt_horizontal_step"
+        ]
       }
     ]
   },
@@ -546,56 +114,20 @@
     "owner": "skysterrainsmootherbop",
     "ingredients": [
       {
-        "item": "skysterrainsmootherbop:dirt_corner_00",
-        "data": 8
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_00",
-        "data": 9
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_00",
-        "data": 10
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_00",
-        "data": 11
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_00",
-        "data": 12
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_00",
-        "data": 13
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_00",
-        "data": 14
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_00",
-        "data": 15
+        "items": [
+          "skysbuildingpieces:dirt_corner"
+        ]
       }
     ]
   },
   {
-    "recipe": "skysterrainsmootherbop:dirt/silty/corner",
+    "recipe": "skysterrainsmootherbop:dirt/sandy/slab_from_steps",
     "owner": "skysterrainsmootherbop",
     "ingredients": [
       {
-        "item": "skysterrainsmootherbop:dirt_step_01",
-        "data": 0
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:dirt/silty/full_block",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "skysterrainsmootherbop:dirt_slab_00",
-        "data": 4
+        "items": [
+          "skysbuildingpieces:dirt_horizontal_step"
+        ]
       }
     ]
   },
@@ -604,46 +136,20 @@
     "owner": "skysterrainsmootherbop",
     "ingredients": [
       {
-        "item": "biomesoplenty:dirt",
-        "data": 2
+        "items": [
+          "minecraft:dirt"
+        ]
       }
     ]
   },
   {
-    "recipe": "skysterrainsmootherbop:dirt/silty/slab_from_steps",
+    "recipe": "skysterrainsmootherbop:dirt/silty/full_block",
     "owner": "skysterrainsmootherbop",
     "ingredients": [
       {
-        "item": "skysterrainsmootherbop:dirt_step_01",
-        "data": 0
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_01",
-        "data": 1
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_01",
-        "data": 2
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_01",
-        "data": 3
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_01",
-        "data": 4
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_01",
-        "data": 5
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_01",
-        "data": 6
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_step_01",
-        "data": 7
+        "items": [
+          "skysgrassslabs:dirt_slab"
+        ]
       }
     ]
   },
@@ -652,8 +158,20 @@
     "owner": "skysterrainsmootherbop",
     "ingredients": [
       {
-        "item": "skysterrainsmootherbop:dirt_slab_00",
-        "data": 4
+        "items": [
+          "skysgrassslabs:dirt_slab"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:dirt/silty/corner",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "items": [
+          "skysbuildingpieces:dirt_horizontal_step"
+        ]
       }
     ]
   },
@@ -662,868 +180,218 @@
     "owner": "skysterrainsmootherbop",
     "ingredients": [
       {
-        "item": "skysterrainsmootherbop:dirt_corner_01",
-        "data": 0
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_01",
-        "data": 1
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_01",
-        "data": 2
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_01",
-        "data": 3
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_01",
-        "data": 4
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_01",
-        "data": 5
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_01",
-        "data": 6
-      },
-      {
-        "item": "skysterrainsmootherbop:dirt_corner_01",
-        "data": 7
+        "items": [
+          "skysbuildingpieces:dirt_corner"
+        ]
       }
     ]
   },
   {
-    "recipe": "skysterrainsmootherbop:grass/daisy/corner",
+    "recipe": "skysterrainsmootherbop:dirt/silty/slab_from_steps",
     "owner": "skysterrainsmootherbop",
     "ingredients": [
       {
-        "item": "skysterrainsmootherbop:grass_step_03",
-        "data": 8
+        "items": [
+          "skysbuildingpieces:dirt_horizontal_step"
+        ]
       }
     ]
   },
   {
-    "recipe": "skysterrainsmootherbop:grass/daisy/full_block",
+    "recipe": "skysterrainsmootherbop:dirt/coarse_loamy/slab",
     "owner": "skysterrainsmootherbop",
     "ingredients": [
       {
-        "item": "skysterrainsmootherbop:grass_slab_00",
-        "data": 14
+        "items": [
+          "minecraft:coarse_dirt"
+        ]
       }
     ]
   },
   {
-    "recipe": "skysterrainsmootherbop:grass/daisy/slab",
+    "recipe": "skysterrainsmootherbop:dirt/coarse_loamy/full_block",
     "owner": "skysterrainsmootherbop",
     "ingredients": [
       {
-        "item": "biomesoplenty:grass",
-        "data": 7
+        "items": [
+          "skysterrainsmootherbop:coarse_dirt_slab"
+        ]
       }
     ]
   },
   {
-    "recipe": "skysterrainsmootherbop:grass/daisy/slab_from_steps",
+    "recipe": "skysterrainsmootherbop:dirt/coarse_loamy/step",
     "owner": "skysterrainsmootherbop",
     "ingredients": [
       {
-        "item": "skysterrainsmootherbop:grass_step_03",
-        "data": 8
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_03",
-        "data": 9
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_03",
-        "data": 10
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_03",
-        "data": 11
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_03",
-        "data": 12
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_03",
-        "data": 13
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_03",
-        "data": 14
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_03",
-        "data": 15
+        "items": [
+          "skysterrainsmootherbop:coarse_dirt_slab"
+        ]
       }
     ]
   },
   {
-    "recipe": "skysterrainsmootherbop:grass/daisy/step",
+    "recipe": "skysterrainsmootherbop:dirt/coarse_loamy/corner",
     "owner": "skysterrainsmootherbop",
     "ingredients": [
       {
-        "item": "skysterrainsmootherbop:grass_slab_00",
-        "data": 14
+        "items": [
+          "skysbuildingpieces:dirt_coarse_horizontal_step"
+        ]
       }
     ]
   },
   {
-    "recipe": "skysterrainsmootherbop:grass/daisy/step_from_corners",
+    "recipe": "skysterrainsmootherbop:dirt/coarse_loamy/step_from_corners",
     "owner": "skysterrainsmootherbop",
     "ingredients": [
       {
-        "item": "skysterrainsmootherbop:grass_corner_03",
-        "data": 8
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_03",
-        "data": 9
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_03",
-        "data": 10
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_03",
-        "data": 11
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_03",
-        "data": 12
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_03",
-        "data": 13
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_03",
-        "data": 14
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_03",
-        "data": 15
+        "items": [
+          "skysbuildingpieces:dirt_coarse_corner"
+        ]
       }
     ]
   },
   {
-    "recipe": "skysterrainsmootherbop:grass/loamy/corner",
+    "recipe": "skysterrainsmootherbop:dirt/coarse_loamy/slab_from_steps",
     "owner": "skysterrainsmootherbop",
     "ingredients": [
       {
-        "item": "skysterrainsmootherbop:grass_step_01",
-        "data": 0
+        "items": [
+          "skysbuildingpieces:dirt_coarse_horizontal_step"
+        ]
       }
     ]
   },
   {
-    "recipe": "skysterrainsmootherbop:grass/loamy/full_block",
+    "recipe": "skysterrainsmootherbop:dirt/coarse_sandy/slab",
     "owner": "skysterrainsmootherbop",
     "ingredients": [
       {
-        "item": "skysterrainsmootherbop:grass_slab_00",
-        "data": 4
+        "items": [
+          "minecraft:coarse_dirt"
+        ]
       }
     ]
   },
   {
-    "recipe": "skysterrainsmootherbop:grass/loamy/slab",
+    "recipe": "skysterrainsmootherbop:dirt/coarse_sandy/full_block",
     "owner": "skysterrainsmootherbop",
     "ingredients": [
       {
-        "item": "biomesoplenty:grass",
-        "data": 2
+        "items": [
+          "skysterrainsmootherbop:coarse_dirt_slab"
+        ]
       }
     ]
   },
   {
-    "recipe": "skysterrainsmootherbop:grass/loamy/slab_from_steps",
+    "recipe": "skysterrainsmootherbop:dirt/coarse_sandy/step",
     "owner": "skysterrainsmootherbop",
     "ingredients": [
       {
-        "item": "skysterrainsmootherbop:grass_step_01",
-        "data": 0
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_01",
-        "data": 1
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_01",
-        "data": 2
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_01",
-        "data": 3
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_01",
-        "data": 4
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_01",
-        "data": 5
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_01",
-        "data": 6
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_01",
-        "data": 7
+        "items": [
+          "skysterrainsmootherbop:coarse_dirt_slab"
+        ]
       }
     ]
   },
   {
-    "recipe": "skysterrainsmootherbop:grass/loamy/step",
+    "recipe": "skysterrainsmootherbop:dirt/coarse_sandy/corner",
     "owner": "skysterrainsmootherbop",
     "ingredients": [
       {
-        "item": "skysterrainsmootherbop:grass_slab_00",
-        "data": 4
+        "items": [
+          "skysbuildingpieces:dirt_coarse_horizontal_step"
+        ]
       }
     ]
   },
   {
-    "recipe": "skysterrainsmootherbop:grass/loamy/step_from_corners",
+    "recipe": "skysterrainsmootherbop:dirt/coarse_sandy/step_from_corners",
     "owner": "skysterrainsmootherbop",
     "ingredients": [
       {
-        "item": "skysterrainsmootherbop:grass_corner_01",
-        "data": 0
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_01",
-        "data": 1
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_01",
-        "data": 2
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_01",
-        "data": 3
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_01",
-        "data": 4
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_01",
-        "data": 5
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_01",
-        "data": 6
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_01",
-        "data": 7
+        "items": [
+          "skysbuildingpieces:dirt_coarse_corner"
+        ]
       }
     ]
   },
   {
-    "recipe": "skysterrainsmootherbop:grass/origin/corner",
+    "recipe": "skysterrainsmootherbop:dirt/coarse_sandy/slab_from_steps",
     "owner": "skysterrainsmootherbop",
     "ingredients": [
       {
-        "item": "skysterrainsmootherbop:grass_step_02",
-        "data": 8
+        "items": [
+          "skysbuildingpieces:dirt_coarse_horizontal_step"
+        ]
       }
     ]
   },
   {
-    "recipe": "skysterrainsmootherbop:grass/origin/full_block",
+    "recipe": "skysterrainsmootherbop:dirt/coarse_silty/slab",
     "owner": "skysterrainsmootherbop",
     "ingredients": [
       {
-        "item": "skysterrainsmootherbop:grass_slab_00",
-        "data": 10
+        "items": [
+          "minecraft:coarse_dirt"
+        ]
       }
     ]
   },
   {
-    "recipe": "skysterrainsmootherbop:grass/origin/slab",
+    "recipe": "skysterrainsmootherbop:dirt/coarse_silty/full_block",
     "owner": "skysterrainsmootherbop",
     "ingredients": [
       {
-        "item": "biomesoplenty:grass",
-        "data": 5
+        "items": [
+          "skysterrainsmootherbop:coarse_dirt_slab"
+        ]
       }
     ]
   },
   {
-    "recipe": "skysterrainsmootherbop:grass/origin/slab_from_steps",
+    "recipe": "skysterrainsmootherbop:dirt/coarse_silty/step",
     "owner": "skysterrainsmootherbop",
     "ingredients": [
       {
-        "item": "skysterrainsmootherbop:grass_step_02",
-        "data": 8
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_02",
-        "data": 9
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_02",
-        "data": 10
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_02",
-        "data": 11
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_02",
-        "data": 12
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_02",
-        "data": 13
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_02",
-        "data": 14
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_02",
-        "data": 15
+        "items": [
+          "skysterrainsmootherbop:coarse_dirt_slab"
+        ]
       }
     ]
   },
   {
-    "recipe": "skysterrainsmootherbop:grass/origin/step",
+    "recipe": "skysterrainsmootherbop:dirt/coarse_silty/corner",
     "owner": "skysterrainsmootherbop",
     "ingredients": [
       {
-        "item": "skysterrainsmootherbop:grass_slab_00",
-        "data": 10
+        "items": [
+          "skysbuildingpieces:dirt_coarse_horizontal_step"
+        ]
       }
     ]
   },
   {
-    "recipe": "skysterrainsmootherbop:grass/origin/step_from_corners",
+    "recipe": "skysterrainsmootherbop:dirt/coarse_silty/step_from_corners",
     "owner": "skysterrainsmootherbop",
     "ingredients": [
       {
-        "item": "skysterrainsmootherbop:grass_corner_02",
-        "data": 8
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_02",
-        "data": 9
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_02",
-        "data": 10
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_02",
-        "data": 11
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_02",
-        "data": 12
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_02",
-        "data": 13
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_02",
-        "data": 14
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_02",
-        "data": 15
+        "items": [
+          "skysbuildingpieces:dirt_coarse_corner"
+        ]
       }
     ]
   },
   {
-    "recipe": "skysterrainsmootherbop:grass/overgrown_netherrack/corner",
+    "recipe": "skysterrainsmootherbop:dirt/coarse_silty/slab_from_steps",
     "owner": "skysterrainsmootherbop",
     "ingredients": [
       {
-        "item": "skysterrainsmootherbop:grass_step_03",
-        "data": 0
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:grass/overgrown_netherrack/full_block",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "skysterrainsmootherbop:grass_slab_00",
-        "data": 12
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:grass/overgrown_netherrack/slab",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "biomesoplenty:grass",
-        "data": 6
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:grass/overgrown_netherrack/slab_from_steps",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "skysterrainsmootherbop:grass_step_03",
-        "data": 0
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_03",
-        "data": 1
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_03",
-        "data": 2
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_03",
-        "data": 3
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_03",
-        "data": 4
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_03",
-        "data": 5
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_03",
-        "data": 6
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_03",
-        "data": 7
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:grass/overgrown_netherrack/step",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "skysterrainsmootherbop:grass_slab_00",
-        "data": 12
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:grass/overgrown_netherrack/step_from_corners",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "skysterrainsmootherbop:grass_corner_03",
-        "data": 0
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_03",
-        "data": 1
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_03",
-        "data": 2
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_03",
-        "data": 3
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_03",
-        "data": 4
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_03",
-        "data": 5
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_03",
-        "data": 6
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_03",
-        "data": 7
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:grass/overgrown_stone/corner",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "skysterrainsmootherbop:grass_step_00",
-        "data": 8
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:grass/overgrown_stone/full_block",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "skysterrainsmootherbop:grass_slab_00",
-        "data": 2
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:grass/overgrown_stone/slab",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "biomesoplenty:grass",
-        "data": 1
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:grass/overgrown_stone/slab_from_steps",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "skysterrainsmootherbop:grass_step_00",
-        "data": 8
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_00",
-        "data": 9
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_00",
-        "data": 10
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_00",
-        "data": 11
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_00",
-        "data": 12
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_00",
-        "data": 13
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_00",
-        "data": 14
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_00",
-        "data": 15
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:grass/overgrown_stone/step",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "skysterrainsmootherbop:grass_slab_00",
-        "data": 2
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:grass/overgrown_stone/step_from_corners",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "skysterrainsmootherbop:grass_corner_00",
-        "data": 8
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_00",
-        "data": 9
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_00",
-        "data": 10
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_00",
-        "data": 11
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_00",
-        "data": 12
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_00",
-        "data": 13
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_00",
-        "data": 14
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_00",
-        "data": 15
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:grass/sandy/corner",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "skysterrainsmootherbop:grass_step_01",
-        "data": 8
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:grass/sandy/full_block",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "skysterrainsmootherbop:grass_slab_00",
-        "data": 6
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:grass/sandy/slab",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "biomesoplenty:grass",
-        "data": 3
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:grass/sandy/slab_from_steps",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "skysterrainsmootherbop:grass_step_01",
-        "data": 8
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_01",
-        "data": 9
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_01",
-        "data": 10
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_01",
-        "data": 11
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_01",
-        "data": 12
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_01",
-        "data": 13
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_01",
-        "data": 14
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_01",
-        "data": 15
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:grass/sandy/step",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "skysterrainsmootherbop:grass_slab_00",
-        "data": 6
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:grass/sandy/step_from_corners",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "skysterrainsmootherbop:grass_corner_01",
-        "data": 8
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_01",
-        "data": 9
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_01",
-        "data": 10
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_01",
-        "data": 11
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_01",
-        "data": 12
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_01",
-        "data": 13
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_01",
-        "data": 14
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_01",
-        "data": 15
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:grass/silty/corner",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "skysterrainsmootherbop:grass_step_02",
-        "data": 0
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:grass/silty/full_block",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "skysterrainsmootherbop:grass_slab_00",
-        "data": 8
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:grass/silty/slab",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "biomesoplenty:grass",
-        "data": 4
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:grass/silty/slab_from_steps",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "skysterrainsmootherbop:grass_step_02",
-        "data": 0
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_02",
-        "data": 1
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_02",
-        "data": 2
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_02",
-        "data": 3
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_02",
-        "data": 4
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_02",
-        "data": 5
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_02",
-        "data": 6
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_02",
-        "data": 7
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:grass/silty/step",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "skysterrainsmootherbop:grass_slab_00",
-        "data": 8
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:grass/silty/step_from_corners",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "skysterrainsmootherbop:grass_corner_02",
-        "data": 0
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_02",
-        "data": 1
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_02",
-        "data": 2
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_02",
-        "data": 3
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_02",
-        "data": 4
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_02",
-        "data": 5
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_02",
-        "data": 6
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_corner_02",
-        "data": 7
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:grass/spectral_moss/corner",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "skysterrainsmootherbop:grass_step_00",
-        "data": 0
-      }
-    ]
-  },
-  {
-    "recipe": "skysterrainsmootherbop:grass/spectral_moss/full_block",
-    "owner": "skysterrainsmootherbop",
-    "ingredients": [
-      {
-        "item": "skysterrainsmootherbop:grass_slab_00",
-        "data": 0
+        "items": [
+          "skysbuildingpieces:dirt_coarse_horizontal_step"
+        ]
       }
     ]
   },
@@ -1532,46 +400,20 @@
     "owner": "skysterrainsmootherbop",
     "ingredients": [
       {
-        "item": "biomesoplenty:grass",
-        "data": 0
+        "items": [
+          "minecraft:mossy_cobblestone"
+        ]
       }
     ]
   },
   {
-    "recipe": "skysterrainsmootherbop:grass/spectral_moss/slab_from_steps",
+    "recipe": "skysterrainsmootherbop:grass/spectral_moss/full_block",
     "owner": "skysterrainsmootherbop",
     "ingredients": [
       {
-        "item": "skysterrainsmootherbop:grass_step_00",
-        "data": 0
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_00",
-        "data": 1
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_00",
-        "data": 2
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_00",
-        "data": 3
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_00",
-        "data": 4
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_00",
-        "data": 5
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_00",
-        "data": 6
-      },
-      {
-        "item": "skysterrainsmootherbop:grass_step_00",
-        "data": 7
+        "items": [
+          "minecraft:mossy_cobblestone_slab"
+        ]
       }
     ]
   },
@@ -1580,8 +422,20 @@
     "owner": "skysterrainsmootherbop",
     "ingredients": [
       {
-        "item": "skysterrainsmootherbop:grass_slab_00",
-        "data": 0
+        "items": [
+          "minecraft:mossy_cobblestone_slab"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/spectral_moss/corner",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "items": [
+          "skysbuildingpieces:mossy_cobblestone_horizontal_step"
+        ]
       }
     ]
   },
@@ -1590,36 +444,482 @@
     "owner": "skysterrainsmootherbop",
     "ingredients": [
       {
-        "item": "skysterrainsmootherbop:grass_corner_00",
-        "data": 0
-      },
+        "items": [
+          "skysbuildingpieces:mossy_cobblestone_corner"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/spectral_moss/slab_from_steps",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
       {
-        "item": "skysterrainsmootherbop:grass_corner_00",
-        "data": 1
-      },
+        "items": [
+          "skysbuildingpieces:mossy_cobblestone_horizontal_step"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/overgrown_stone/slab",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
       {
-        "item": "skysterrainsmootherbop:grass_corner_00",
-        "data": 2
-      },
+        "items": [
+          "minecraft:mossy_cobblestone"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/overgrown_stone/full_block",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
       {
-        "item": "skysterrainsmootherbop:grass_corner_00",
-        "data": 3
-      },
+        "items": [
+          "minecraft:mossy_cobblestone_slab"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/overgrown_stone/step",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
       {
-        "item": "skysterrainsmootherbop:grass_corner_00",
-        "data": 4
-      },
+        "items": [
+          "minecraft:mossy_cobblestone_slab"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/overgrown_stone/corner",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
       {
-        "item": "skysterrainsmootherbop:grass_corner_00",
-        "data": 5
-      },
+        "items": [
+          "skysbuildingpieces:mossy_cobblestone_horizontal_step"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/overgrown_stone/step_from_corners",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
       {
-        "item": "skysterrainsmootherbop:grass_corner_00",
-        "data": 6
-      },
+        "items": [
+          "skysbuildingpieces:mossy_cobblestone_corner"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/overgrown_stone/slab_from_steps",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
       {
-        "item": "skysterrainsmootherbop:grass_corner_00",
-        "data": 7
+        "items": [
+          "skysbuildingpieces:mossy_cobblestone_horizontal_step"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/loamy/slab",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "items": [
+          "minecraft:grass_block"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/loamy/full_block",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "items": [
+          "skysgrassslabs:grass_slab"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/loamy/step",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "items": [
+          "skysgrassslabs:grass_slab"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/loamy/corner",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "items": [
+          "skysbuildingpieces:grass_step"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/loamy/step_from_corners",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "items": [
+          "skysbuildingpieces:grass_corner"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/loamy/slab_from_steps",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "items": [
+          "skysbuildingpieces:grass_step"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/sandy/slab",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "items": [
+          "minecraft:grass_block"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/sandy/full_block",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "items": [
+          "skysgrassslabs:grass_slab"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/sandy/step",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "items": [
+          "skysgrassslabs:grass_slab"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/sandy/corner",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "items": [
+          "skysbuildingpieces:grass_step"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/sandy/step_from_corners",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "items": [
+          "skysbuildingpieces:grass_corner"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/sandy/slab_from_steps",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "items": [
+          "skysbuildingpieces:grass_step"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/silty/slab",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "items": [
+          "minecraft:grass_block"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/silty/full_block",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "items": [
+          "skysgrassslabs:grass_slab"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/silty/step",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "items": [
+          "skysgrassslabs:grass_slab"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/silty/corner",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "items": [
+          "skysbuildingpieces:grass_step"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/silty/step_from_corners",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "items": [
+          "skysbuildingpieces:grass_corner"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/silty/slab_from_steps",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "items": [
+          "skysbuildingpieces:grass_step"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/origin/slab",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "items": [
+          "minecraft:grass_block"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/origin/full_block",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "items": [
+          "skysgrassslabs:grass_slab"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/origin/step",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "items": [
+          "skysgrassslabs:grass_slab"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/origin/corner",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "items": [
+          "skysbuildingpieces:grass_step"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/origin/step_from_corners",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "items": [
+          "skysbuildingpieces:grass_corner"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/origin/slab_from_steps",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "items": [
+          "skysbuildingpieces:grass_step"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/overgrown_netherrack/slab",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "items": [
+          "minecraft:netherrack"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/overgrown_netherrack/full_block",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "items": [
+          "skysbuildingpieces:netherrack_slab"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/overgrown_netherrack/step",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "items": [
+          "skysbuildingpieces:netherrack_slab"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/overgrown_netherrack/corner",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "items": [
+          "skysbuildingpieces:netherrack_horizontal_step"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/overgrown_netherrack/step_from_corners",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "items": [
+          "skysbuildingpieces:netherrack_corner"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/overgrown_netherrack/slab_from_steps",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "items": [
+          "skysbuildingpieces:netherrack_horizontal_step"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/daisy/slab",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "items": [
+          "minecraft:grass_block"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/daisy/full_block",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "items": [
+          "skysgrassslabs:grass_slab"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/daisy/step",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "items": [
+          "skysgrassslabs:grass_slab"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/daisy/corner",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "items": [
+          "skysbuildingpieces:grass_step"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/daisy/step_from_corners",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "items": [
+          "skysbuildingpieces:grass_corner"
+        ]
+      }
+    ]
+  },
+  {
+    "recipe": "skysterrainsmootherbop:grass/daisy/slab_from_steps",
+    "owner": "skysterrainsmootherbop",
+    "ingredients": [
+      {
+        "items": [
+          "skysbuildingpieces:grass_step"
+        ]
       }
     ]
   }

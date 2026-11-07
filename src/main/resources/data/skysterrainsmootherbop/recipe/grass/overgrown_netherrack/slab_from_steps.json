@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "skysterrainsmootherbop/slab_from_steps",
+  "pattern": [
+    "X",
+    "X"
+  ],
+  "key": {
+    "X": {
+      "item": "skysbuildingpieces:netherrack_horizontal_step"
+    }
+  },
+  "result": {
+    "id": "skysbuildingpieces:netherrack_slab",
+    "count": 1
+  }
+}
