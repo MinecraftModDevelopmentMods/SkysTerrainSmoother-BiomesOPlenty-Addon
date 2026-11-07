@@ -166,7 +166,7 @@ final class FamilyForwardChecks {
                 StandardCharsets.UTF_8)) {
             fixture = new JsonParser().parse(input).getAsJsonObject();
         }
-        java.util.Map<BlockPos, BlockState> retainedRocks = retainedNamedRocks(world, fixture);
+        java.util.Map<BlockPos, BlockState> retainedRocks = retainedNamedRocks(fixture);
         if (new File("source-native-biomes.json").isFile()) {
             NativeBiomeChecks.verify(world);
         }
@@ -280,7 +280,7 @@ final class FamilyForwardChecks {
         return checked + 7;
     }
 
-    private static java.util.Map<BlockPos, BlockState> retainedNamedRocks(ServerLevel world, JsonObject fixture) throws Exception {
+    private static java.util.Map<BlockPos, BlockState> retainedNamedRocks(JsonObject fixture) throws Exception {
         java.util.Map<BlockPos, BlockState> retained = new java.util.HashMap<>();
         if (!fixture.has("native_sand_states")) {
             return retained;
@@ -294,11 +294,9 @@ final class FamilyForwardChecks {
                 CompoundTag saved = TagParser.parseTag(row.get("state").getAsString());
                 // Adding Mineralogy keeps named fallback rocks. Their bridge recipe is the explicit conversion.
                 if (saved.getString("Name").equals("skysbuildingpiecesbop:retired_rocks")) {
-                    BlockState state = net.minecraft.nbt.NbtUtils.readBlockState(world.holderLookup(net.minecraft.core.registries.Registries.BLOCK), saved);
-                    RuntimeProbe.require(BuiltInRegistries.BLOCK.getKey(state.getBlock()).toString()
-                                    .equals("skysbuildingpiecesbop:retired_rocks"),
-                            "The saved fallback rock must still resolve");
-                    retained.put(position(row), state);
+                    CompoundTag properties = saved.getCompound("Properties");
+                    int slot = properties.contains("variant") ? Integer.parseInt(properties.getString("variant")) : 0;
+                    retained.put(position(row), zone.moddev.mc.skysbuildingpiecesbop.RetiredRocks.state(slot));
                 }
             }
         }
