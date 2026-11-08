@@ -311,11 +311,9 @@ final class FamilyForwardChecks {
                 CompoundTag saved = TagParser.parseCompoundFully(row.get("state").getAsString());
                 // Adding Mineralogy keeps named fallback rocks. Their bridge recipe is the explicit conversion.
                 if (saved.getStringOr("Name", "").equals("skysbuildingpiecesbop:retired_rocks")) {
-                    BlockState state = net.minecraft.nbt.NbtUtils.readBlockState(world.holderLookup(net.minecraft.core.registries.Registries.BLOCK), saved);
-                    RuntimeProbe.require(ForgeRegistries.BLOCKS.getKey(state.getBlock()).toString()
-                                    .equals("skysbuildingpiecesbop:retired_rocks"),
-                            "The saved fallback rock must still resolve");
-                    retained.put(position(row), state);
+                    CompoundTag properties = saved.getCompoundOrEmpty("Properties");
+                    int slot = properties.contains("variant") ? Integer.parseInt(properties.getStringOr("variant", "")) : 0;
+                    retained.put(position(row), zone.moddev.mc.skysbuildingpiecesbop.RetiredRocks.state(slot));
                 }
             }
         }
