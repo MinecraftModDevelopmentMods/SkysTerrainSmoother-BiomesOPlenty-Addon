@@ -12,8 +12,8 @@ Use Forge 47.4.10 and Java 17 with these matching mods on both client and server
 - Biomes O' Plenty 19.0.0.96.
 - TerraBlender 3.0.1.10 and GlitchCore 0.0.1.1, required by BOP.
 - Sky's Grass Slabs 1.2.0.120011.
-- Sky's Building Pieces 0.3.8.120011.
-- Sky's Building Pieces BOP add-on 0.2.4.120011.
+- Sky's Building Pieces 0.3.9.120011.
+- Sky's Building Pieces BOP add-on 0.2.5.120011.
 - Sky's Terrain Smoother 0.1.0.120011.
 
 BOP now uses vanilla grass and dirt for its ordinary ground. Terrain Smoother
