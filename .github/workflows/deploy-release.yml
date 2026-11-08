@@ -337,13 +337,26 @@ jobs:
           ref: ${{ steps.content.outputs.bopPieces }}
           path: dependencies/bopPieces
       - name: Build development dependencies
+        env:
+          LOADER_NAME: ${{ needs.preflight.outputs.loader_name }}
         run: |
           set -euo pipefail
           chmod +x dependencies/*/gradlew
           (cd dependencies/grass && ./gradlew assemble --no-daemon --stacktrace)
+          if [[ "$LOADER_NAME" == "neoforge" ]]; then
+            grass_version="$(sed -n 's/^grass.version=//p' gradle/content-dependencies.properties)"
+            grass_jar="$GITHUB_WORKSPACE/dependencies/grass/build/libs/SkysGrassSlabs-$grass_version.jar"
+            test -f "$grass_jar"
+            export ORG_GRADLE_PROJECT_grassSlabsMainJar="$grass_jar"
+            export ORG_GRADLE_PROJECT_grassSlabsDeobfJar="$grass_jar"
+          fi
           (cd dependencies/pieces && ./gradlew assemble --no-daemon --stacktrace)
           (cd dependencies/terrain && ./gradlew assemble -PgrassSlabsDirectory=../grass -PbuildingPiecesDirectory=../pieces --no-daemon --stacktrace)
-          (cd dependencies/bopPieces && ./gradlew assemble bopDevelopmentJar -PbuildingPiecesCoreDir=../pieces --no-daemon --stacktrace)
+          if [[ "$LOADER_NAME" == "neoforge" ]]; then
+            (cd dependencies/bopPieces && ./gradlew assemble verifyNativeBopDependencies -PbuildingPiecesCoreDir=../pieces --no-daemon --stacktrace)
+          else
+            (cd dependencies/bopPieces && ./gradlew assemble bopDevelopmentJar -PbuildingPiecesCoreDir=../pieces --no-daemon --stacktrace)
+          fi
 
       - name: Build, test, and audit once
         env:
@@ -354,8 +367,8 @@ jobs:
           if [[ "$LOADER_NAME" == "neoforge" ]]; then
             # NeoGradle resolves model inputs during configuration under build/tmp.
             # Cleaning in the same invocation removes those inputs before setup runs.
-            ./gradlew clean --no-daemon --stacktrace --max-workers=2
-            ./gradlew check build javadoc verifyReleaseArtifacts writeReleaseChecksums \
+            ./gradlew clean -PgrassSlabsDirectory=dependencies/grass -PbuildingPiecesDirectory=dependencies/pieces -PterrainDirectory=dependencies/terrain -PbuildingPiecesBopDirectory=dependencies/bopPieces --no-daemon --stacktrace --max-workers=2
+            ./gradlew check build javadoc verifyReleaseArtifacts writeReleaseChecksums -PgrassSlabsDirectory=dependencies/grass -PbuildingPiecesDirectory=dependencies/pieces -PterrainDirectory=dependencies/terrain -PbuildingPiecesBopDirectory=dependencies/bopPieces \
               --no-daemon --stacktrace --max-workers=2
           else
             # Preserve the established Forge release lifecycle.
@@ -554,13 +567,26 @@ jobs:
           ref: ${{ steps.content.outputs.bopPieces }}
           path: dependencies/bopPieces
       - name: Build development dependencies
+        env:
+          LOADER_NAME: ${{ needs.preflight.outputs.loader_name }}
         run: |
           set -euo pipefail
           chmod +x dependencies/*/gradlew
           (cd dependencies/grass && ./gradlew assemble --no-daemon --stacktrace)
+          if [[ "$LOADER_NAME" == "neoforge" ]]; then
+            grass_version="$(sed -n 's/^grass.version=//p' gradle/content-dependencies.properties)"
+            grass_jar="$GITHUB_WORKSPACE/dependencies/grass/build/libs/SkysGrassSlabs-$grass_version.jar"
+            test -f "$grass_jar"
+            export ORG_GRADLE_PROJECT_grassSlabsMainJar="$grass_jar"
+            export ORG_GRADLE_PROJECT_grassSlabsDeobfJar="$grass_jar"
+          fi
           (cd dependencies/pieces && ./gradlew assemble --no-daemon --stacktrace)
           (cd dependencies/terrain && ./gradlew assemble -PgrassSlabsDirectory=../grass -PbuildingPiecesDirectory=../pieces --no-daemon --stacktrace)
-          (cd dependencies/bopPieces && ./gradlew assemble bopDevelopmentJar -PbuildingPiecesCoreDir=../pieces --no-daemon --stacktrace)
+          if [[ "$LOADER_NAME" == "neoforge" ]]; then
+            (cd dependencies/bopPieces && ./gradlew assemble verifyNativeBopDependencies -PbuildingPiecesCoreDir=../pieces --no-daemon --stacktrace)
+          else
+            (cd dependencies/bopPieces && ./gradlew assemble bopDevelopmentJar -PbuildingPiecesCoreDir=../pieces --no-daemon --stacktrace)
+          fi
 
       - name: Download immutable release artifact
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
