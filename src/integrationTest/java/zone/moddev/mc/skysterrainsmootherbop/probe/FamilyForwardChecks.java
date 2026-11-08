@@ -313,11 +313,9 @@ final class FamilyForwardChecks {
                 CompoundTag saved = TagParser.parseCompoundFully(row.get("state").getAsString());
                 // Adding Mineralogy keeps named fallback rocks. Their bridge recipe is the explicit conversion.
                 if (saved.getStringOr("Name", "").equals("skysbuildingpiecesbop:retired_rocks")) {
-                    BlockState state = ProbeItems.readFixtureState(world, saved);
-                    RuntimeProbe.require(ForgeRegistries.BLOCKS.getKey(state.getBlock()).toString()
-                                    .equals("skysbuildingpiecesbop:retired_rocks"),
-                            "The saved fallback rock must still resolve");
-                    retained.put(position(row), state);
+                    CompoundTag properties = saved.getCompoundOrEmpty("Properties");
+                    int slot = properties.contains("variant") ? Integer.parseInt(properties.getStringOr("variant", "")) : 0;
+                    retained.put(position(row), zone.moddev.mc.skysbuildingpiecesbop.RetiredRocks.state(slot));
                 }
             }
         }
@@ -379,7 +377,10 @@ final class FamilyForwardChecks {
         int metadata = saved.get("meta").getAsInt();
         if (keepsSkyWoolIdentity(saved, namedSource)) {
             PieceBlock palette = (PieceBlock) ForgeRegistries.BLOCKS.getValue(Identifier.parse(id));
-            return palette.getStateFromMeta(metadata);
+            String material = Identifier.parse(saved.get("material").getAsString()).getPath();
+            String shape = saved.get("shape").getAsString().toLowerCase(Locale.ROOT);
+            PieceBlock wool = Pieces.pieceItem("skysbuildingpieces:" + material + "_" + shape).piece;
+            return wool.getStateFromMeta(palette.orientation(palette.getStateFromMeta(metadata)));
         }
         if (saved.has("material")) {
             return Pieces.state(saved.get("material").getAsString(), Shape.valueOf(saved.get("shape").getAsString()),
