@@ -12,8 +12,8 @@ Use NeoForge 47.1.106 and Java 17 with these matching mods on both client and se
 - Biomes O' Plenty 18.0.0.598.
 - TerraBlender 3.0.1.10, required by BOP.
 - Sky's Grass Slabs 1.2.0.120012.
-- Sky's Building Pieces 0.3.8.120012.
-- Sky's Building Pieces BOP add-on 0.2.4.120012.
+- Sky's Building Pieces 0.3.9.120012.
+- Sky's Building Pieces BOP add-on 0.2.5.120012.
 - Sky's Terrain Smoother 0.1.0.120012.
 
 BOP now uses vanilla grass and dirt for its ordinary ground. Terrain Smoother
