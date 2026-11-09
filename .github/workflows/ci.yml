@@ -87,11 +87,10 @@ jobs:
       - name: Build development dependencies
         run: |
           set -euo pipefail
-          chmod +x dependencies/*/gradlew
-          (cd dependencies/grass && ./gradlew assemble --no-daemon --stacktrace)
-          (cd dependencies/pieces && ./gradlew assemble --no-daemon --stacktrace)
-          (cd dependencies/terrain && ./gradlew assemble -PgrassSlabsDirectory=../grass -PbuildingPiecesDirectory=../pieces --no-daemon --stacktrace)
-          (cd dependencies/bopPieces && ./gradlew assemble verifyNativeBopDependencies -PbuildingPiecesCoreDir=../pieces --no-daemon --stacktrace)
+          (cd dependencies/grass && bash ./gradlew assemble --no-daemon --stacktrace)
+          (cd dependencies/pieces && bash ./gradlew assemble --no-daemon --stacktrace)
+          (cd dependencies/terrain && bash ./gradlew assemble -PgrassSlabsDirectory=../grass -PbuildingPiecesDirectory=../pieces --no-daemon --stacktrace)
+          (cd dependencies/bopPieces && bash ./gradlew assemble verifyNativeBopDependencies -PbuildingPiecesCoreDir=../pieces --no-daemon --stacktrace)
 
       - name: Bootstrap Forge from an empty cache
         shell: bash
@@ -164,6 +163,7 @@ jobs:
           echo "STS_JAVA25_HOME=$JAVA_HOME" >> "$GITHUB_ENV"
 
       - name: Install Java for Gradle
+        if: steps.target.outputs.gradle_java_version != steps.target.outputs.java_setup_version
         uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
         with:
           distribution: temurin
@@ -216,11 +216,10 @@ jobs:
       - name: Build development dependencies
         run: |
           set -euo pipefail
-          chmod +x dependencies/*/gradlew
-          (cd dependencies/grass && ./gradlew assemble --no-daemon --stacktrace)
-          (cd dependencies/pieces && ./gradlew assemble --no-daemon --stacktrace)
-          (cd dependencies/terrain && ./gradlew assemble -PgrassSlabsDirectory=../grass -PbuildingPiecesDirectory=../pieces --no-daemon --stacktrace)
-          (cd dependencies/bopPieces && ./gradlew assemble verifyNativeBopDependencies -PbuildingPiecesCoreDir=../pieces --no-daemon --stacktrace)
+          (cd dependencies/grass && bash ./gradlew assemble --no-daemon --stacktrace)
+          (cd dependencies/pieces && bash ./gradlew assemble --no-daemon --stacktrace)
+          (cd dependencies/terrain && bash ./gradlew assemble -PgrassSlabsDirectory=../grass -PbuildingPiecesDirectory=../pieces --no-daemon --stacktrace)
+          (cd dependencies/bopPieces && bash ./gradlew assemble verifyNativeBopDependencies -PbuildingPiecesCoreDir=../pieces --no-daemon --stacktrace)
 
       - name: Make the wrapper executable
         run: chmod +x ./gradlew

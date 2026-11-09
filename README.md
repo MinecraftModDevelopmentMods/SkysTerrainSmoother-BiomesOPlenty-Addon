@@ -36,9 +36,9 @@ their shape, orientation, stack counts and custom item data:
 
 The old registry IDs remain available as recovery entries for unopened chunks and
 mixed saves. Coarse dirt keeps its own slab under an existing palette ID; the
-other old entries are hidden. The original cutting and combining recipes now
-make the replacement pieces. The content mods keep their normal recipes and
-placement behaviour.
+other old entries are hidden. Replacement pieces use the recipes from Minecraft
+and the content mods. This add-on supplies the four recipes for making, cutting
+and combining coarse dirt slabs.
 
 This does not restore every block or feature removed from BOP. Keep BOP worlds
 on a supported Minecraft and loader route, and check a copy before upgrading.

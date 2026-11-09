@@ -1,6 +1,11 @@
 package zone.moddev.mc.skysterrainsmootherbop.probe;
 
+import java.util.List;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -164,6 +169,12 @@ final class BopRecoveryChecks {
             RuntimeProbe.require(rejected && invalid.equals(unchanged),
                     "A count outside the saved-byte range stops without changing the stack");
         }
+        int recipes = checkReplacementRecipes(world);
+        zone.moddev.mc.skysterrainsmoother.SkysTerrainSmoother.logger.info("TERRAIN_BOP_RECOVERY_PASS states=" + states + " checks=" + checked);
+        return checked + recipes + 2;
+    }
+
+    private static int checkReplacementRecipes(ServerLevel world) {
         int recipes = 0;
         for (var holder : world.getServer().getRecipeManager().getRecipes()) {
             var recipe = holder.value();
@@ -188,8 +199,50 @@ final class BopRecoveryChecks {
             }
             recipes++;
         }
-        RuntimeProbe.require(recipes == 84, "All original recipe identities load with available ingredients");
-        zone.moddev.mc.skysterrainsmoother.SkysTerrainSmoother.logger.info("TERRAIN_BOP_RECOVERY_PASS states=" + states + " checks=" + checked);
-        return checked + 2;
+        RuntimeProbe.require(recipes == 4, "The add-on registers only its four coarse dirt slab recipes");
+
+        checkCraftingChain(world, "minecraft:coarse_dirt", "skysterrainsmootherbop:coarse_dirt_slab",
+                "dirt_coarse_horizontal_step", "dirt_coarse_corner");
+        checkCraftingChain(world, "minecraft:dirt", "skysgrassslabs:dirt_slab",
+                "dirt_horizontal_step", "dirt_corner");
+        checkCraftingChain(world, "minecraft:grass_block", "skysgrassslabs:grass_slab",
+                "grass_step", "grass_corner");
+        checkCraftingChain(world, "minecraft:netherrack", "skysbuildingpieces:netherrack_slab",
+                "netherrack_horizontal_step", "netherrack_corner");
+        checkCraftingChain(world, "minecraft:mossy_cobblestone", "minecraft:mossy_cobblestone_slab",
+                "mossy_cobblestone_horizontal_step", "mossy_cobblestone_corner");
+        zone.moddev.mc.skysterrainsmoother.SkysTerrainSmoother.logger.info(
+                "TERRAIN_BOP_CRAFTING_PASS patterns=30 addon_recipes={}", recipes);
+        return recipes + 30;
+    }
+
+    private static void checkCraftingChain(ServerLevel world, String fullBlockId, String slabId,
+                                           String stepPath, String cornerPath) {
+        ItemStack fullBlock = new ItemStack(item(fullBlockId));
+        ItemStack slab = new ItemStack(item(slabId));
+        ItemStack step = new ItemStack(item("skysbuildingpieces:" + stepPath));
+        ItemStack corner = new ItemStack(item("skysbuildingpieces:" + cornerPath));
+
+        checkCraft(world, 3, 1, List.of(fullBlock, fullBlock, fullBlock), slab.copyWithCount(6));
+        checkCraft(world, 2, 2, List.of(slab, ItemStack.EMPTY, ItemStack.EMPTY, slab), step.copyWithCount(4));
+        checkCraft(world, 2, 1, List.of(step, step), corner.copyWithCount(4));
+        checkCraft(world, 1, 2, List.of(corner, corner), step);
+        checkCraft(world, 1, 2, List.of(step, step), slab);
+        checkCraft(world, 2, 1, List.of(slab, slab), fullBlock);
+    }
+
+    private static Item item(String id) {
+        Item item = ForgeRegistries.ITEMS.getValue(Identifier.parse(id));
+        RuntimeProbe.require(item != null, "Missing replacement recipe item: " + id);
+        return item;
+    }
+
+    private static void checkCraft(ServerLevel world, int width, int height, List<ItemStack> ingredients,
+                                   ItemStack expected) {
+        CraftingInput input = CraftingInput.of(width, height, ingredients);
+        ItemStack actual = world.getServer().getRecipeManager().getRecipeFor(RecipeType.CRAFTING, input, world)
+                .map(recipe -> recipe.value().assemble(input)).orElse(ItemStack.EMPTY);
+        RuntimeProbe.require(ItemStack.matches(expected, actual),
+                "Crafting " + ingredients + " should produce " + expected + ", got " + actual);
     }
 }

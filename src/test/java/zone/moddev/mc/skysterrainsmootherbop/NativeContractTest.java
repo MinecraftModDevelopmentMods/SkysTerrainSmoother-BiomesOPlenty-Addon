@@ -46,9 +46,9 @@ class NativeContractTest {
     }
 
     @Test
-    void everyOriginalRecipeIdentityHasOneNativeRecipeAndUnlock() throws Exception {
+    void onlyTheAddOnCoarseDirtSlabRecipesHaveTheirOwnUnlocks() throws Exception {
         JsonArray manifest = read(Paths.get("src/main/recipe-book/recipes.json")).getAsJsonArray();
-        assertEquals(84, manifest.size());
+        assertEquals(4, manifest.size());
         Set<String> ids = new HashSet<>();
         for (JsonElement row : manifest) {
             String id = row.getAsJsonObject().get("recipe").getAsString();
@@ -67,6 +67,19 @@ class NativeContractTest {
             assertFalse(recipe.toString().contains("biomesoplenty:"), "Removed native items are not recipe inputs");
             assertFalse(recipe.toString().contains("\"data\""), "Recipe ingredients use flat item identities");
             assertTrue(recipe.getAsJsonObject("result").get("count").getAsInt() > 0);
+        }
+
+        String recipePrefix = "skysterrainsmootherbop:dirt/coarse_loamy/";
+        assertEquals(Set.of(recipePrefix + "slab", recipePrefix + "full_block",
+                recipePrefix + "step", recipePrefix + "slab_from_steps"), ids);
+        Path recipeRoot = RESOURCES.resolve("data/skysterrainsmootherbop/recipe");
+        try (Stream<Path> files = Files.walk(recipeRoot)) {
+            Set<String> recipeFiles = new HashSet<>();
+            files.filter(path -> path.toString().endsWith(".json")).forEach(path -> {
+                String relative = recipeRoot.relativize(path).toString().replace('\\', '/');
+                recipeFiles.add("skysterrainsmootherbop:" + relative.substring(0, relative.length() - 5));
+            });
+            assertEquals(ids, recipeFiles);
         }
     }
 
