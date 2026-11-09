@@ -8,6 +8,28 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PublicationContractTest {
     @Test
+    void hostedBuildsPinTheDeclaredProductionToolchainBeforeStartingGradle() throws Exception {
+        java.util.Properties metadata = new java.util.Properties();
+        metadata.load(new java.io.StringReader(text("gradle.properties")));
+        assertEquals("25.0.3+9", metadata.getProperty("java_toolchain_version"));
+        assertEquals("25.0.3+9", metadata.getProperty("gradle_java_toolchain_version"));
+        for (String name : new String[] { "ci.yml", "codeql-analysis.yml" }) {
+            String workflow = text(".github/workflows/" + name);
+            int install = workflow.indexOf("- name: Install target Java toolchain");
+            int pin = workflow.indexOf("- name: Pin production Java");
+            int gradle = workflow.indexOf("- name: Install Java for Gradle", pin);
+            assertTrue(install >= 0 && install < pin && pin < gradle, name);
+            assertTrue(workflow.substring(install, pin).contains("steps.target.outputs.java_setup_version"));
+            assertTrue(workflow.substring(pin, gradle).contains("STS_JAVA25_HOME=$JAVA_HOME"));
+        }
+        String ci = text(".github/workflows/ci.yml");
+        assertTrue(ci.contains("java-version: '25.0.3+9.0.LTS'"));
+        assertTrue(ci.contains("Bootstrap Forge from an empty cache"));
+        assertTrue(ci.contains("-PterrainDirectory=dependencies/terrain"));
+        assertTrue(ci.contains("-PbuildingPiecesBopDirectory=dependencies/bopPieces"));
+    }
+
+    @Test
     void publicationNeedsThisModsMetadataAndExplicitApproval() throws Exception {
         String properties = text("gradle.properties");
         java.util.Properties metadata = new java.util.Properties();

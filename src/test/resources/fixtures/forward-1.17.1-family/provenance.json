@@ -1,0 +1,2158 @@
+{
+  "source_minecraft": "1.17.1",
+  "source_data_version": 2730,
+  "source_artifacts": [
+    {
+      "name": "SkysTerrainSmoother-BiomesOPlenty-Addon-0.1.0.117011.jar",
+      "sha256": "F1CAF9222515C67CFB30DBD31676FE14DA6DFAF6F38269CB416397CE75E53AEB"
+    },
+    {
+      "name": "SkysGrassSlabs-1.2.0.117011.jar",
+      "sha256": "5A5EC232E9EB05B870315F7080B2F2B66003F2D66755607135E559B1D1E0D506"
+    },
+    {
+      "name": "SkysBuildingPieces-0.3.8.117011.jar",
+      "sha256": "40ACD56C59F50C9C5DC484781B7FEA180E1C45FAB5470735CA27983E14258240"
+    },
+    {
+      "name": "SkysTerrainSmoother-0.1.0.117011.jar",
+      "sha256": "35D6C37E24C3F02FC2BCABF7833FEF44B8A79586507DB5E8C6B26274C2739434"
+    },
+    {
+      "name": "SkysBuildingPieces-BiomesOPlenty-Addon-0.2.4.117011.jar",
+      "sha256": "4BD869BCFE8ABAC82D3D073E51982D8726076B3E0B8B510EEF075E242129E99F"
+    }
+  ],
+  "source_probe_sha256": "166881495168F04561CE2AEF51F7D2DD1C0E47D66C298BD025D63997681B3678",
+  "source_terrain_bop_commit": "fb2c07fe6e203f8ae42fd8abfb3c7665d1665ab1",
+  "source_runtime_archive_sha256": "3B7EE450202055DB3B7DF9696599953CE918524C2E50523BD766FFDEF95BA49B",
+  "source_runtime_profile": "terrain-bop-family-117-final-1-server-forward116",
+  "source_world_files": {
+    "family-forward-fresh.properties": "68B1874675ABCD5CD9809266B4A1DAFE4AC7D37291CECD0AF96A4B02230710CD",
+    "family-forward-reload.properties": "68B1874675ABCD5CD9809266B4A1DAFE4AC7D37291CECD0AF96A4B02230710CD",
+    "forcedchunks.dat": "8A1FF1D28CC89BEFE2B93AEC31A800604D46B8E653E6A106D409A240CDA20738",
+    "level.dat": "46AF52A4DB6556067C5D65B44CD58EF6A05058B760307E9414AFCD9604EED5AD",
+    "level.dat_old": "41440E5ADFE758E5EC385AAB5CA6B3EC35955DF5FD8FC222F9D7535BD3DD5D43",
+    "session.lock": "51643361C79ECAEF25A8DE802DE24F570BA25D9C2DF1D22D94FADE11B4F466CC",
+    "data/capabilities.dat": "8084A41EEABE6A0B9AD084F5072D44090AB6B39FC6F69E1042AC3A9A355F816A",
+    "data/chunks.dat": "D09DD6AB0D70ABCFC1AFC74FF63545151C24EFC87CB66EE0B96F06D796F10C80",
+    "data/raids.dat": "28C23EB30A4BBB1F5890B0F5B91D13DDAFC48C326C3F5794D1234FAA6890164A",
+    "data/skysbuildingpiecesbop_named_registry.dat": "33F8182D186A93012D2D42391F7F64F0936CD9978E576B000D8251078DF223A5",
+    "data/skysbuildingpieces_legacy_registry.dat": "54B81AA257C180FE595A4670D50052E851AB82150FB37BBA94C959EA3327E9A2",
+    "data/skysbuildingpieces_world_state.dat": "E810453E869DF499323892BE174E6E81E8A44813596DC43398F6C209D5272751",
+    "data/skysgrassslabs_legacy_registry.dat": "4AAA0526768CC237A7852E07320E750A60C6BF9AF8E37B78FEA0249E7E7AA84D",
+    "data/skysgrassslabs_world_state.dat": "06F5ECE86F25D9661A10ECE46F8FE82AB1CDB85C7EA953B8CD905B579BAA97DB",
+    "data/villages.dat": "0BA0CED0C7AE7CB3C6F93C46BD274B99E12841FBC98F23B5803A48E027BBEF51",
+    "DIM-1/forcedchunks.dat": "8A1FF1D28CC89BEFE2B93AEC31A800604D46B8E653E6A106D409A240CDA20738",
+    "DIM1/forcedchunks.dat": "8A1FF1D28CC89BEFE2B93AEC31A800604D46B8E653E6A106D409A240CDA20738",
+    "entities/r.-2.-1.mca": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "entities/r.-2.0.mca": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "entities/r.1.1.mca": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "entities/r.1.2.mca": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "entities/r.2.1.mca": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "entities/r.2.2.mca": "2EDA87D692E3BE4B3B449CB9511760B467D76434733FB620D06387C8CF0B79AB",
+    "entities/r.58.58.mca": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "entities/r.59.58.mca": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "playerdata/592308ca-42eb-46f7-929d-d2c6d00a4a01.dat": "B086F11D9EF7A6E0B537518E278F55C1B71C727EE76E75A79355A197C244DBD3",
+    "poi/r.-1.0.mca": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "poi/r.-2.-1.mca": "9F1DCBC35C350D6027F98BE0F5C8B43B42CA52B7604459C0C42BE3AA88913D47",
+    "poi/r.-2.0.mca": "9F1DCBC35C350D6027F98BE0F5C8B43B42CA52B7604459C0C42BE3AA88913D47",
+    "poi/r.1.1.mca": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "poi/r.1.2.mca": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "poi/r.2.1.mca": "9F1DCBC35C350D6027F98BE0F5C8B43B42CA52B7604459C0C42BE3AA88913D47",
+    "poi/r.2.2.mca": "9F1DCBC35C350D6027F98BE0F5C8B43B42CA52B7604459C0C42BE3AA88913D47",
+    "poi/r.58.58.mca": "9F1DCBC35C350D6027F98BE0F5C8B43B42CA52B7604459C0C42BE3AA88913D47",
+    "poi/r.59.58.mca": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+    "region/r.-1.-1.mca": "8391490F1D9B77A442C26028CDCCD480F91BC4F4D5758838E2B00F2C43F0A758",
+    "region/r.-1.0.mca": "688B40C21283C6DDF248FD630A513B61FEE8E3FF0E31BFC8F49E855B7734D42A",
+    "region/r.-1.1.mca": "CECB2577E385994982F1D31EF1EA2567F425354A77D94C6DBB3E8CA42E82FC39",
+    "region/r.-2.-1.mca": "0A2638E1B43F067584FD3C30657B5F00853A0721E75FDA04590B6D14540E8A91",
+    "region/r.-2.0.mca": "DC4A5CDD502AAD84AA1FF9350312452FC0CD8A6FAACDF61C0DE9BB7D5F3A67C1",
+    "region/r.-3.-1.mca": "9F1DCBC35C350D6027F98BE0F5C8B43B42CA52B7604459C0C42BE3AA88913D47",
+    "region/r.-3.0.mca": "9F1DCBC35C350D6027F98BE0F5C8B43B42CA52B7604459C0C42BE3AA88913D47",
+    "region/r.0.-1.mca": "81BC4633920354CA08258ED6459005CB9AD12605B3EC0947321D48E42D5CE894",
+    "region/r.0.0.mca": "06A37955243A1C5F44661F459B0A04D8988DDB4E3D09F8D35D3C4243F657B5BE",
+    "region/r.1.1.mca": "463084C0D5E8A555E61E9DB99BAE65FE9A60C7F6C56700FD40772C6E366EE68F",
+    "region/r.1.2.mca": "FA26E85D81C9BB2919B7AA6F3496C86E3F15A11BF2FFC41C5E248626EFBA047A",
+    "region/r.2.1.mca": "CAC702EF2F448C5F204ACA84A0E52E9DF642BECCC2C309B0A4DD35207B63657A",
+    "region/r.2.2.mca": "E5FF4313D14A0C593048F23A23AF142AB90F019887C0577A2123095EBF427D82",
+    "region/r.3.1.mca": "6730A3E63B973F35DB93802214F600C133C0F19130411C8A9BC09372A8ED06ED",
+    "region/r.3.2.mca": "FEF0D60F690ED36B8309D7B5672698757BAD09EAC70C2818311DF17D95E373C1",
+    "region/r.58.58.mca": "22E0B7696FE2DAB5E1AA0BE00AE514C849ADF6812ECBD8171ED3999A2DB2685E",
+    "region/r.59.58.mca": "77CABD3CC11CFFD76A5E069A2764F620FA76C8F43D2EF965AE4CBC0E1E96A8F5",
+    "serverconfig/forge-server.toml": "7F2E9B1D0379A5E48ADD3FB94B9E277618B94733DCF3B3EEFEBE66FBE1029347",
+    "serverconfig/skysbuildingpieces-migration-report.txt": "A706EE654C1CAF3942C80A406C722713D7B026BBB438E59E148DDD1EF23A2423",
+    "DIM-1/data/capabilities.dat": "8084A41EEABE6A0B9AD084F5072D44090AB6B39FC6F69E1042AC3A9A355F816A",
+    "DIM-1/data/raids.dat": "3728641EF06C8A2250890D02DA6BB90AF989ADEF71620FD789DC8BA4722A52E8",
+    "DIM-1/data/villages_nether.dat": "0BA0CED0C7AE7CB3C6F93C46BD274B99E12841FBC98F23B5803A48E027BBEF51",
+    "DIM1/data/capabilities.dat": "8084A41EEABE6A0B9AD084F5072D44090AB6B39FC6F69E1042AC3A9A355F816A",
+    "DIM1/data/raids_end.dat": "3728641EF06C8A2250890D02DA6BB90AF989ADEF71620FD789DC8BA4722A52E8",
+    "DIM1/data/villages_end.dat": "0BA0CED0C7AE7CB3C6F93C46BD274B99E12841FBC98F23B5803A48E027BBEF51"
+  },
+  "source_world_unchanged": true,
+  "source_saved_states": 4700,
+  "native_sand_states": 12,
+  "wet_sand_states": 6,
+  "derived_snow_updates": [
+    {
+      "x": 1066,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1068,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1070,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1072,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1074,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1076,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1078,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1080,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1082,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1084,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1086,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1088,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1090,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1092,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1094,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1096,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1098,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1100,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1102,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1104,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1106,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1108,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1110,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1112,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1114,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1116,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1118,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1120,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1122,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1124,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1126,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1128,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1130,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1132,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1134,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1136,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1138,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1140,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1142,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1144,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1146,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1148,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1150,
+      "y": 70,
+      "z": 1086,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1024,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1026,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1028,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1030,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1032,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1034,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1036,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1038,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1024,
+      "y": 70,
+      "z": 1090,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1026,
+      "y": 70,
+      "z": 1090,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1028,
+      "y": 70,
+      "z": 1090,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1030,
+      "y": 70,
+      "z": 1090,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1032,
+      "y": 70,
+      "z": 1090,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1040,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1042,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1044,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1046,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1048,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1050,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1052,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1054,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1056,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1058,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1060,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1062,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1064,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1066,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1068,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1070,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1072,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1074,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1076,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1078,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1080,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1082,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1084,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1086,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1088,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1090,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1092,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1094,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1096,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1098,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1100,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1102,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1104,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1106,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1108,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1110,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1112,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1114,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1116,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1118,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1120,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1122,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1124,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1126,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1128,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1130,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1132,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1134,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1136,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1138,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1140,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1142,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1144,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1146,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1148,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1150,
+      "y": 70,
+      "z": 1088,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1024,
+      "y": 70,
+      "z": 1108,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1098,
+      "y": 70,
+      "z": 1106,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1100,
+      "y": 70,
+      "z": 1106,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1102,
+      "y": 70,
+      "z": 1106,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1104,
+      "y": 70,
+      "z": 1106,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1106,
+      "y": 70,
+      "z": 1106,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1108,
+      "y": 70,
+      "z": 1106,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1110,
+      "y": 70,
+      "z": 1106,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1112,
+      "y": 70,
+      "z": 1106,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1114,
+      "y": 70,
+      "z": 1106,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1116,
+      "y": 70,
+      "z": 1106,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1118,
+      "y": 70,
+      "z": 1106,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1120,
+      "y": 70,
+      "z": 1106,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1122,
+      "y": 70,
+      "z": 1106,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1124,
+      "y": 70,
+      "z": 1106,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1126,
+      "y": 70,
+      "z": 1106,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1128,
+      "y": 70,
+      "z": 1106,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1130,
+      "y": 70,
+      "z": 1106,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1132,
+      "y": 70,
+      "z": 1106,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1134,
+      "y": 70,
+      "z": 1106,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1136,
+      "y": 70,
+      "z": 1106,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1138,
+      "y": 70,
+      "z": 1106,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1140,
+      "y": 70,
+      "z": 1106,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1142,
+      "y": 70,
+      "z": 1106,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1144,
+      "y": 70,
+      "z": 1106,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1146,
+      "y": 70,
+      "z": 1106,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1148,
+      "y": 70,
+      "z": 1106,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1150,
+      "y": 70,
+      "z": 1106,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1024,
+      "y": 70,
+      "z": 1130,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1026,
+      "y": 70,
+      "z": 1130,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1148,
+      "y": 70,
+      "z": 1128,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1150,
+      "y": 70,
+      "z": 1128,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1024,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1026,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1028,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1030,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1032,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1034,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1036,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1038,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1024,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1026,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1028,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1030,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1032,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1034,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1036,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1038,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1024,
+      "y": 70,
+      "z": 1166,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1026,
+      "y": 70,
+      "z": 1166,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1028,
+      "y": 70,
+      "z": 1166,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1030,
+      "y": 70,
+      "z": 1166,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1032,
+      "y": 70,
+      "z": 1166,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1034,
+      "y": 70,
+      "z": 1166,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1036,
+      "y": 70,
+      "z": 1166,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1038,
+      "y": 70,
+      "z": 1166,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1040,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1042,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1044,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1046,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1048,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1050,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1052,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1054,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1040,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1042,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1052,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1054,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1040,
+      "y": 70,
+      "z": 1166,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1042,
+      "y": 70,
+      "z": 1166,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1056,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1058,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1060,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1062,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1064,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1066,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1068,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1070,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1056,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1058,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1060,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1062,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1064,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1066,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1060,
+      "y": 70,
+      "z": 1166,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1062,
+      "y": 70,
+      "z": 1166,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1064,
+      "y": 70,
+      "z": 1166,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1066,
+      "y": 70,
+      "z": 1166,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1068,
+      "y": 70,
+      "z": 1166,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1070,
+      "y": 70,
+      "z": 1166,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1084,
+      "y": 70,
+      "z": 1160,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1086,
+      "y": 70,
+      "z": 1160,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1072,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1074,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1076,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1078,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1080,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1082,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1084,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1086,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1072,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1074,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1072,
+      "y": 70,
+      "z": 1166,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1074,
+      "y": 70,
+      "z": 1166,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1088,
+      "y": 70,
+      "z": 1160,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1090,
+      "y": 70,
+      "z": 1160,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1092,
+      "y": 70,
+      "z": 1160,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1094,
+      "y": 70,
+      "z": 1160,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1096,
+      "y": 70,
+      "z": 1160,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1098,
+      "y": 70,
+      "z": 1160,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1100,
+      "y": 70,
+      "z": 1160,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1102,
+      "y": 70,
+      "z": 1160,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1088,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1090,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1092,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1094,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1096,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1098,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1100,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1102,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1104,
+      "y": 70,
+      "z": 1160,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1106,
+      "y": 70,
+      "z": 1160,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1108,
+      "y": 70,
+      "z": 1160,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1110,
+      "y": 70,
+      "z": 1160,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1112,
+      "y": 70,
+      "z": 1160,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1114,
+      "y": 70,
+      "z": 1160,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1116,
+      "y": 70,
+      "z": 1160,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1118,
+      "y": 70,
+      "z": 1160,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1104,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1106,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1108,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1110,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1112,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1114,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1116,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1118,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1108,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1110,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1112,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1114,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1116,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1118,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1108,
+      "y": 70,
+      "z": 1166,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1110,
+      "y": 70,
+      "z": 1166,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1112,
+      "y": 70,
+      "z": 1166,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1114,
+      "y": 70,
+      "z": 1166,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1116,
+      "y": 70,
+      "z": 1166,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1118,
+      "y": 70,
+      "z": 1166,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1120,
+      "y": 70,
+      "z": 1160,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1122,
+      "y": 70,
+      "z": 1160,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1124,
+      "y": 70,
+      "z": 1160,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1126,
+      "y": 70,
+      "z": 1160,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1128,
+      "y": 70,
+      "z": 1160,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1130,
+      "y": 70,
+      "z": 1160,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1132,
+      "y": 70,
+      "z": 1160,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1134,
+      "y": 70,
+      "z": 1160,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1120,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1122,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1124,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1126,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1128,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1130,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1132,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1134,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1120,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1122,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1124,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1126,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1128,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1130,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1132,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1134,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1120,
+      "y": 70,
+      "z": 1166,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1122,
+      "y": 70,
+      "z": 1166,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1124,
+      "y": 70,
+      "z": 1166,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1126,
+      "y": 70,
+      "z": 1166,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1128,
+      "y": 70,
+      "z": 1166,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1130,
+      "y": 70,
+      "z": 1166,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1132,
+      "y": 70,
+      "z": 1166,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1134,
+      "y": 70,
+      "z": 1166,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1136,
+      "y": 70,
+      "z": 1160,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1138,
+      "y": 70,
+      "z": 1160,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1140,
+      "y": 70,
+      "z": 1160,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1142,
+      "y": 70,
+      "z": 1160,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1144,
+      "y": 70,
+      "z": 1160,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1146,
+      "y": 70,
+      "z": 1160,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1148,
+      "y": 70,
+      "z": 1160,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1150,
+      "y": 70,
+      "z": 1160,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1136,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1138,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1140,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1142,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1144,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1146,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1148,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1150,
+      "y": 70,
+      "z": 1162,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1136,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1138,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1140,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1142,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1144,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1146,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1148,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1150,
+      "y": 70,
+      "z": 1164,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1136,
+      "y": 70,
+      "z": 1166,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1138,
+      "y": 70,
+      "z": 1166,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1140,
+      "y": 70,
+      "z": 1166,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1142,
+      "y": 70,
+      "z": 1166,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1144,
+      "y": 70,
+      "z": 1166,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1146,
+      "y": 70,
+      "z": 1166,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1148,
+      "y": 70,
+      "z": 1166,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1150,
+      "y": 70,
+      "z": 1166,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1024,
+      "y": 70,
+      "z": 1168,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1026,
+      "y": 70,
+      "z": 1168,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1028,
+      "y": 70,
+      "z": 1168,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1030,
+      "y": 70,
+      "z": 1168,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1032,
+      "y": 70,
+      "z": 1168,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1034,
+      "y": 70,
+      "z": 1168,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1036,
+      "y": 70,
+      "z": 1168,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1038,
+      "y": 70,
+      "z": 1168,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1040,
+      "y": 70,
+      "z": 1168,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1042,
+      "y": 70,
+      "z": 1168,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1060,
+      "y": 70,
+      "z": 1168,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1062,
+      "y": 70,
+      "z": 1168,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1064,
+      "y": 70,
+      "z": 1168,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1066,
+      "y": 70,
+      "z": 1168,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1068,
+      "y": 70,
+      "z": 1168,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1070,
+      "y": 70,
+      "z": 1168,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1072,
+      "y": 70,
+      "z": 1168,
+      "source_manifest_snowy": true
+    },
+    {
+      "x": 1074,
+      "y": 70,
+      "z": 1168,
+      "source_manifest_snowy": true
+    }
+  ],
+  "vanilla_path_rename": {
+    "source": "minecraft:grass_path",
+    "target": "minecraft:dirt_path",
+    "affected_states": 0
+  },
+  "world_sha256": "932180D7BA3AECF1E5506ECCB691BAF813284E5805CB198BAB3813C031EF6262",
+  "manifest_sha256": "051D5AE9906706B9CC825872186641B71FB8F1F86299CF023138DB5D5ADE90EA",
+  "native_states_sha256": "98A1ACE5E838E64B3BCA1214BED9246366BF8FC59CC22940E2A6357B3180655D"
+}
