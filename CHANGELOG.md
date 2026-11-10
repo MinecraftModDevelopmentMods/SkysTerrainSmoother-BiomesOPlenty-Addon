@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.1.2603001
+
+- Update Terrain Smoother to 0.1.1.2603001 for wider slab treads on gentle slopes in Biomes O' Plenty worlds.
+
 ## 0.1.0.2603001
 
 - Updated for Minecraft 26.3 on Forge. Use the matching versions of the Sky mods and Biomes O’ Plenty.
