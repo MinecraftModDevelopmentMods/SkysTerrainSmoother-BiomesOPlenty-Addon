@@ -166,8 +166,8 @@ final class BopRecoveryChecks {
                     "Replacement recipes expose native book ingredients");
             recipes++;
         }
-        RuntimeProbe.require(recipes == 84, "All original recipe identities load with available ingredients");
+        RuntimeProbe.require(recipes == 4, "The add-on owns only its distinct coarse dirt slab recipes");
         zone.moddev.mc.skysterrainsmoother.SkysTerrainSmoother.logger.info("TERRAIN_BOP_RECOVERY_PASS states=" + states + " checks=" + checked);
-        return checked + 2;
+        return checked + 2 + ReplacementRecipeChecks.run(world);
     }
 }

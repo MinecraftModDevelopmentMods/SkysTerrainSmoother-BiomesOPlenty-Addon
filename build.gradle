@@ -760,3 +760,5 @@ tasks.register('verifyNativeLogPolicy', Exec) {
             '-m', 'unittest', 'discover', '-s', 'tools'
 }
 tasks.named('check') { dependsOn tasks.named('verifyNativeLogPolicy') }
+
+apply from: 'gradle/recipe-resource-sync.gradle'

@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.1.121012
+
+- Keep different crafting results on separate recipe-book buttons.
+- Remove repeated recipes for retired BOP soils; their replacement pieces keep the usual crafting recipes.
+- Wait for the core's setup before registering BOP terrain materials.
+- Refresh coarse-dirt slab snow during normal ticks, including beside higher snowy ground.
+- Keep waterlogged coarse-dirt slabs from supporting dry-land plants.
+- Use Terrain Smoother's wider slabs on gentle slopes and snowy grass transitions.
+- Use matching snow pieces on full snow-block terrain.
+
 ## 0.1.0.121012
 
 - Bring Biomes O' Plenty terrain smoothing to Minecraft 1.21.1 on NeoForge.
