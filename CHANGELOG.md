@@ -3,6 +3,7 @@
 ## 0.1.1.121012
 
 - Use Terrain Smoother's wider slabs on gentle slopes and snowy grass transitions.
+- Use matching snow pieces on full snow-block terrain.
 
 ## 0.1.0.121012
 
