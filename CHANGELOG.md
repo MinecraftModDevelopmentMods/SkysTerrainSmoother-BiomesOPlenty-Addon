@@ -2,6 +2,9 @@
 
 ## 0.1.1.121012
 
+- Wait for the core's setup before registering BOP terrain materials.
+- Refresh coarse-dirt slab snow during normal ticks, including beside higher snowy ground.
+- Keep waterlogged coarse-dirt slabs from supporting dry-land plants.
 - Use Terrain Smoother's wider slabs on gentle slopes and snowy grass transitions.
 - Use matching snow pieces on full snow-block terrain.
 

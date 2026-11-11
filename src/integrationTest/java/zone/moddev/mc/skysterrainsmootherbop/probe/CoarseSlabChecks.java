@@ -65,12 +65,25 @@ final class CoarseSlabChecks {
                     Blocks.SNOW_BLOCK.defaultBlockState(), world, position, position.east());
             RuntimeProbe.require(snowy.getValue(SnowyDirtBlock.SNOWY), "Coarse slabs keep calculated snow caps");
             world.setBlock(position.east(), Blocks.AIR.defaultBlockState(), 18);
+            world.setBlock(position.east(), Blocks.STONE.defaultBlockState(), 18);
+            world.setBlock(position.east().above(), Blocks.SNOW.defaultBlockState(), 18);
+            world.setBlock(position, dry, 18);
+            world.getBlockState(position).randomTick(world, position, net.minecraft.util.RandomSource.create(1));
+            RuntimeProbe.require(world.getBlockState(position).getValue(SnowyDirtBlock.SNOWY),
+                    "Normal random ticks recognise the higher snowy terrace beside a coarse slab");
+            world.setBlock(position.east().above(), Blocks.AIR.defaultBlockState(), 18);
+            world.setBlock(position.east(), Blocks.AIR.defaultBlockState(), 18);
+            BlockState wet = dry.setValue(SlabBlock.WATERLOGGED, true);
+            world.setBlock(position, wet, 18);
+            RuntimeProbe.require(wet.canSustainPlant(world, position, Direction.UP,
+                            Blocks.OAK_SAPLING.defaultBlockState()) == TriState.FALSE,
+                    "A waterlogged coarse slab cannot support a dry-land plant");
         }
         world.setBlock(position, Blocks.AIR.defaultBlockState(), 18);
         zone.moddev.mc.skysterrainsmoother.SkysTerrainSmoother.logger.info(
                 "TERRAIN_BOP_COARSE_SLAB_PASS halves=2 combines=2 waterlogging=2 snow=2"
-                        + " flattened=2 wet_blocked=2 plant_faces=4 plants=6");
-        return 24;
+                        + " flattened=2 wet_blocked=2 plant_faces=4 plants=6 random_tick_snow=2 wet_plants=2");
+        return 28;
     }
 
     private static void checkFlattening(ServerLevel world, ServerPlayer player, BlockPos position, BlockState dry) {

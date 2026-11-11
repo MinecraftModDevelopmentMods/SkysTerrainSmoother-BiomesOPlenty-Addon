@@ -27,7 +27,8 @@ public final class SkysTerrainSmootherBop {
     }
 
     private void setup(FMLCommonSetupEvent event) {
-        NativeTerrain.register();
+        // Common setup runs in parallel; the core must open its catalogue before we contribute.
+        event.enqueueWork(NativeTerrain::register);
     }
 
     @EventBusSubscriber(modid = ID, bus = EventBusSubscriber.Bus.MOD)
