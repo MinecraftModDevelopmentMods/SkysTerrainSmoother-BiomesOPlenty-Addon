@@ -221,7 +221,7 @@ def auditOptionalPhase = { File directory, String phase, boolean server ->
     List<String> arguments = [providers.gradleProperty('pythonExecutable').getOrElse('python'),
             'tools/native_client_log.py', '--directory', directory.absolutePath, '--phase', phase]
     if (server) arguments.add('--server')
-    else arguments.add('--offline-probe')
+    else arguments.add('--offline-client')
     project.services.get(org.gradle.process.ExecOperations).exec { commandLine arguments }
     copy { from new File(directory, 'logs'); into new File(directory, 'phase-logs/' + phase) }
 }
@@ -277,6 +277,7 @@ def optionalClientFresh = tasks.register('integrationMineralogyClientProcess', J
     systemProperty probeId + '.integrationPhase', 'client-fresh'
     systemProperty 'skysterrainsmoother.requireMineralogy', 'true'
     systemProperty 'skysterrainsmoother.testMineralogyShapes', 'false'
+    args '--accessToken', '0'
     configureVerification(delegate, 'runClient')
     doLast { auditOptionalPhase(optionalClientDirectory.get().asFile, 'client-fresh', false) }
 }
@@ -287,6 +288,7 @@ tasks.register('integrationMineralogyClientReloadProcess', JavaExec) {
     systemProperty probeId + '.integrationPhase', 'client-reload'
     systemProperty 'skysterrainsmoother.requireMineralogy', 'true'
     systemProperty 'skysterrainsmoother.testMineralogyShapes', 'false'
+    args '--accessToken', '0'
     configureVerification(delegate, 'runClient')
     doLast { auditOptionalPhase(optionalClientDirectory.get().asFile, 'client-reload', false) }
 }

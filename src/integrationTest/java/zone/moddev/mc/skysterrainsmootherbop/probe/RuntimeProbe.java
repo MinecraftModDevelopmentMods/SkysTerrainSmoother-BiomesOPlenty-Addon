@@ -481,8 +481,20 @@ public final class RuntimeProbe {
                     index++;
 
                     if (phase().equals("reload")) {
-                        require(world.getBlockState(pos).equals(expected),
-                                "saved fine piece retains identity and orientation");
+                        BlockState actual = world.getBlockState(pos);
+                        if (actual.hasProperty(net.minecraft.world.level.block.state.properties.BlockStateProperties.SNOWY)) {
+                            PieceBlock piece = (PieceBlock) actual.getBlock();
+                            require(actual.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.SNOWY)
+                                            == piece.getActualState(actual, world, pos)
+                                                    .getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.SNOWY),
+                                    "saved grass pieces retain the correct local snow appearance");
+                            // Snow is a calculated appearance; it does not change a piece's identity or orientation.
+                            actual = actual.setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.SNOWY,
+                                    expected.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.SNOWY));
+                        }
+                        require(actual.equals(expected),
+                                "saved fine piece retains identity and orientation: expected=" + expected
+                                        + " actual=" + world.getBlockState(pos));
                     } else {
                         world.setBlock(pos, expected, 2);
                     }
@@ -525,6 +537,16 @@ public final class RuntimeProbe {
         world.getChunk(position);
         world.getChunk(position.offset(-8, 0, -8));
         world.getChunk(position.offset(8, 0, 8));
+
+        // This test checks grass growth and orientation. Keep its climate warm;
+        // the separate snowy-terrain fixtures exercise cold ground and thawing.
+        var warmBiome = world.registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.BIOME)
+                .getOrThrow(net.minecraft.world.level.biome.Biomes.PLAINS);
+        for (int chunkX = (position.getX() >> 4) - 1; chunkX <= (position.getX() >> 4) + 1; chunkX++) {
+            for (int chunkZ = (position.getZ() >> 4) - 1; chunkZ <= (position.getZ() >> 4) + 1; chunkZ++) {
+                world.getChunk(chunkX, chunkZ).fillBiomesFromNoise((quartX, quartY, quartZ) -> warmBiome);
+            }
+        }
 
         for (Shape shape : new Shape[] { Shape.HORIZONTAL_STEP, Shape.VERTICAL_STEP, Shape.CORNER, Shape.STAIRS }) {
             for (int direction = 0; direction < shape.states; direction++) {
