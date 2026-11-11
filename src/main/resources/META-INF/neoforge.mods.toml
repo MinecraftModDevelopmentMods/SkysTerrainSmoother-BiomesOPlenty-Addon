@@ -38,7 +38,7 @@ side="BOTH"
 [[dependencies.${mod_id}]]
 modId="skysterrainsmoother"
 type="required"
-versionRange="[0.1.0.121012,0.2)"
+versionRange="[0.1.1.121012,0.2)"
 ordering="AFTER"
 side="BOTH"
 

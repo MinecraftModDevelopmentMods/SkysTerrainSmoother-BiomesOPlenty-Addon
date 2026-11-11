@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.1.121012
+
+- Use Terrain Smoother's wider slabs on gentle slopes and snowy grass transitions.
+
 ## 0.1.0.121012
 
 - Bring Biomes O' Plenty terrain smoothing to Minecraft 1.21.1 on NeoForge.
