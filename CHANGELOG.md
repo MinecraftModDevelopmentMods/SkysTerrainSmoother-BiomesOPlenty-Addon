@@ -2,6 +2,7 @@
 
 ## 0.1.1.121012
 
+- Remove repeated recipes for retired BOP soils; their replacement pieces keep the usual crafting recipes.
 - Wait for the core's setup before registering BOP terrain materials.
 - Refresh coarse-dirt slab snow during normal ticks, including beside higher snowy ground.
 - Keep waterlogged coarse-dirt slabs from supporting dry-land plants.
