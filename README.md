@@ -12,7 +12,7 @@ Use NeoForge 21.1.247 and Java 21 with these matching mods on both client and se
 - Biomes O' Plenty 21.1.0.14.
 - TerraBlender 4.1.0.8 and GlitchCore 2.1.0.2, required by BOP.
 - Sky's Grass Slabs 1.2.1.121012.
-- Sky's Building Pieces 0.3.10.121012.
+- Sky's Building Pieces 0.3.11.121012.
 - Sky's Building Pieces BOP add-on 0.2.6.121012.
 - Sky's Terrain Smoother 0.1.1.121012.
 
