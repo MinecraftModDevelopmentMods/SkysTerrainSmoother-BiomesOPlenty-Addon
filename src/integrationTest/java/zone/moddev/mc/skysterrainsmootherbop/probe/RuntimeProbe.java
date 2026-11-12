@@ -295,11 +295,16 @@ public final class RuntimeProbe {
                 require(!world.isEmptyBlock(position.above()), "regression starts with an actual generated piece");
                 world.setBlock(position, replacement.defaultBlockState(), 2);
                 ProbeWorld.repair(world, new BlockPos(owner.getPos().x() << 4, 0, owner.getPos().z() << 4));
-                require(replacement == Blocks.SAND
-                        ? world.getBlockState(position.above())
-                                .getBlock() == zone.moddev.mc.skysterrainsmoother.content.SandContent.slab
-                        : world.isEmptyBlock(position.above()),
-                        "decoration retargets sand and removes unsupported gravel/air caps");
+                Block expectedCap;
+                if (replacement == Blocks.SAND) {
+                    expectedCap = zone.moddev.mc.skysterrainsmoother.content.SandContent.slab;
+                } else if (replacement == Blocks.GRAVEL) {
+                    expectedCap = zone.moddev.mc.skysterrainsmoother.content.SandContent.gravelSlab;
+                } else {
+                    expectedCap = Blocks.AIR;
+                }
+                require(world.getBlockState(position.above()).getBlock() == expectedCap,
+                        "decoration retargets falling terrain and removes unsupported air caps");
                 require(world.getBlockState(position).getBlock() == replacement, "decorator's terrain is not reverted");
                 checks += 3;
             }
@@ -367,7 +372,7 @@ public final class RuntimeProbe {
             }
         }
 
-        world.setBlock(beach, Blocks.GRAVEL.defaultBlockState(), 2);
+        world.setBlock(beach, Blocks.COAL_BLOCK.defaultBlockState(), 2);
         SkysTerrainSmoother.engine.smooth(world, beachOwner, 1);
         require(world.isEmptyBlock(beach.above()), "unsupported first pass leaves no piece");
         world.setBlock(beach, Blocks.RED_SAND.defaultBlockState(), 2);
