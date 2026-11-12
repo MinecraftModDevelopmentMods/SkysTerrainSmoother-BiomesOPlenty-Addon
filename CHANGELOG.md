@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.2.121012
+
+- Use Terrain Smoother 0.1.2 for gravel slopes alongside BOP terrain.
+- Keep the pinned Mineralogy and OreSpawn jars available for Eclipse after sibling rebuilds.
+
 ## 0.1.1.121012
 
 - Keep different crafting results on separate recipe-book buttons.

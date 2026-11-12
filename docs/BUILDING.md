@@ -23,6 +23,15 @@ launches use the processed resources and keep the tests out of ordinary play.
 The Mineralogy launches have their own game folder and use the pinned
 NeoForge Mineralogy and OreSpawn jars.
 
+Preparing these runs keeps a checksum-verified copy of each optional jar in the
+project cache. Rebuilding a sibling mod will not change the version used by this
+profile. An explicit jar override must still match the pinned checksum.
+Use the same Gradle user home in Eclipse and at the command line.
+
+The pinned BOP build logs an allay spawn-registration error in development
+games, including a control with no Sky mods. The log checks recognise that
+single startup message only with the pinned vendor jars. Other errors still fail.
+
 Use `preparePackagedIntegrationProbe` to build the disposable runtime probe.
 The tools in `tools/` check native games and saved fixtures without changing
 the original worlds. Use a fresh directory under `build/` for each first

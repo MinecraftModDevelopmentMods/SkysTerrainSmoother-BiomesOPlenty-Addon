@@ -28,6 +28,21 @@ class NativeServerLogTest(unittest.TestCase):
 
 
 class NativeClientLogTest(unittest.TestCase):
+    def test_controlled_bop_notice_requires_an_explicit_profile_and_precedes_startup(self):
+        from native_registry_notices import BOP_ALLAY_MESSAGE
+
+        notice = "[time] [Server thread/ERROR] [ne.ne.ne.se.ServerLifecycleHooks/]: " + BOP_ALLAY_MESSAGE + "\n\t - minecraft:allay\n"
+        normal = "\n".join((START, LOGIN))
+        self.assertEqual(classify(notice + normal, True, bop_development=True)["controlled_bop_allay_notices"], 1)
+        with self.assertRaises(ValueError):
+            classify(notice + normal, True)
+        for invalid in (notice + notice + normal, normal + "\n" + notice,
+                        notice.replace("minecraft:allay", "minecraft:bat") + normal,
+                        notice + "\t - minecraft:bat\n" + normal,
+                        notice + normal + "\n[time] [Server thread/ERROR] [Sky/]: Broken generation"):
+            with self.subTest(invalid=invalid), self.assertRaises(ValueError):
+                classify(invalid, True, bop_development=True)
+
     def test_previous_target_notices_are_rejected(self):
         with self.assertRaises(ValueError):
             classify("\n".join((NOTICE, START, LOGIN, PAYLOAD)), True)

@@ -288,7 +288,7 @@ def audit(directory, phase, mode, *, bop_development=False):
         if not any(line.endswith(marker) for line in log.splitlines()):
             raise ValueError("The complete saved biome volume was not verified")
     if mode == "client":
-        audit_client(directory, phase)
+        audit_client(directory, phase, bop_development=bop_development)
         shutil.copyfile(directory / "logs/latest.log", directory / (phase + "-complete.log"))
         shutil.copyfile(directory / "logs/debug.log", directory / (phase + "-debug.log"))
         return
