@@ -953,7 +953,9 @@ tasks.named('genEclipseRuns') {
 
 tasks.register('verifyEclipseProductionClasspath') {
     group = 'verification'
-    dependsOn tasks.named('genEclipseRuns'), tasks.named('eclipse')
+    // Check the finished launches, after the production-only classpath has been written.
+    dependsOn tasks.named('genEclipseRuns'), tasks.named('eclipse'),
+            tasks.named('isolateEclipseProductionRuns'), tasks.named('configureEclipseBuildship')
     doLast {
         File prefsFile = file('.settings/org.eclipse.buildship.core.prefs')
         if (!prefsFile.isFile()) throw new GradleException('Missing Buildship preferences')

@@ -149,6 +149,7 @@ tasks.named('genEclipseRuns') {
 }
 
 tasks.named('verifyEclipseProductionClasspath') {
+    dependsOn generateMineralogyEclipseRuns
     doLast {
         ['runMineralogyClient.launch', 'runMineralogyServer.launch'].each { name ->
             File launch = file(name)
