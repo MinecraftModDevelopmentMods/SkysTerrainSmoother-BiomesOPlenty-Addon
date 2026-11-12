@@ -2,7 +2,8 @@
 
 ## 0.1.2.2603001
 
-- Keep different crafting results on separate recipe-book buttons. Snowy coarse-dirt slabs follow the surrounding snow and cold ground.
+- Keep different crafting results on separate recipe-book buttons.
+- Give coarse-dirt slabs their snowy appearance to match the surrounding snow and cold ground.
 
 
 ## 0.1.1.2603001
