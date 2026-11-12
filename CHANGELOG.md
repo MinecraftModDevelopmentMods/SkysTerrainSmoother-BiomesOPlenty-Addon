@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.2.2603001
+
+- Keep different crafting results on separate recipe-book buttons.
+- Give coarse-dirt slabs their snowy appearance to match the surrounding snow and cold ground.
+
+
 ## 0.1.1.2603001
 
 - Update Terrain Smoother to 0.1.1.2603001 for wider slab treads on gentle slopes in Biomes O' Plenty worlds.

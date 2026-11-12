@@ -4,9 +4,16 @@ import java.nio.file.Files
 // These are optional development mods, never compile or production dependencies.
 def runtimeLock = new Properties()
 file('gradle/mineralogy-runtime.properties').withInputStream { runtimeLock.load(it) }
+
+def retainedRuntimeJars = ['mineralogy', 'orespawn'].collectEntries { mod ->
+    File siblingJar = file(runtimeLock.getProperty(mod + '.development.path'))
+    String checksum = runtimeLock.getProperty(mod + '.development.sha256')
+    [(mod): file(".gradle/qualification-dependencies/${checksum}/${siblingJar.name}")]
+}
+
 def runtimeSources = ['mineralogy', 'orespawn'].collectEntries { mod ->
     File siblingJar = file(runtimeLock.getProperty(mod + '.development.path'))
-    File retainedJar = file('.gradle/qualification-dependencies/' + siblingJar.name)
+    File retainedJar = retainedRuntimeJars[mod]
     // Sibling builds can change during other work. A retained copy still has to
     // pass the same checksum check before it can enter a development profile.
     [(mod): file(providers.gradleProperty(mod + 'RuntimeJar')
@@ -63,6 +70,14 @@ def installRuntimeMods = {
         }
         if (name.contains('integration-test') || name.contains('-probe')) {
             throw new GradleException("The ordinary Mineralogy profile must not contain test mods: ${candidate}")
+        }
+    }
+    runtimeSources.each { mod, source ->
+        File retained = retainedRuntimeJars[mod]
+        if (source.canonicalFile != retained.canonicalFile) {
+            // Keep this verified build when another project rebuilds the sibling jar.
+            Files.createDirectories(retained.parentFile.toPath())
+            Files.copy(source.toPath(), retained.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
         }
     }
     // Copy only the declared jars. Never sync or clear a player's mods, config or saves.
@@ -134,6 +149,7 @@ tasks.named('genEclipseRuns') {
 }
 
 tasks.named('verifyEclipseProductionClasspath') {
+    dependsOn generateMineralogyEclipseRuns
     doLast {
         ['runMineralogyClient.launch', 'runMineralogyServer.launch'].each { name ->
             File launch = file(name)
@@ -221,7 +237,7 @@ def auditOptionalPhase = { File directory, String phase, boolean server ->
     List<String> arguments = [providers.gradleProperty('pythonExecutable').getOrElse('python'),
             'tools/native_client_log.py', '--directory', directory.absolutePath, '--phase', phase]
     if (server) arguments.add('--server')
-    else arguments.add('--offline-probe')
+    else arguments.add('--offline-client')
     project.services.get(org.gradle.process.ExecOperations).exec { commandLine arguments }
     copy { from new File(directory, 'logs'); into new File(directory, 'phase-logs/' + phase) }
 }
@@ -277,6 +293,7 @@ def optionalClientFresh = tasks.register('integrationMineralogyClientProcess', J
     systemProperty probeId + '.integrationPhase', 'client-fresh'
     systemProperty 'skysterrainsmoother.requireMineralogy', 'true'
     systemProperty 'skysterrainsmoother.testMineralogyShapes', 'false'
+    args '--accessToken', '0'
     configureVerification(delegate, 'runClient')
     doLast { auditOptionalPhase(optionalClientDirectory.get().asFile, 'client-fresh', false) }
 }
@@ -287,6 +304,7 @@ tasks.register('integrationMineralogyClientReloadProcess', JavaExec) {
     systemProperty probeId + '.integrationPhase', 'client-reload'
     systemProperty 'skysterrainsmoother.requireMineralogy', 'true'
     systemProperty 'skysterrainsmoother.testMineralogyShapes', 'false'
+    args '--accessToken', '0'
     configureVerification(delegate, 'runClient')
     doLast { auditOptionalPhase(optionalClientDirectory.get().asFile, 'client-reload', false) }
 }
