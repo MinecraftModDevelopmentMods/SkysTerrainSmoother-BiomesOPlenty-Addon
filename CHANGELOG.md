@@ -2,6 +2,8 @@
 
 ## 0.1.2.121012
 
+- Follow Terrain Smoother's soil and stone switches for BOP material mappings.
+
 - Use Terrain Smoother 0.1.2 for gravel slopes alongside BOP terrain.
 - Keep the pinned Mineralogy and OreSpawn jars available for Eclipse after sibling rebuilds.
 
@@ -60,7 +62,6 @@
   keeping their shape, orientation and custom inventory data.
 - Kept the original recipe identities for cutting and combining replacements.
 - Kept ordinary BOP ground and recovered natural rocks in the same smoothing pass.
-
 
 ## 0.1.0.112021
 
