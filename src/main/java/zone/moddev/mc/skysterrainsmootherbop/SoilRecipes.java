@@ -48,6 +48,11 @@ public final class SoilRecipes {
         }
     }
 
+    static String resultGroup(ItemStack output) {
+        return SkysTerrainSmootherBop.ID + "/result/" + output.getItem().getRegistryName()
+                + "/" + output.getMetadata() + "/" + output.getCount();
+    }
+
     private static void register(IForgeRegistry<IRecipe> registry, String name, ItemStack output, ItemStack input,
             String... rows) {
         int width = rows[0].length();
@@ -61,7 +66,7 @@ public final class SoilRecipes {
             }
         }
 
-        registry.register(new ShapedRecipes(SkysTerrainSmootherBop.ID + "/" + name.substring(name.lastIndexOf('/') + 1), width, rows.length, ingredients, output)
+        registry.register(new ShapedRecipes(resultGroup(output), width, rows.length, ingredients, output)
                 .setRegistryName(new ResourceLocation(SkysTerrainSmootherBop.ID, name)));
     }
 }

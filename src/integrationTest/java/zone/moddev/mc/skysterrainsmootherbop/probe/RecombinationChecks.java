@@ -46,8 +46,10 @@ public final class RecombinationChecks {
 
                         require(ItemStack.areItemStacksEqual(expected,
                                 CraftingManager.findMatchingResult(grid, world)), "vertical pair " + label);
+                        int matching = 0;
                         for (IRecipe recipe : net.minecraftforge.fml.common.registry.ForgeRegistries.RECIPES.getValuesCollection()) {
                             if (recipe.matches(grid, world)) {
+                                matching++;
                                 ItemStack actual = recipe.getCraftingResult(grid);
                                 require(ItemStack.areItemStacksEqual(expected, actual), "no conflicting recipe " + label);
                                 actual.setCount(9);
@@ -58,6 +60,7 @@ public final class RecombinationChecks {
                                 }
                             }
                         }
+                        require(matching == 1, "one distinct crafting recipe for " + label);
                         require(upper.getCount() == 17 && lower.getCount() == 23, "lookup does not mutate inputs");
                         cases++;
                     }

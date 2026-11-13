@@ -98,7 +98,8 @@ if (localPiecesVersion.isPresent() &&
 def piecesVersion = localPiecesVersion.getOrElse(contentLock.getProperty('pieces.version'))
 def buildingPiecesDevelopmentJar = new File(piecesDirectory,
         "build/libs-dev/SkysBuildingPieces-${piecesVersion}-deobf.jar")
-def terrainDevelopmentJar=new File(terrainDirectory,'build/libs-dev/SkysTerrainSmoother-0.1.0.112021-deobf.jar')
+def terrainDevelopmentJar = new File(terrainDirectory,
+        "build/libs-dev/SkysTerrainSmoother-${contentLock.getProperty('terrain.version')}-deobf.jar")
 def bopPiecesDirectory = file(contentProperty('buildingPiecesBopDirectory')
         .getOrElse('../../SkysBuildingPiecesBOP112/SkysBuildingPieces-BiomesOPlenty-Addon'))
 def localBopVersion = contentProperty('buildingPiecesBopVersion')

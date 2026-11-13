@@ -14,7 +14,7 @@ public final class SoilRecombinationRecipe extends ShapedRecipes {
     private final ItemStack ingredient;
 
     public SoilRecombinationRecipe(IBlockState input, ItemStack output) {
-        super(SkysTerrainSmootherBop.ID + "/recombine/" + ((SoilPieceBlock) input.getBlock()).shape.name(), 1, 2, NonNullList.from(Ingredient.EMPTY,
+        super(SoilRecipes.resultGroup(output), 1, 2, NonNullList.from(Ingredient.EMPTY,
                 ingredients(input), ingredients(input)),
                 output.copy());
         inputBlock = (SoilPieceBlock) input.getBlock();
