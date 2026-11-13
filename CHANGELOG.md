@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.3.2603001
+
+- Follow Terrain Smoother's soil and stone switches for BOP material mappings.
+- Use Terrain Smoother 0.1.3 and its Materials config page.
+
 ## 0.1.2.2603001
 
 - Keep different crafting results on separate recipe-book buttons.
