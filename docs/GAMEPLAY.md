@@ -4,6 +4,11 @@ Current BOP versions use vanilla grass and dirt instead of its old soil families
 surfaces use the normal Terrain Smoother rules at all three levels, in BOP
 biomes too. Existing terrain is left alone.
 
+Terrain Smoother's **Materials** config page also controls this add-on. The soil switch
+covers its coarse dirt; the stone switch covers its rock mappings. Mineralogy rocks need
+both stone smoothing and Mineralogy support enabled. All groups start enabled. Save on
+the main config page and restart Minecraft; existing pieces and recipes are unaffected.
+
 Saved BOP slabs, steps and corners are converted to the replacements listed
 in the README. They keep their orientation, and then follow the owning content
 mod's placement, joining, snow, grass, shovel and drop behaviour. Decorative

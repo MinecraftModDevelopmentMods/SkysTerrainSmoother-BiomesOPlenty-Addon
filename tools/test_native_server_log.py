@@ -55,6 +55,17 @@ class NativeServerLogTest(unittest.TestCase):
 
 
 class BopDevelopmentNoticeTest(unittest.TestCase):
+    def test_notice_requires_the_complete_checksum_locked_vendor_stack(self):
+        from run_development_checks import BOP_SPAWN_CONTROL_HASHES, has_controlled_bop_inputs
+
+        exact = set(BOP_SPAWN_CONTROL_HASHES)
+        self.assertTrue(has_controlled_bop_inputs(exact))
+        self.assertTrue(has_controlled_bop_inputs(exact | {"additional Sky mod"}))
+        for missing in exact:
+            with self.subTest(missing=missing):
+                self.assertFalse(has_controlled_bop_inputs(exact - {missing}))
+                self.assertFalse(has_controlled_bop_inputs((exact - {missing}) | {"changed vendor build"}))
+
     def test_only_the_exact_pinned_development_notice_is_accepted(self):
         from native_registry_notices import BOP_ALLAY_MESSAGE, audit_text
 

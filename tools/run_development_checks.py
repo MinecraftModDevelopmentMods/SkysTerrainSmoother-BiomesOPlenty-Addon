@@ -9,13 +9,17 @@ import subprocess
 from run_packaged_checks import audit, digest, prepare
 
 
-# The exact vendor jars used to reproduce the allay notice on a development
-# server with no Sky mods. A different vendor build still gets the strict audit.
+# These exact vendor jars reproduce the allay notice without Sky mods on both
+# integrated and dedicated development servers. Other builds keep the strict audit.
 BOP_SPAWN_CONTROL_HASHES = frozenset({
     "5F3C8D752C2E0464ECA8C9527D8FFE498129FD37A2FE86A266B64C98371763B1",
     "0C49B5EF447A7F09100E9A210888A7347FBDA0AA75322063991F6063B25FE3F9",
     "59D2A3FB3D6877E43018FD6A2B199D526074A864276A5F49091409A1CDC62FAE",
 })
+
+
+def has_controlled_bop_inputs(vendor_inputs):
+    return BOP_SPAWN_CONTROL_HASHES <= set(vendor_inputs)
 
 
 def main():
@@ -55,7 +59,7 @@ def main():
     with console.open("x", encoding="utf-8") as output:
         subprocess.run(command, check=True, stdout=output, stderr=subprocess.STDOUT, timeout=600)
     vendor_inputs = {row["sha256"] for row in expected}
-    bop_development = options.mode == "server" and BOP_SPAWN_CONTROL_HASHES <= vendor_inputs
+    bop_development = has_controlled_bop_inputs(vendor_inputs)
     audit(directory, options.phase, options.mode, bop_development=bop_development)
     print("NEOFORGE_TERRAIN_BOP_DEVELOPMENT_PASS", options.mode, options.phase)
 

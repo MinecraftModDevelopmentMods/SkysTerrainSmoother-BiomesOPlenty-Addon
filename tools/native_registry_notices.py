@@ -142,17 +142,25 @@ BOP_ALLAY_NOTICE = re.compile(
 )
 
 
+def checked_bop_development_text(text):
+    """Recognise one control-proven notice without changing the saved log."""
+    text = text.replace("\r\n", "\n")
+    notices = list(BOP_ALLAY_NOTICE.finditer(text))
+    if len(notices) > 1:
+        raise ValueError("Repeated BOP allay spawn diagnostic")
+    if notices:
+        notice = notices[0]
+        before = text[:notice.start()]
+        if "Done (" in before or "Preparing start region for dimension " in before:
+            raise ValueError("BOP allay spawn diagnostic appeared after startup")
+        text = text[:notice.start()] + text[notice.end():]
+    return text
+
+
 def audit_text(text, profile=None, completed_native_client=False, *, bop_development=False):
     text = text.replace("\r\n", "\n")
     if bop_development:
-        notices = list(BOP_ALLAY_NOTICE.finditer(text))
-        if len(notices) > 1:
-            raise ValueError("Repeated BOP allay spawn diagnostic")
-        if notices:
-            notice = notices[0]
-            if "Done (" in text[:notice.start()]:
-                raise ValueError("BOP allay spawn diagnostic appeared after startup")
-            text = text[:notice.start()] + text[notice.end():]
+        text = checked_bop_development_text(text)
     if completed_native_client:
         text = checked_offline_profile_warnings(text)
     observed = {}

@@ -5,6 +5,11 @@ worlds and building pieces. Choose slabs, steps or corners in Terrain Smoother's
 configuration. Only new, dry terrain is smoothed, including suitable cave floors.
 Existing chunks are left alone.
 
+Terrain Smoother's **Materials** config page also controls this add-on. The soil switch
+covers its coarse dirt; the stone switch covers its rock mappings. Mineralogy rocks need
+both stone smoothing and Mineralogy support enabled. All groups start enabled. Save on
+the main config page and restart Minecraft; existing pieces and recipes are unaffected.
+
 ## Minecraft 1.21.1
 
 Use NeoForge 21.1.247 and Java 21 with these matching mods on both client and server:
@@ -14,7 +19,7 @@ Use NeoForge 21.1.247 and Java 21 with these matching mods on both client and se
 - Sky's Grass Slabs 1.2.1.121012.
 - Sky's Building Pieces 0.3.11.121012.
 - Sky's Building Pieces BOP add-on 0.2.6.121012.
-- Sky's Terrain Smoother 0.1.1.121012.
+- Sky's Terrain Smoother 0.1.2.121012.
 
 BOP now uses vanilla grass and dirt for its ordinary ground. Terrain Smoother
 already handles those states in BOP biomes. This add-on also connects the

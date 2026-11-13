@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 import re
 import tomllib
-from native_registry_notices import audit_text
+from native_registry_notices import audit_text, BOP_ALLAY_NOTICE, checked_bop_development_text
 
 
 
@@ -31,8 +31,12 @@ def audit_complete_logs(directory, *, bop_development=False):
     return len(paths)
 
 
-def classify(log, unchanged_defaults):
+def classify(log, unchanged_defaults, *, bop_development=False):
     """Require a complete client login without severe notices."""
+    controlled_notices = 0
+    if bop_development:
+        controlled_notices = len(list(BOP_ALLAY_NOTICE.finditer(log)))
+        log = checked_bop_development_text(log)
     lines = log.splitlines()
     severe = [line for line in lines if re.search(r"/(?:ERROR|FATAL)\]", line)]
     startup = next((index for index, line in enumerate(lines)
@@ -46,7 +50,8 @@ def classify(log, unchanged_defaults):
     if severe or "[STDERR/" in log or "[STDERR]" in log:
         raise ValueError("Unexpected client errors: " + repr(severe[:4]))
     return {"empty_handshakes": 0, "native_config_notices": 0,
-            "notices": [], "unchanged_native_defaults": True}
+            "notices": [], "unchanged_native_defaults": True,
+            "controlled_bop_allay_notices": controlled_notices}
 
 
 def unchanged_native_settings(directory, names):
@@ -66,21 +71,21 @@ def unchanged_native_settings(directory, names):
     return True
 
 
-def audit(directory, phase):
+def audit(directory, phase, *, bop_development=False):
     directory = Path(directory)
     log = (directory / "logs/latest.log").read_text(encoding="utf-8")
     unchanged = unchanged_native_settings(directory, (
         "fml.toml", "neoforge-client.toml", "neoforge-common.toml", "neoforge-server.toml"))
     if not unchanged:
         raise ValueError("NeoForge settings differ from the controlled defaults")
-    receipt = classify(log, unchanged)
+    receipt = classify(log, unchanged, bop_development=bop_development)
     required = ("SKY_CONFIG_SCREENS_PASS", "TERRAIN_SMOOTHER_CLIENT_PASS",
                 "TERRAIN_SMOOTHER_CLIENT_WORLD_PASS", "TERRAIN_SMOOTHER_CLIENT_DISCONNECT_PASS", "SKY_RECIPE_PREVIEW_MODELS_PASS")
     if any(marker not in log for marker in required):
         raise ValueError("Native client completion checks are missing")
     if list((directory / "crash-reports").glob("*")):
         raise ValueError("Native client produced a crash report")
-    receipt["complete_log_files"] = audit_complete_logs(directory)
+    receipt["complete_log_files"] = audit_complete_logs(directory, bop_development=bop_development)
     receipt["phase"] = phase
     (directory / (phase + "-log-audit.json")).write_text(
         json.dumps(receipt, indent=2) + "\n", encoding="utf-8")
