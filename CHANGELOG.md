@@ -2,6 +2,7 @@
 
 ## 0.1.1.112021
 
+- Stop snow layers hovering over BOP soil pieces and paths, and clear old unsupported layers during normal updates.
 - Used Terrain Smoother's material switches for BOP soils and natural rocks.
 - Opened the shared smoothing settings from this add-on's Config button too.
 - Gave BOP soil pieces the updated snow appearance on cold ground and higher snowy terraces.

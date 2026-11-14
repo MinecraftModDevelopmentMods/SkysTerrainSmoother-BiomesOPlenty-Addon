@@ -9,6 +9,7 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
@@ -111,6 +112,12 @@ public final class SoilPathBlock extends Block {
     }
 
     @Override
+    public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state,
+            BlockPos position, EnumFacing face) {
+        return BlockFaceShape.UNDEFINED;
+    }
+
+    @Override
     public boolean shouldSideBeRendered(IBlockState state, IBlockAccess world, BlockPos position, EnumFacing side) {
         return true;
     }
@@ -172,11 +179,13 @@ public final class SoilPathBlock extends Block {
 
     @Override
     public void onBlockAdded(World world, BlockPos position, IBlockState state) {
+        SoilLifecycle.removeUnsupportedSnow(world, position);
         SoilPaths.checkCover(world, position, state);
     }
 
     @Override
     public void neighborChanged(IBlockState state, World world, BlockPos position, Block changed, BlockPos changedPosition) {
+        SoilLifecycle.removeUnsupportedSnow(world, position);
         SoilPaths.checkCover(world, position, state);
     }
 }
