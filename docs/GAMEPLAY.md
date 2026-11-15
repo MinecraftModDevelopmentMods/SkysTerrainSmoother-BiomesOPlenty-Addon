@@ -4,6 +4,11 @@ All eight BOP grass variants and ordinary/coarse loamy, sandy and silty dirt
 have horizontal slabs, steps and corners. Snow caps are visual and grass uses
 the native BOP biome colours. Only a complete upper face supports plants.
 
+Snow layers settle only on a top slab with a complete surface at full-block
+height. Lower pieces keep their calculated snow cap without a floating layer.
+Old unsupported layers clear during normal soil ticks or block updates, keeping
+the piece's material and orientation.
+
 Three full blocks in a row make six slabs. Two matching slabs in a horizontal
 row make their original full block. Two slabs placed diagonally in the grid
 make four steps; two steps side by side make four corners. Matching pieces can

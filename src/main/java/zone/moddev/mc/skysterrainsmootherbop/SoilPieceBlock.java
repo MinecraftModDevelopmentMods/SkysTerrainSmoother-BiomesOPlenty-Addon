@@ -111,6 +111,12 @@ public final class SoilPieceBlock extends Block implements IGrowable {
     }
 
     @Override
+    public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, EnumFacing face) {
+        // Vanilla snowfall needs a complete face at the block boundary, not the top of a half-height piece.
+        return isSideSolid(state, world, pos, face) ? BlockFaceShape.SOLID : BlockFaceShape.UNDEFINED;
+    }
+
+    @Override
     public boolean doesSideBlockRendering(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
         return isSideSolid(state, world, pos, side);
     }
@@ -171,16 +177,8 @@ public final class SoilPieceBlock extends Block implements IGrowable {
 
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        boolean snow = false;
-
-        for (EnumFacing face : new EnumFacing[] { EnumFacing.UP, EnumFacing.NORTH, EnumFacing.EAST, EnumFacing.SOUTH,
-                EnumFacing.WEST }) {
-            Block block = world.getBlockState(pos.offset(face)).getBlock();
-
-            snow |= block == Blocks.SNOW || block == Blocks.SNOW_LAYER;
-        }
-
-        return state.withProperty(BlockGrass.SNOWY, snow);
+        return state.withProperty(BlockGrass.SNOWY,
+                zone.moddev.mc.skysgrassslabs.api.GrassSlabsApi.hasSnowAppearance(world, pos));
     }
 
     @Override
@@ -228,11 +226,13 @@ public final class SoilPieceBlock extends Block implements IGrowable {
 
     @Override
     public void onBlockAdded(World world, BlockPos pos, IBlockState state) {
+        SoilLifecycle.removeUnsupportedSnow(world, pos);
         SoilLifecycle.repairSupport(world, pos, state);
     }
 
     @Override
     public void neighborChanged(IBlockState state, World world, BlockPos pos, Block changed, BlockPos changedPos) {
+        SoilLifecycle.removeUnsupportedSnow(world, pos);
         SoilLifecycle.repairSupport(world, pos, state);
     }
 

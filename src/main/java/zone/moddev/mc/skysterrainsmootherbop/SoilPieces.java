@@ -191,7 +191,7 @@ public final class SoilPieces {
                                         (grass ? "grass_" : "dirt_") + (grass ? NativeSoils.GRASS_NAMES[material]
                                                 : NativeSoils.DIRT_NAMES[material])),
                                 Collections.singleton(full), state(grass, material, Shape.SLAB, 1), steps, corners,
-                                grass, support));
+                                grass, support, MaterialGroup.SOIL));
             }
         }
         if (Loader.isModLoaded("skysbuildingpiecesbop")) {
@@ -226,7 +226,7 @@ public final class SoilPieces {
                 }
 
                 TerrainSmoothingApi.registerMaterial(new TerrainMaterial(new ResourceLocation(registryId),
-                        Collections.singleton(full.getStateFromMeta(meta)), slab, steps, corners, false, null));
+                        Collections.singleton(full.getStateFromMeta(meta)), slab, steps, corners, false, null, MaterialGroup.STONE));
             }
         }
 

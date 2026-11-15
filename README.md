@@ -11,6 +11,8 @@ sandy and silty dirt. Grass keeps its native textures, biome colours and
 spreading rules. Moss and overgrown grass don't start spreading like ordinary
 grass.
 
+Open **Mods > Config** for this add-on or Terrain Smoother. The **Materials** page can turn soil or stone smoothing off without removing pieces or recipes. Restart Minecraft after changing settings.
+
 Choose the level in Terrain Smoother's configuration: slabs alone, slabs and
 steps, or all three shapes. The same setting applies outdoors and on dry cave
 floors. Existing chunks aren't changed; explore new terrain to see the results.
@@ -32,10 +34,10 @@ For **Minecraft 1.12.2**, use **Forge 14.23.5.2859** and **Java 8**. Install
 this add-on together with:
 
 - **Biomes O' Plenty 7.0.1.2445**.
-- **Sky's Terrain Smoother 0.1.0.112021**.
-- **Sky's Grass Slabs 1.1.2.112021**.
-- **Sky's Building Pieces 0.3.8.112021**.
-- **[Sky's Building Pieces BOP add-on](https://github.com/MinecraftModDevelopmentMods/SkysBuildingPieces-BiomesOPlenty-Addon) 0.2.4.112021**.
+- **Sky's Terrain Smoother 0.1.1.112021**.
+- **Sky's Grass Slabs 1.2.0.112021**.
+- **Sky's Building Pieces 0.3.10.112021**.
+- **[Sky's Building Pieces BOP add-on](https://github.com/MinecraftModDevelopmentMods/SkysBuildingPieces-BiomesOPlenty-Addon) 0.2.6.112021**.
 
 All six main jars are needed on both the client and server.
 

@@ -14,6 +14,18 @@ public final class SoilLifecycle {
     private SoilLifecycle() {
     }
 
+    static void removeUnsupportedSnow(World world, BlockPos position) {
+        BlockPos above = position.up();
+        if (world.isRemote || above.getY() > 255 || !world.isBlockLoaded(above)) {
+            return;
+        }
+        // Retain the calculated snow cap; only the physically unsupported vanilla layer is removed.
+        if (world.getBlockState(above).getBlock() == Blocks.SNOW_LAYER
+                && !Blocks.SNOW_LAYER.canPlaceBlockAt(world, above)) {
+            world.setBlockToAir(above);
+        }
+    }
+
     public static void repairSupport(World world, BlockPos pos, IBlockState state) {
         SoilPieceBlock block = (SoilPieceBlock) state.getBlock();
 
@@ -34,6 +46,7 @@ public final class SoilLifecycle {
     }
 
     public static void tick(World world, BlockPos pos, IBlockState state, Random random) {
+        removeUnsupportedSnow(world, pos);
         if (world.isRemote || !world.isAreaLoaded(pos, 3)) {
             return;
         }

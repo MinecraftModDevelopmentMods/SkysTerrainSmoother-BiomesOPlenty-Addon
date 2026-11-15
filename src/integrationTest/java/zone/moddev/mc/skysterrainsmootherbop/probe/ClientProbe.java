@@ -19,6 +19,13 @@ public final class ClientProbe extends ProbeProxy {
 
     @Override
     public void init() {
+        if (org.lwjgl.opengl.Display.isCreated()) {
+            org.lwjgl.opengl.Display.setLocation(-10000, -10000);
+        }
+        if (org.lwjgl.input.Mouse.isCreated()) {
+            org.lwjgl.input.Mouse.setGrabbed(false);
+        }
+        Minecraft.getMinecraft().getSession().setProperties(new com.mojang.authlib.properties.PropertyMap());
         MinecraftForge.EVENT_BUS.register(this);
     }
 
@@ -43,6 +50,22 @@ public final class ClientProbe extends ProbeProxy {
         }
 
         ran = true;
+
+        net.minecraftforge.fml.client.IModGuiFactory factory = net.minecraftforge.fml.client.FMLClientHandler.instance()
+                .getGuiFactoryFor(net.minecraftforge.fml.common.Loader.instance().getIndexedModList()
+                        .get(SkysTerrainSmootherBop.ID));
+        RuntimeProbe.require(factory != null && factory.hasConfigGui(), "the BOP Config button is available");
+        net.minecraft.client.gui.GuiScreen screen = factory.createConfigGui(minecraft.currentScreen);
+        net.minecraft.client.gui.ScaledResolution resolution = new net.minecraft.client.gui.ScaledResolution(minecraft);
+        screen.setWorldAndResolution(minecraft, resolution.getScaledWidth(), resolution.getScaledHeight());
+        net.minecraftforge.fml.client.config.GuiConfig settings = (net.minecraftforge.fml.client.config.GuiConfig) screen;
+        RuntimeProbe.require(settings.configElements.size() == 4 && settings.allRequireMcRestart,
+                "the BOP button opens the shared settings and material pages");
+        minecraft.getFramebuffer().bindFramebuffer(true);
+        minecraft.entityRenderer.setupOverlayRendering();
+        screen.drawScreen(0, 0, 0);
+        screen.onGuiClosed();
+        System.out.println("BOP_TERRAIN_CONFIG_PASS shared_pages=true restart_required=true");
 
         int models = 0;
         int items = 0;

@@ -66,9 +66,24 @@ public final class RuntimeProbe {
 
         try {
             WorldServer world = server.getWorld(0);
+            if (phase().equals("upgrade-existing")) {
+                new ExistingWorldProbe(world);
+                return;
+            }
 
             world.getGameRules().setOrCreateGameRule("randomTickSpeed", "0");
             world.setWorldTime(6000);
+
+            if (phase().equals("saved-snow")) {
+                SnowSettlementChecks.savedWorld(world);
+                server.initiateShutdown();
+                return;
+            }
+            if (phase().equals("snow-support")) {
+                SnowSettlementChecks.run(world);
+                server.initiateShutdown();
+                return;
+            }
 
             if (Boolean.getBoolean("skysterrainsmootherbop.pathFixtureOnly")) {
                 PathChecks.fixture(world, phase().equals("reload"));
@@ -76,7 +91,7 @@ public final class RuntimeProbe {
                 return;
             }
 
-            int checks = PathChecks.run(world) + MineralogyProbe.run() + content(world) + placement(world) + recipes(world) + footprints(world) + nativeGrass(world)
+            int checks = SnowSettlementChecks.run(world) + BackportChecks.run(world) + PathChecks.run(world) + MineralogyProbe.run() + content(world) + placement(world) + recipes(world) + footprints(world) + nativeGrass(world)
                     + persistence(world) + generationOrder(world);
             int generated = generation(world);
             File marker = new File(world.getSaveHandler().getWorldDirectory(),
