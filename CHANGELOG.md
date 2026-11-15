@@ -3,11 +3,11 @@
 ## 0.1.1.112021
 
 - Stop snow layers hovering over BOP soil pieces and paths, and clear old unsupported layers during normal updates.
-- Used Terrain Smoother's material switches for BOP soils and natural rocks.
-- Opened the shared smoothing settings from this add-on's Config button too.
-- Gave BOP soil pieces the updated snow appearance on cold ground and higher snowy terraces.
-- Kept each material, shape and crafting yield in its own recipe-book entry.
-- Updated the coordinated Sky dependencies, keeping the existing BOP palette slots.
+- Use Terrain Smoother's material switches for BOP soils and natural rocks.
+- Open the shared smoothing settings from this add-on's Config button too.
+- Give BOP soil pieces snowy edges on cold ground and beside higher snowy terraces.
+- Keep each material, shape and crafting yield in its own recipe-book entry.
+- Update the matching Sky dependencies without changing saved BOP pieces or palette slots.
 
 ## 0.1.0.112021
 
