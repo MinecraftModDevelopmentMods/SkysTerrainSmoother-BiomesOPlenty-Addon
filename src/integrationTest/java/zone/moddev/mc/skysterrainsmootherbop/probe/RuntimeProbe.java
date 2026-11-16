@@ -76,7 +76,7 @@ public final class RuntimeProbe {
                 return;
             }
 
-            int checks = PathChecks.run(world) + MineralogyProbe.run() + content(world) + placement(world)
+            int checks = SnowChecks.run(world) + PathChecks.run(world) + MineralogyProbe.run() + content(world) + placement(world)
                     + recipes(world) + footprints(world) + nativeGrass(world) + persistence(world)
                     + generationOrder(world);
             int generated = generation(world);

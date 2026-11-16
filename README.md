@@ -26,15 +26,19 @@ keep their native BOP dirt sides. Flattening a grass step or corner also
 flattens compatible grass directly underneath in the same shovel action.
 The [gameplay guide](docs/GAMEPLAY.md) covers plant support and snow.
 
+Snow caps follow nearby snow, including snow on the next terrace up. Exposed
+ground in cold biomes also gets a cap, while roofs and strong block light block
+that weather effect. Piece orientations stay unchanged.
+
 ## Installation
 
 For **Minecraft 1.10.2**, use **Forge 12.18.3.2511** and **Java 8**. Install
 this add-on together with:
 
 - **Biomes O' Plenty 5.0.0.2236**.
-- **Sky's Terrain Smoother 0.1.0.110021**.
-- **Sky's Grass Slabs 1.1.1.110021**.
-- **Sky's Building Pieces 0.3.7.110021**.
+- **Sky's Terrain Smoother 0.1.1.110021**.
+- **Sky's Grass Slabs 1.2.0.110021**.
+- **Sky's Building Pieces 0.3.9.110021**.
 - **[Sky's Building Pieces BOP add-on](https://github.com/MinecraftModDevelopmentMods/SkysBuildingPieces-BiomesOPlenty-Addon) 0.1.3.110021**.
 
 All six main jars are needed on both the client and server.

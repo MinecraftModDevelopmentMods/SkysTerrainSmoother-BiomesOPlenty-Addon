@@ -14,6 +14,8 @@ plugins {
     id 'net.minecraftforge.gradle' version '7.0.34'
 }
 
+apply from: 'gradle/legacy-tools.gradle'
+
 group = project.mod_group
 version = project.mod_version
 base.archivesName = 'SkysTerrainSmoother-BiomesOPlenty-Addon'
@@ -34,6 +36,7 @@ ext.functional_version = versionParts[0..2].join('.')
 ext.display_version = project.mod_version
 ext.release_tag = project.mod_version
 def pinnedJava8 = providers.environmentVariable('STS_JAVA8_HOME')
+        .orElse(providers.environmentVariable('JAVA_HOME_8_X64'))
 // Gradle normally chooses the newest cached Java 8 installation. Use the
 // specified installation so local builds and CI compile with the same JDK.
 def exactJava8Spec = pinnedJava8.isPresent() ?
@@ -62,6 +65,25 @@ tasks.withType(JavaCompile).configureEach {
 def contentLock = new Properties()
 file('gradle/content-dependencies.properties').withInputStream { contentLock.load(it) }
 
+// Manual candidates use an explicit, ignored lock; published dependencies remain the default.
+def localContentLock = providers.gradleProperty('localContentLock')
+if (localContentLock.isPresent()) {
+    if (System.getenv('CI') != null) {
+        throw new GradleException('Local content candidates are not allowed in CI.')
+    }
+    File candidateLock = file(localContentLock.get())
+    if (!candidateLock.isFile()) {
+        throw new GradleException("Missing local content lock: ${candidateLock}")
+    }
+    candidateLock.withInputStream { contentLock.load(it) }
+    gradle.taskGraph.whenReady { graph ->
+        if (graph.allTasks.any { it.name.toLowerCase(Locale.ROOT).startsWith('publish') }) {
+            throw new GradleException('Publish with released dependencies; local content candidates are for testing only.')
+        }
+    }
+}
+ext.localContentCandidates = localContentLock.isPresent()
+
 // Keep Eclipse and command-line runs on the same published dependencies.
 // An old source-directory argument must not select a different local build.
 ['grassSlabsDirectory', 'buildingPiecesDirectory', 'terrainDirectory', 'buildingPiecesCoreVersion'].each { name ->
@@ -71,7 +93,7 @@ file('gradle/content-dependencies.properties').withInputStream { contentLock.loa
 }
 
 def developmentContent = ['grass', 'pieces', 'terrain', 'bopPieces'].collectEntries { name ->
-    [(name): file(".gradle/released-content/${contentLock.getProperty(name + '.artifact')}-" +
+    [(name): file(".gradle/${localContentLock.isPresent() ? 'candidate-content' : 'released-content'}/${contentLock.getProperty(name + '.artifact')}-" +
             contentLock.getProperty(name + '.version') + '-deobf.jar')]
 }
 def grassSlabsDevelopmentJar = developmentContent.grass
@@ -650,6 +672,12 @@ def configureEclipseBuildship = tasks.register('configureEclipseBuildship') {
         File preferencesFile = file('.settings/org.eclipse.buildship.core.prefs')
         Properties preferences = new Properties()
         if (preferencesFile.isFile()) preferencesFile.withInputStream { preferences.load(it) }
+        List<String> arguments = preferences.getProperty('arguments', '').tokenize(' ')
+        arguments.removeAll { it.startsWith('-PlocalContentLock=') }
+        if (localContentLock.isPresent()) {
+            arguments.add('-PlocalContentLock=' + localContentLock.get())
+        }
+        preferences.setProperty('arguments', arguments.join(' '))
         [
                 'eclipse.preferences.version': '1',
                 'connection.gradle.distribution': 'GRADLE_DISTRIBUTION(WRAPPER)',

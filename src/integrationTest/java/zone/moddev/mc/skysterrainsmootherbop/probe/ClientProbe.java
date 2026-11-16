@@ -44,6 +44,7 @@ public final class ClientProbe extends ProbeProxy {
 
         ran = true;
 
+        SnowVisualChecks.run(minecraft);
         int models = 0;
         int items = 0;
 

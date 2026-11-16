@@ -171,14 +171,7 @@ public final class SoilPieceBlock extends Block implements IGrowable {
 
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        boolean snow = false;
-
-        for (EnumFacing face : new EnumFacing[] { EnumFacing.UP, EnumFacing.NORTH, EnumFacing.EAST, EnumFacing.SOUTH,
-                EnumFacing.WEST }) {
-            Block block = world.getBlockState(pos.offset(face)).getBlock();
-
-            snow |= block == Blocks.SNOW || block == Blocks.SNOW_LAYER;
-        }
+        boolean snow = zone.moddev.mc.skysgrassslabs.api.GrassSlabsApi.hasSnowAppearance(world, pos);
 
         return state.withProperty(BlockGrass.SNOWY, snow);
     }

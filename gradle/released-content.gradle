@@ -6,6 +6,15 @@ def developmentJars = project.ext.contentDevelopmentJars
 def releases = [:]
 
 developmentJars.each { name, destination ->
+    String localPath = lock.getProperty(name + '.path')
+    if (project.ext.localContentCandidates && localPath) {
+        File candidate = file(localPath)
+        if (!candidate.isFile() || !(lock.getProperty(name + '.sha256') ==~ /[A-F0-9]{64}/)) {
+            throw new GradleException("Missing local dependency jar or checksum: ${name}")
+        }
+        releases[name] = candidate
+        return
+    }
     String coordinate = lock.getProperty(name + '.coordinate')
     String checksum = lock.getProperty(name + '.sha256')
     if (!(coordinate ==~ /curse\.maven:[a-z0-9-]+-[0-9]+:[0-9]+/) ||
@@ -24,7 +33,14 @@ def verify = {
         String actual = MessageDigest.getInstance('SHA-256')
                 .digest(Files.readAllBytes(jar.toPath())).encodeHex().toString().toUpperCase(Locale.ROOT)
         if (actual != lock.getProperty(name + '.sha256')) {
-            throw new GradleException("Published dependency checksum mismatch: ${name}")
+            throw new GradleException("Content dependency checksum mismatch: ${name}")
+        }
+        new java.util.zip.ZipFile(jar).withCloseable { archive ->
+            def metadata = archive.getEntry('mcmod.info')
+            def mods = new groovy.json.JsonSlurper().parse(archive.getInputStream(metadata))
+            if (mods[0].version != lock.getProperty(name + '.version')) {
+                throw new GradleException("Content dependency version mismatch: ${name}")
+            }
         }
     }
 }

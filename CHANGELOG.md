@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.1.110021
+
+BOP grass pieces now match snowy terraces and cold exposed ground, using the updated shared snow rules.
+
 ## 0.1.0.110021
 
 - Adds slabs, steps and corners for Biomes O' Plenty grass and soil.
