@@ -1,7 +1,7 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "building",
-  "group": "skysterrainsmootherbop/full_block",
+  "group": "skys/result/minecraft/coarse_dirt",
   "pattern": [
     "XX"
   ],

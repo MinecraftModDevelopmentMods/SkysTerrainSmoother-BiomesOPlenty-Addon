@@ -1,5 +1,6 @@
 package zone.moddev.mc.skysterrainsmootherbop.probe;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import java.util.*;
 import java.security.MessageDigest;
 import net.minecraft.world.level.block.state.BlockState;
@@ -102,7 +103,7 @@ final class LateTerrainProbe {
                     for (BlockState occupied : new BlockState[] { Blocks.SHORT_GRASS.defaultBlockState(),
                             Blocks.OAK_SAPLING.defaultBlockState(),
                             Blocks.WATER.defaultBlockState(), Blocks.GLASS.defaultBlockState() }) {
-                        fixture(world, floor, Blocks.GRAVEL.defaultBlockState());
+                        fixture(world, floor, Blocks.COAL_BLOCK.defaultBlockState());
                         SkysTerrainSmoother.engine.smooth(world, owner, level);
                         world.setBlock(floor, Blocks.GRASS_BLOCK.defaultBlockState(), 2);
                         world.setBlock(floor.offset(DX[direction], 1, DZ[direction]), clay, 2);
@@ -154,6 +155,7 @@ final class LateTerrainProbe {
 
                 for (int order = 0; order < 2; order++) {
                     int origin = order == 0 ? 128 : 256;
+                    ProbeWorld.coldBiome(world, origin, 128, 9);
                     List<LevelChunk> chunks = new ArrayList<>();
 
                     for (int blockZ = 0; blockZ < 9; blockZ++) {
@@ -220,7 +222,7 @@ final class LateTerrainProbe {
                                 BlockState state = world.getBlockState(
                                         new BlockPos((origin << 4) + blockX, blockY, (128 << 4) + blockZ));
 
-                                digest.update((net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(state.getBlock()) + "/"
+                                digest.update((BuiltInRegistries.BLOCK.getKey(state.getBlock()) + "/"
                                         + state.toString() + "\n").getBytes("UTF-8"));
                             }
                         }

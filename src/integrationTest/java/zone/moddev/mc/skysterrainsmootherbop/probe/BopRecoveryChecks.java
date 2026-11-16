@@ -1,5 +1,11 @@
 package zone.moddev.mc.skysterrainsmootherbop.probe;
 
+import java.util.List;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -22,7 +28,7 @@ final class BopRecoveryChecks {
             String material = "biomesoplenty:" + rock;
             BlockState full = Pieces.nativeState(
                     zone.moddev.mc.skysbuildingpieces.catalogue.Catalogue.INSTANCE.materials.get(material), "full");
-            boolean mineralogyOwnsRock = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(full.getBlock()).getNamespace().equals("mineralogy");
+            boolean mineralogyOwnsRock = BuiltInRegistries.BLOCK.getKey(full.getBlock()).getNamespace().equals("mineralogy");
             RuntimeProbe.require(zone.moddev.mc.skysterrainsmoother.api.TerrainSmoothingApi
                             .hasMaterial(net.minecraft.resources.Identifier.parse(material)) != mineralogyOwnsRock,
                     "BOP rock mappings defer to Mineralogy without bypassing its configuration");
@@ -51,7 +57,7 @@ final class BopRecoveryChecks {
                 RuntimeProbe.require(!target.hasBlockEntity() && target.getFluidState().isEmpty(),
                         "Recovered pieces are dry and have no block entity");
                 RuntimeProbe.require(target.getBlock() == zone.moddev.mc.skysterrainsmootherbop.CoarseDirtSlab.BLOCK
-                                || !net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(target.getBlock()).getNamespace().equals("skysterrainsmootherbop"),
+                                || !BuiltInRegistries.BLOCK.getKey(target.getBlock()).getNamespace().equals("skysterrainsmootherbop"),
                         "A removed soil becomes an available playable piece");
                 int orientation = metadata % palette.orientations;
                 int lower = palette.shape == Shape.SLAB ? 15
@@ -163,6 +169,12 @@ final class BopRecoveryChecks {
             RuntimeProbe.require(rejected && invalid.equals(unchanged),
                     "A count outside the saved-byte range stops without changing the stack");
         }
+        int recipes = checkReplacementRecipes(world);
+        zone.moddev.mc.skysterrainsmoother.SkysTerrainSmoother.logger.info("TERRAIN_BOP_RECOVERY_PASS states=" + states + " checks=" + checked);
+        return checked + recipes + 2;
+    }
+
+    private static int checkReplacementRecipes(ServerLevel world) {
         int recipes = 0;
         for (var holder : world.getServer().getRecipeManager().getRecipes()) {
             var recipe = holder.value();
@@ -187,8 +199,7 @@ final class BopRecoveryChecks {
             }
             recipes++;
         }
-        RuntimeProbe.require(recipes == 84, "All original recipe identities load with available ingredients");
-        zone.moddev.mc.skysterrainsmoother.SkysTerrainSmoother.logger.info("TERRAIN_BOP_RECOVERY_PASS states=" + states + " checks=" + checked);
-        return checked + 2;
+        RuntimeProbe.require(recipes == 4, "The add-on owns only its distinct coarse dirt slab recipes");
+        return recipes + ReplacementRecipeChecks.run(world);
     }
 }

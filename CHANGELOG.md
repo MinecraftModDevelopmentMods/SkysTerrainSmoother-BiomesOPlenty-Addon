@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.3.2603002
+
+- Use the core material settings for BOP soil and stone.
+- Match coarse-soil slabs to snowy terraces.
+- Remove overlapping recipes while keeping distinct cuts and combinations.
+
 ## 0.1.0.2603002
 
 - Updated for Minecraft 26.3 on NeoForge. Use the matching Sky mods and Biomes O' Plenty builds.
