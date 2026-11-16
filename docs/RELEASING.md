@@ -4,9 +4,7 @@ Pushes and pull requests run the build, tests, artifact audit, CodeQL and Gradle
 wrapper checks. CI uploads the main, sources and Javadoc jars with their checksums.
 Tags only validate a candidate; they never publish it.
 
-Publication is currently disabled. Before the first release, create this mod's
-CurseForge project, set its own `curseforge_project_id` in `gradle.properties`,
-and set `release_enabled=true`. Do not reuse another mod's project ID.
+Publication uses CurseForge project 1770864. Fork builds never publish.
 
 The MMD release workflow uses the organisation's `CURSEFORGE_TOKEN`,
 `MAVEN_UPLOAD_URL`, `MAVEN_UPLOAD_USERNAME` and `MAVEN_UPLOAD_PASSWORD`.

@@ -8,9 +8,9 @@ import net.minecraftforge.fml.common.event.*;
         name = "Sky's Terrain Smoother - Biomes O Plenty",
         version = SkysTerrainSmootherBop.VERSION,
         acceptedMinecraftVersions = "[1.10.2]",
-        dependencies = "required-after:skysterrainsmoother@[0.1.0.110021,0.2);required-after:skysgrassslabs@[1.1.1.110021,2);required-after:skysbuildingpieces@[0.3.7.110021,0.4);required-after:BiomesOPlenty@[5.0.0,6);required-after:skysbuildingpiecesbop")
+        dependencies = "required-after:skysterrainsmoother@[0.1.1.110021,0.2);required-after:skysgrassslabs@[1.2.0.110021,2);required-after:skysbuildingpieces@[0.3.9.110021,0.4);required-after:BiomesOPlenty@[5.0.0,6);required-after:skysbuildingpiecesbop")
 public final class SkysTerrainSmootherBop {
-    public static final String ID = "skysterrainsmootherbop", VERSION = "0.1.0.110021";
+    public static final String ID = "skysterrainsmootherbop", VERSION = "0.1.1.110021";
     @SidedProxy(
             clientSide = "zone.moddev.mc.skysterrainsmootherbop.client.ClientProxy",
             serverSide = "zone.moddev.mc.skysterrainsmootherbop.client.CommonProxy")

@@ -23,8 +23,7 @@ Old source-directory and local-version overrides are rejected. To test another
 release, update its file ID, version and checksum together in the lock file.
 
 Use `genEclipseRuns eclipse` to prepare the Java 8 IDE setup. Ordinary launches
-exclude unit tests and build-only runtime probes. Publication remains disabled
-until this mod has its own CurseForge project.
+exclude unit tests and build-only runtime probes. Publication uses the guarded MMD release workflow; ordinary builds do not publish.
 
 ## Testing with Mineralogy
 
@@ -63,3 +62,18 @@ from development profiles and contains normal production jars.
 
 The Building Pieces BOP add-on is required in development runs and packaged
 games. Its matching dependency is recorded in `gradle/content-dependencies.properties`.
+
+## Testing a coordinated local candidate
+
+Normal builds still use the published jars in `gradle/content-dependencies.properties`.
+For an unreleased dependency change, create an ignored lock under `.gradle/` and select it
+with `-PlocalContentLock=.gradle/<candidate>/content.properties`. Each overridden dependency
+needs its `version`, `path` and uppercase `sha256`; keep the same `grass`, `pieces`,
+`terrain` and `bopPieces` keys as the published lock. Paths are relative to this project.
+Use production jars, not development jars: the build checks their versions and hashes,
+then prepares separate development mappings for Eclipse.
+
+Run `eclipse genEclipseRuns verifyEclipseProductionClasspath` with that argument.
+The generated Buildship preferences retain it when Eclipse refreshes the project.
+Local candidates are rejected in CI and by publication tasks. Remove the argument and
+regenerate Eclipse's configuration to return to the published dependency set.
