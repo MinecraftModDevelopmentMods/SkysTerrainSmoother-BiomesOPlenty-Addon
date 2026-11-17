@@ -5,6 +5,12 @@ worlds and building pieces. Choose slabs, steps or corners in Terrain Smoother's
 configuration. Only new, dry terrain is smoothed, including suitable cave floors.
 Existing chunks are left alone.
 
+The **Materials** page in Terrain Smoother's config also controls this add-on.
+**Dirt and grass** includes its coarse dirt, and **Stone and rocks** controls
+its rock mappings. You can turn stone smoothing off and keep grass and soil
+transitions. Mineralogy rocks also need Mineralogy support enabled. All groups
+are enabled by default. Save on the main config screen and restart Minecraft.
+
 ## Minecraft 26.3
 
 Use NeoForge 26.3.0.99 and Java 25 with these matching mods on both client and server:
