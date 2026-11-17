@@ -224,10 +224,12 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build, test, and audit release artifacts
-        run: >-
+        run: |
+          set -euo pipefail
           ./gradlew clean --no-daemon --stacktrace
-          ./gradlew check build javadoc preparePackagedIntegrationProbe verifyReleaseArtifacts writeReleaseChecksums
-          verifyEclipseProductionClasspath -PgrassSlabsDirectory=dependencies/grass -PbuildingPiecesDirectory=dependencies/pieces -PterrainDirectory=dependencies/terrain -PbuildingPiecesBopDirectory=dependencies/bopPieces --no-daemon --stacktrace
+          ./gradlew check build javadoc preparePackagedIntegrationProbe verifyReleaseArtifacts writeReleaseChecksums \
+            verifyEclipseProductionClasspath -Declipse.application=org.eclipse.ui.ide.workbench \
+            -PgrassSlabsDirectory=dependencies/grass -PbuildingPiecesDirectory=dependencies/pieces -PterrainDirectory=dependencies/terrain -PbuildingPiecesBopDirectory=dependencies/bopPieces --no-daemon --stacktrace
 
       - name: Replay artifact checks offline
         run: >-
