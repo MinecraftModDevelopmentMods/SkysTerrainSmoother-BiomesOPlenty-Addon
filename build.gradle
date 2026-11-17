@@ -524,6 +524,7 @@ level-name=world
 level-seed=skys-terrain-smoother-integration
 level-type=minecraft:normal
 online-mode=false
+use-native-transport=false
 server-ip=127.0.0.1
 server-port=0
 generate-structures=false
@@ -813,6 +814,11 @@ eclipse {
         downloadSources = true
         downloadJavadoc = true
         file.whenMerged { classpath ->
+            // Forge supplies MixinExtras at runtime. Eclipse also picks up ForgeGradle's compile-only jar.
+            classpath.entries.removeAll { entry ->
+                entry instanceof org.gradle.plugins.ide.eclipse.model.Library &&
+                        entry.path.tokenize('/\\').last().startsWith('mixinextras-common-')
+            }
             // Eclipse copies these files on every build. Use Gradle's expanded metadata, never the template.
             def resources = classpath.entries.findAll {
                 it instanceof org.gradle.plugins.ide.eclipse.model.SourceFolder &&
@@ -832,6 +838,10 @@ tasks.named('eclipseClasspath') {
     dependsOn tasks.named('processResources'), verifyContentDependencies
 }
 
+def eclipseRecipeDirectories = [
+        'data/skysterrainsmootherbop/recipe',
+        'data/skysterrainsmootherbop/advancement/recipes'
+]
 def prepareEclipseResources = tasks.register('prepareEclipseResources') {
     group = 'ide'
     dependsOn tasks.named('processResources')
@@ -839,6 +849,18 @@ def prepareEclipseResources = tasks.register('prepareEclipseResources') {
         project.copy {
             from(layout.buildDirectory.dir('resources/main'))
             into(layout.projectDirectory.dir('bin/main'))
+            eclipseRecipeDirectories.each { directory -> exclude directory + '/**' }
+        }
+        // Drop retired recipes and unlocks from the merged output without clearing compiled classes.
+        eclipseRecipeDirectories.each { directory ->
+            File destination = layout.projectDirectory.dir("bin/main/${directory}").asFile
+            if (destination.canonicalFile != new File(projectDir.canonicalFile, "bin/main/${directory}")) {
+                throw new GradleException("Unexpected Eclipse resource output: ${destination}")
+            }
+            project.sync {
+                from(layout.buildDirectory.dir("resources/main/${directory}"))
+                into(destination)
+            }
         }
     }
 }
@@ -960,6 +982,11 @@ tasks.register('verifyEclipseProductionClasspath') {
         }
         File metadata = file('bin/main/META-INF/mods.toml')
         def eclipseClasspath = new groovy.xml.XmlSlurper().parse(file('.classpath'))
+        if (eclipseClasspath.classpathentry.any {
+            it.@kind == 'lib' && file(it.@path.text()).name.startsWith('mixinextras-common-')
+        }) {
+            throw new GradleException('Eclipse must use the MixinExtras runtime supplied by Forge')
+        }
         // The add-on name starts with the core name. Match a version after each
         // artifact stem so the two legitimate dependencies are checked separately.
         [SkysBuildingPieces: buildingPiecesDevelopmentJar,
@@ -986,6 +1013,15 @@ tasks.register('verifyEclipseProductionClasspath') {
         if (resourceFolders.contains('src/main/resources') ||
                 resourceFolders.count { it == 'build/resources/main' } != 1) {
             throw new GradleException('Eclipse must copy processed resources, not overwrite them with templates')
+        }
+        eclipseRecipeDirectories.each { directory ->
+            File processed = layout.buildDirectory.dir("resources/main/${directory}").get().asFile
+            File eclipse = layout.projectDirectory.dir("bin/main/${directory}").asFile
+            def expected = fileTree(processed).files.collect { processed.toPath().relativize(it.toPath()) } as Set
+            def actual = fileTree(eclipse).files.collect { eclipse.toPath().relativize(it.toPath()) } as Set
+            if (actual != expected) {
+                throw new GradleException("Eclipse output contains stale or missing recipe resources: ${directory}")
+            }
         }
         String nativeMetadata = metadata.isFile() ? metadata.getText('UTF-8') : ''
         if (!nativeMetadata.contains("version=\"${project.mod_version}\"") ||
@@ -1117,7 +1153,7 @@ def prepareFamilyForward = tasks.register('prepareFamilyForwardFixture') {
         ['banned-players.json', 'banned-ips.json', 'ops.json', 'whitelist.json'].each { name ->
             new File(target, name).setText('[]\n', 'UTF-8')
         }
-        new File(target, 'server.properties').setText('level-name=world\nonline-mode=false\n' +
+        new File(target, 'server.properties').setText('level-name=world\nonline-mode=false\nuse-native-transport=false\n' +
                 'server-ip=127.0.0.1\nserver-port=0\nview-distance=6\nmax-tick-time=120000\n', 'UTF-8')
     }
 }

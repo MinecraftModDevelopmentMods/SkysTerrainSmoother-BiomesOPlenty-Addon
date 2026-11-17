@@ -1,8 +1,16 @@
 # Changelog
 
+## 0.1.3.2602001
+
+- Uses the updated smoother, including gentle slopes, snowy terrain and material settings.
+- Coarse-dirt slabs follow neighbouring snow and cold surface conditions.
+- Retains one recipe for each distinct coarse-dirt result, with the other pieces using their content mod's recipes.
+
+
 ## 0.1.0.2602001
 
 - Updated for Minecraft 26.2 on Forge. Use the matching versions of the Sky mods and Biomes O’ Plenty.
+- Removed repeat recipes for old BOP soil pieces. Each crafting pattern is still available.
 
 ## 0.1.0.2601021
 

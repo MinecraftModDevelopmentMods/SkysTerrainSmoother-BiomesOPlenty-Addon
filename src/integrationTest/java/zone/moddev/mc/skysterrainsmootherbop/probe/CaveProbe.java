@@ -117,8 +117,9 @@ final class CaveProbe {
         RuntimeProbe.require(!world.isEmptyBlock(floor.above()), "cave entrance and outdoor floor join consistently");
         checks++;
 
+        // Gravel has a smoothing piece now. Use an excluded coal block as the unregistered terrain control.
         for (BlockState source : new BlockState[] { Blocks.COAL_ORE.defaultBlockState(),
-                Blocks.GRAVEL.defaultBlockState(), Blocks.OAK_PLANKS.defaultBlockState(), Blocks.INFESTED_STONE.defaultBlockState(),
+                Blocks.COAL_BLOCK.defaultBlockState(), Blocks.OAK_PLANKS.defaultBlockState(), Blocks.INFESTED_STONE.defaultBlockState(),
                 Blocks.CHEST.defaultBlockState() }) {
             fixture(world, floor, 6);
             world.setBlock(floor, source, 2);
