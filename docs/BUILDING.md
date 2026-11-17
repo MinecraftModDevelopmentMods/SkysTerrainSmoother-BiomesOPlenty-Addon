@@ -1,7 +1,7 @@
 # Building from source
 
-Use the Gradle 9.2.1 wrapper and Temurin 21.0.7+6. This branch builds with
-NeoGradle 7.1.38 for NeoForge 21.1.247. The log checks use Python 3.11 or newer.
+Use the Gradle 9.2.1 wrapper and Temurin 25.0.3+9. This branch builds with
+NeoGradle 7.1.39 for NeoForge 26.3.0.99. The log checks use Python 3.11 or newer.
 
 Build the four commits in `gradle/content-dependencies.properties` with
 `assemble`. Build Grass Slabs and Building Pieces first, then the Building
@@ -27,3 +27,6 @@ Use `preparePackagedIntegrationProbe` to build the disposable runtime probe.
 The tools in `tools/` check native games and saved fixtures without changing
 the original worlds. Use a fresh directory under `build/` for each first
 load so older logs remain available.
+
+Disposable servers use Java networking (`use-native-transport=false`). This
+avoids host-specific Netty availability probes during log auditing.

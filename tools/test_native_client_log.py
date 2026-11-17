@@ -11,7 +11,7 @@ from native_client_log import audit, classify, classify_server
 
 LOGIN = ("[Server thread/INFO]: TerrainChecks logged in with entity id 21 at (0, 64, 0)\n"
          "[Server thread/INFO]: TerrainChecks joined the game")
-START = "[Server thread/INFO] [MinecraftServer/]: Preparing start region for dimension minecraft:overworld"
+START = "[Server thread/INFO] [MinecraftServer/]: Starting integrated minecraft server version 26.3"
 NOTICE = "[Thread-1/FATAL] [net.minecraftforge.common.ForgeConfig/CORE]: Forge config just got changed on the file system!"
 PAYLOAD = "[Client thread/ERROR] [net.minecraftforge.fml.network.simple.IndexedMessageCodec/SIMPLENET]: Received empty payload on channel fml:handshake"
 REGISTRY_NOTICE = ("[00:00:00] [main/ERROR] [net.minecraftforge.registries.GameData/REGISTRIES]: "
@@ -21,7 +21,7 @@ REGISTRY_NOTICE = ("[00:00:00] [main/ERROR] [net.minecraftforge.registries.GameD
 
 class NativeServerLogTest(unittest.TestCase):
     def test_notice_from_earlier_loader_does_not_pass(self):
-        startup = START + '\n[Server thread/INFO]: Done (1s)!'
+        startup = '[Server thread/INFO]: Preparing level "world"\n[Server thread/INFO]: Done (1s)!'
         self.assertEqual(classify_server(startup, "Debug log", True)["notices"], [])
         with self.assertRaisesRegex(ValueError, "Unexpected missing registry entries"):
             classify_server(REGISTRY_NOTICE + startup, "Debug log", True)
@@ -71,6 +71,36 @@ class NativeClientLogTest(unittest.TestCase):
             classify("\n".join((START, LOGIN, "[STDERR/]: java.lang.IllegalStateException")), True)
 
 
+    def test_only_the_packaged_offline_authentication_notice_is_accepted(self):
+        auth = "\n".join((
+            '[00:00:00] [Download-2/ERROR]: Failed to fetch user properties',
+            'com.mojang.authlib.exceptions.InvalidCredentialsException: Status: 401',
+            'at com.mojang.authlib.exceptions.MinecraftClientHttpException.toAuthenticationException(MinecraftClientHttpException.java:70)',
+            'at com.mojang.authlib.services.MinecraftServicesUserApiService.fetchProperties(MinecraftServicesUserApiService.java:168)',
+            'at TRANSFORMER/minecraft@26.3/net.minecraft.client.Minecraft.lambda$new$1(Minecraft.java:419)',
+            'at java.base/java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1789)',
+            'at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1090)',
+            'at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:614)',
+            'at java.base/java.lang.Thread.run(Thread.java:1474)',
+            'Caused by: MinecraftClientHttpException[type=HTTP_ERROR, status=401, response=ErrorResponse[path=/player/attributes, error=null, errorMessage=null, details=null]]',
+            'at com.mojang.authlib.minecraft.client.MinecraftClient.buildHttpException(MinecraftClient.java:170)',
+            'at com.mojang.authlib.minecraft.client.MinecraftClient.readServiceResponse(MinecraftClient.java:147)',
+            'at com.mojang.authlib.minecraft.client.MinecraftClient.getWithEtag(MinecraftClient.java:81)',
+            'at com.mojang.authlib.minecraft.client.MinecraftClient.get(MinecraftClient.java:65)',
+            'at com.mojang.authlib.services.MinecraftServicesUserApiService.fetchProperties(MinecraftServicesUserApiService.java:118)',
+            '... 5 more',
+        ))
+        log = "\n".join((auth, START, LOGIN))
+        self.assertEqual(classify(log, True, packaged_offline=True)["notices"],
+                         ["Failed to fetch user properties"])
+        with self.assertRaises(ValueError):
+            classify(log, True)
+        with self.assertRaises(ValueError):
+            classify(log.replace("Status: 401", "Status: 503"), True, packaged_offline=True)
+        with self.assertRaises(ValueError):
+            classify(log.replace("CompletableFuture", "AnotherWorker"), True, packaged_offline=True)
+
+
 class NativeClientFilesTest(unittest.TestCase):
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory()
@@ -83,7 +113,10 @@ class NativeClientFilesTest(unittest.TestCase):
         (self.directory / "logs/latest.log").write_text("\n".join((
             START, LOGIN,
             "SKY_CONFIG_SCREENS_PASS", "TERRAIN_SMOOTHER_CLIENT_PASS",
-            "TERRAIN_SMOOTHER_CLIENT_WORLD_PASS", "TERRAIN_SMOOTHER_CLIENT_DISCONNECT_PASS", "SKY_RECIPE_PREVIEW_MODELS_PASS")), encoding="utf-8")
+            "TERRAIN_SMOOTHER_CLIENT_WORLD_PASS", "TERRAIN_SMOOTHER_CLIENT_DISCONNECT_PASS", "SKY_RECIPE_PREVIEW_MODELS_PASS",
+            "TERRAIN_BOP_SOIL_MODELS_PASS", "Stopping server", "Saving worlds",
+            *(f"Saving chunks for level 'Terrain BOP Test'/minecraft:{dimension}"
+              for dimension in ("overworld", "the_nether", "the_end")))), encoding="utf-8")
 
     def test_native_defaults_with_different_order_and_comments(self):
         client = self.directory / "config/neoforge-client.toml"
@@ -105,7 +138,7 @@ class NativeClientFilesTest(unittest.TestCase):
             audit(self.directory, "client-fresh")
 
     def test_missing_server_config_stops_the_check(self):
-        (self.server / "neoforge-server.toml").unlink()
+        (self.server / "neoforge-synced.toml").unlink()
         with self.assertRaises(ValueError):
             audit(self.directory, "client-fresh")
 

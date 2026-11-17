@@ -16,7 +16,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.properties.SlabType;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import zone.moddev.mc.skysbuildingpieces.catalogue.Shape;
 import zone.moddev.mc.skysbuildingpieces.content.Pieces;
 import zone.moddev.mc.skysbuildingpieces.legacy.HistoricalFullBlocks;
@@ -92,8 +92,10 @@ public final class LegacySoils {
                 change.saved.remove("Damage");
             } else {
                 CompoundTag target = NbtUtils.writeBlockState(change.state);
-                change.saved.putString("Name", target.getString("Name"));
-                change.saved.put("Properties", target.getCompound("Properties"));
+                // Leave the palette in the format expected by the current stage of the upgrade.
+                boolean legacy = change.saved.contains("Name");
+                change.saved.putString(legacy ? "Name" : "id", target.getString("id").orElseThrow());
+                change.saved.put(legacy ? "Properties" : "properties", target.getCompoundOrEmpty("properties"));
             }
         }
     }
@@ -104,24 +106,28 @@ public final class LegacySoils {
         }
         if (value instanceof CompoundTag) {
             CompoundTag compound = (CompoundTag) value;
-            Palette item = PALETTES.get(compound.getString("id"));
-            Palette block = PALETTES.get(compound.getString("Name"));
+            String id = compound.getStringOr("id", "");
+            boolean currentState = compound.get("properties") instanceof CompoundTag
+                    && !compound.contains("Count") && !compound.contains("count");
+            Palette item = currentState ? null : PALETTES.get(id);
+            Palette block = PALETTES.get(currentState ? id : compound.getStringOr("Name", ""));
             if (item != null) {
                 if (!integer(compound, "Damage") || !integer(compound, "Count")
-                        || compound.getLong("Count") < 1 || compound.getLong("Count") > 127
-                        || compound.getLong("Damage") < 0 || compound.getLong("Damage") > 15
-                        || !item.valid(compound.getInt("Damage"))) {
+                        || compound.getLongOr("Count", 0L) < 1 || compound.getLongOr("Count", 0L) > 127
+                        || compound.getLongOr("Damage", -1L) < 0 || compound.getLongOr("Damage", -1L) > 15
+                        || !item.valid(compound.getIntOr("Damage", -1))) {
                     throw abort("Invalid saved BOP soil stack: " + item.id);
                 }
-                changes.add(new Change(compound, item.resolve(compound.getInt("Damage")), true));
+                changes.add(new Change(compound, item.resolve(compound.getIntOr("Damage", -1)), true));
             }
             if (block != null) {
-                BlockState target = namedState(block, compound.getCompound("Properties"));
+                BlockState target = namedState(block,
+                        compound.getCompoundOrEmpty(currentState ? "properties" : "Properties"));
                 if (target != null) {
                     changes.add(new Change(compound, target, false));
                 }
             }
-            for (String key : compound.getAllKeys()) {
+            for (String key : compound.keySet()) {
                 collect(compound.get(key), changes, depth + 1);
             }
         } else if (value instanceof ListTag) {
@@ -136,7 +142,7 @@ public final class LegacySoils {
             if (properties.contains("meta")) {
                 throw abort("Conflicting old and current coarse dirt slab properties");
             }
-            String type = properties.getString("type");
+            String type = properties.getStringOr("type", "");
             if (type.equals("double")) {
                 return net.minecraft.world.level.block.Blocks.COARSE_DIRT.defaultBlockState();
             }
@@ -147,7 +153,7 @@ public final class LegacySoils {
         }
         int metadata;
         try {
-            metadata = Integer.parseInt(properties.getString("meta"));
+            metadata = Integer.parseInt(properties.getStringOr("meta", ""));
         } catch (NumberFormatException failure) {
             throw abort("Missing or invalid saved BOP soil orientation: " + palette.id);
         }

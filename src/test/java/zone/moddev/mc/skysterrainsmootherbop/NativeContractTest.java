@@ -46,9 +46,9 @@ class NativeContractTest {
     }
 
     @Test
-    void everyOriginalRecipeIdentityHasOneNativeRecipeAndUnlock() throws Exception {
+    void onlyTheAddOnCoarseDirtSlabRecipesHaveTheirOwnUnlocks() throws Exception {
         JsonArray manifest = read(Paths.get("src/main/recipe-book/recipes.json")).getAsJsonArray();
-        assertEquals(84, manifest.size());
+        assertEquals(4, manifest.size());
         Set<String> ids = new HashSet<>();
         for (JsonElement row : manifest) {
             String id = row.getAsJsonObject().get("recipe").getAsString();
@@ -57,9 +57,29 @@ class NativeContractTest {
                     + id.substring(id.indexOf(':') + 1) + ".json");
             JsonObject recipe = read(path).getAsJsonObject();
             assertEquals("minecraft:crafting_shaped", recipe.get("type").getAsString());
+            assertEquals("building", recipe.get("category").getAsString(), id);
+            recipe.getAsJsonObject("key").entrySet().forEach(ingredient -> {
+                JsonElement value = ingredient.getValue();
+                assertTrue(value.isJsonPrimitive() && value.getAsJsonPrimitive().isString(),
+                    id + " needs a named ingredient for " + ingredient.getKey());
+                assertTrue(value.getAsString().matches("#?[a-z0-9_.-]+:[a-z0-9_./-]+"), id);
+            });
             assertFalse(recipe.toString().contains("biomesoplenty:"), "Removed native items are not recipe inputs");
             assertFalse(recipe.toString().contains("\"data\""), "Recipe ingredients use flat item identities");
             assertTrue(recipe.getAsJsonObject("result").get("count").getAsInt() > 0);
+        }
+
+        String recipePrefix = "skysterrainsmootherbop:dirt/coarse_loamy/";
+        assertEquals(Set.of(recipePrefix + "slab", recipePrefix + "full_block",
+                recipePrefix + "step", recipePrefix + "slab_from_steps"), ids);
+        Path recipeRoot = RESOURCES.resolve("data/skysterrainsmootherbop/recipe");
+        try (Stream<Path> files = Files.walk(recipeRoot)) {
+            Set<String> recipeFiles = new HashSet<>();
+            files.filter(path -> path.toString().endsWith(".json")).forEach(path -> {
+                String relative = recipeRoot.relativize(path).toString().replace('\\', '/');
+                recipeFiles.add("skysterrainsmootherbop:" + relative.substring(0, relative.length() - 5));
+            });
+            assertEquals(ids, recipeFiles);
         }
     }
 
@@ -79,11 +99,14 @@ class NativeContractTest {
             String name = id.substring(id.indexOf(':') + 1);
             assertTrue(Files.isRegularFile(assets.resolve("blockstates/" + name + ".json")));
             assertTrue(Files.isRegularFile(assets.resolve("models/item/" + name + ".json")));
+            JsonObject definition = read(assets.resolve("items/" + name + ".json")).getAsJsonObject()
+                    .getAsJsonObject("model");
+            assertEquals("minecraft:model", definition.get("type").getAsString());
+            assertEquals("skysterrainsmootherbop:item/" + name, definition.get("model").getAsString());
         }
         JsonObject pack = read(RESOURCES.resolve("pack.mcmeta")).getAsJsonObject().getAsJsonObject("pack");
-        assertEquals(48, pack.get("pack_format").getAsInt());
-        assertEquals(34, pack.getAsJsonObject("supported_formats").get("min_inclusive").getAsInt());
-        assertEquals(48, pack.getAsJsonObject("supported_formats").get("max_inclusive").getAsInt());
+        assertEquals(121, pack.get("max_format").getAsInt());
+        assertEquals(121, pack.get("min_format").getAsInt());
     }
 
     @Test
@@ -119,7 +142,7 @@ class NativeContractTest {
                 "skysbuildingpiecesbop", "skysterrainsmoother", "biomesoplenty" }) {
             assertTrue(metadata.contains("modId=\"" + mod + "\""));
         }
-        assertTrue(metadata.contains("[21.1.0.14]"));
+        assertTrue(metadata.contains("[26.3.0.0.16]"));
         assertFalse(Files.exists(RESOURCES.resolve("META-INF/coremods.json")));
         assertFalse(Files.exists(RESOURCES.resolve("mcmod.info")));
     }

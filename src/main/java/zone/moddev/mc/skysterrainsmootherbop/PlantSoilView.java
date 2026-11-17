@@ -8,7 +8,6 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.ColorResolver;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeManager;
@@ -23,9 +22,26 @@ import net.minecraft.world.level.lighting.LevelLightEngine;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.util.TriState;
 
 /** Shows a plant the full soil beneath it while keeping its real surroundings. */
 record PlantSoilView(LevelReader world, BlockPos soilPosition, BlockState soil) implements LevelReader {
+    @Override
+    public net.minecraft.world.attribute.EnvironmentAttributeReader environmentAttributes() {
+        return world.environmentAttributes();
+    }
+
+    static TriState supports(BlockState soil, BlockGetter world, BlockPos position, Direction face,
+            BlockState plant) {
+        TriState support = soil.canSustainPlant(world, position, face, plant);
+        if (!support.isDefault() || !(world instanceof LevelReader level)) {
+            return support;
+        }
+        // Ask the plant about the full soil without changing the actual block.
+        return plant.canSurvive(new PlantSoilView(level, position, soil), position.relative(face))
+                ? TriState.TRUE : TriState.FALSE;
+    }
+
     @Override
     public BlockState getBlockState(BlockPos position) {
         return soilPosition.equals(position) ? soil : world.getBlockState(position);
@@ -97,18 +113,8 @@ record PlantSoilView(LevelReader world, BlockPos soilPosition, BlockState soil) 
     }
 
     @Override
-    public float getShade(Direction direction, boolean shade) {
-        return world.getShade(direction, shade);
-    }
-
-    @Override
     public LevelLightEngine getLightEngine() {
         return world.getLightEngine();
-    }
-
-    @Override
-    public int getBlockTint(BlockPos position, ColorResolver resolver) {
-        return world.getBlockTint(position, resolver);
     }
 
     @Override

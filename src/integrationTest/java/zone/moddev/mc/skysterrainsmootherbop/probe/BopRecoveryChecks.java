@@ -1,11 +1,15 @@
 package zone.moddev.mc.skysterrainsmootherbop.probe;
 
+import java.util.List;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -26,7 +30,7 @@ final class BopRecoveryChecks {
                     zone.moddev.mc.skysbuildingpieces.catalogue.Catalogue.INSTANCE.materials.get(material), "full");
             boolean mineralogyOwnsRock = BuiltInRegistries.BLOCK.getKey(full.getBlock()).getNamespace().equals("mineralogy");
             RuntimeProbe.require(zone.moddev.mc.skysterrainsmoother.api.TerrainSmoothingApi
-                            .hasMaterial(net.minecraft.resources.ResourceLocation.parse(material)) != mineralogyOwnsRock,
+                            .hasMaterial(net.minecraft.resources.Identifier.parse(material)) != mineralogyOwnsRock,
                     "BOP rock mappings defer to Mineralogy without bypassing its configuration");
             checked++;
         }
@@ -96,7 +100,7 @@ final class BopRecoveryChecks {
                         "Nested inventory identity and count survive");
                 RuntimeProbe.require(ProbeItems.custom(actual).equals(custom),
                         "Nested inventory custom data survives the native item conversion");
-                RuntimeProbe.require(stack.getByte("Slot") == 7 && stack.getCompound("tag").equals(custom),
+                RuntimeProbe.require(stack.getIntOr("Slot", -1) == 7 && stack.getCompoundOrEmpty("tag").equals(custom),
                         "Inventory slot and unrelated custom NBT survive");
                 CompoundTag once = root.copy();
                 LegacySoils.recover(root);
@@ -109,14 +113,26 @@ final class BopRecoveryChecks {
                 properties.putString("snowy", "false");
                 named.put("Properties", properties);
                 named.putString("Unrelated", "kept");
+                CompoundTag current = new CompoundTag();
+                current.putString("id", palette.id);
+                current.put("properties", properties.copy());
+                current.putString("Unrelated", "kept");
                 LegacySoils.recover(named);
-                RuntimeProbe.require(NbtUtils.readBlockState(world.holderLookup(net.minecraft.core.registries.Registries.BLOCK), named).equals(target),
+                LegacySoils.recover(current);
+                RuntimeProbe.require(ProbeItems.readFixtureState(world, named).equals(target),
                         "Named states preserve the exact target geometry");
-                RuntimeProbe.require(named.getString("Unrelated").equals("kept"), "Unrelated state data survives");
+                RuntimeProbe.require(named.getStringOr("Unrelated", "").equals("kept"), "Unrelated state data survives");
+                RuntimeProbe.require(net.minecraft.nbt.NbtUtils.readBlockState(
+                                world.holderLookup(net.minecraft.core.registries.Registries.BLOCK), current).equals(target)
+                                && current.getStringOr("Unrelated", "").equals("kept"),
+                        "Modern palette compounds preserve the same geometry and unrelated data");
                 CompoundTag namedOnce = named.copy();
                 LegacySoils.recover(named);
                 RuntimeProbe.require(named.equals(namedOnce), "Current named coarse slabs are not converted twice");
-                checked += 8;
+                CompoundTag currentOnce = current.copy();
+                LegacySoils.recover(current);
+                RuntimeProbe.require(current.equals(currentOnce), "Modern coarse slabs are not mistaken for inventory stacks");
+                checked += 10;
             }
         }
         RuntimeProbe.require(states == 306, "All 306 assigned old soil and path states are covered");
@@ -153,21 +169,37 @@ final class BopRecoveryChecks {
             RuntimeProbe.require(rejected && invalid.equals(unchanged),
                     "A count outside the saved-byte range stops without changing the stack");
         }
+        int recipes = checkReplacementRecipes(world);
+        zone.moddev.mc.skysterrainsmoother.SkysTerrainSmoother.logger.info("TERRAIN_BOP_RECOVERY_PASS states=" + states + " checks=" + checked);
+        return checked + recipes + 2;
+    }
+
+    private static int checkReplacementRecipes(ServerLevel world) {
         int recipes = 0;
-        for (var holder : world.getRecipeManager().getRecipes()) {
+        for (var holder : world.getServer().getRecipeManager().getRecipes()) {
             var recipe = holder.value();
-            if (!holder.id().getNamespace().equals("skysterrainsmootherbop")) {
+            if (!holder.id().identifier().getNamespace().equals("skysterrainsmootherbop")) {
                 continue;
             }
-            RuntimeProbe.require(!recipe.isSpecial() && !recipe.getResultItem(world.registryAccess()).isEmpty(),
+            var context = net.minecraft.world.item.crafting.display.SlotDisplayContext.fromLevel(world);
+            RuntimeProbe.require(!recipe.isSpecial() && !recipe.display().isEmpty(),
                     "Replacement recipes remain visible in the native recipe book");
-            RuntimeProbe.require(recipe.getIngredients().stream()
-                    .anyMatch(ingredient -> ingredient != net.minecraft.world.item.crafting.Ingredient.EMPTY),
-                    "Replacement recipes expose native book ingredients");
+            for (var display : recipe.display()) {
+                RuntimeProbe.require(!display.result().resolveForFirstStack(context).isEmpty(),
+                        "The recipe book shows the replacement item");
+                var slots = switch (display) {
+                    case net.minecraft.world.item.crafting.display.ShapedCraftingRecipeDisplay shaped ->
+                            shaped.ingredients();
+                    case net.minecraft.world.item.crafting.display.ShapelessCraftingRecipeDisplay shapeless ->
+                            shapeless.ingredients();
+                    default -> throw new AssertionError("Unexpected BOP recipe display: " + display);
+                };
+                RuntimeProbe.require(slots.stream().anyMatch(slot -> !slot.resolveForStacks(context).isEmpty()),
+                        "Replacement recipes expose native book ingredients");
+            }
             recipes++;
         }
-        RuntimeProbe.require(recipes == 84, "All original recipe identities load with available ingredients");
-        zone.moddev.mc.skysterrainsmoother.SkysTerrainSmoother.logger.info("TERRAIN_BOP_RECOVERY_PASS states=" + states + " checks=" + checked);
-        return checked + 2;
+        RuntimeProbe.require(recipes == 4, "The add-on owns only its distinct coarse dirt slab recipes");
+        return recipes + ReplacementRecipeChecks.run(world);
     }
 }

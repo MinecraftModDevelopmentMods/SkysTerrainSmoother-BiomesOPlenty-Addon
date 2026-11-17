@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.1.3.2603002
+
+- Use the core material settings for BOP soil and stone.
+- Match coarse-soil slabs to snowy terraces.
+- Remove overlapping recipes while keeping distinct cuts and combinations.
+
+## 0.1.0.2603002
+
+- Updated for Minecraft 26.3 on NeoForge. Use the matching Sky mods and Biomes O' Plenty builds.
+
+## 0.1.0.2602002
+
+- Updated the add-on for Minecraft 26.2 and Biomes O' Plenty 26.2.0.0.28.
+- Smoothing still applies only to newly generated terrain.
+
+## 0.1.0.2601022
+
+- Updated the BOP add-on for Minecraft 26.1.2 on NeoForge.
+- Existing terrain stays as it was. Smoothing applies as new chunks generate.
+
+## 0.1.0.121112
+
+- Bring the add-on to Minecraft 1.21.11 on NeoForge.
+- Keep matching coarse soil and rock transitions, and recover saved pieces from older BOP worlds.
+
 ## 0.1.0.121012
 
 - Bring Biomes O' Plenty terrain smoothing to Minecraft 1.21.1 on NeoForge.
