@@ -27,3 +27,6 @@ Use `preparePackagedIntegrationProbe` to build the disposable runtime probe.
 The tools in `tools/` check native games and saved fixtures without changing
 the original worlds. Use a fresh directory under `build/` for each first
 load so older logs remain available.
+
+Disposable servers use Java networking (`use-native-transport=false`). This
+avoids host-specific Netty availability probes during log auditing.

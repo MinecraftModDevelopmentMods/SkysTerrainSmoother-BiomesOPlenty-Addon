@@ -1,5 +1,6 @@
 package zone.moddev.mc.skysterrainsmootherbop.probe;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -76,11 +77,11 @@ final class FamilyForwardChecks {
             java.util.Enumeration<? extends java.util.zip.ZipEntry> entries = archive.entries();
             while (entries.hasMoreElements()) {
                 java.util.zip.ZipEntry entry = entries.nextElement();
-                String path = entry.getName();
-                String overworld = "world/dimensions/minecraft/overworld/";
-                if (!(path.startsWith("world/region/") || path.startsWith("world/entities/")
-                        || path.startsWith(overworld + "region/") || path.startsWith(overworld + "entities/"))
-                        || !path.endsWith(".mca")) {
+                String name = entry.getName();
+                if (!name.endsWith(".mca") || !(name.startsWith("world/region/")
+                        || name.startsWith("world/entities/")
+                        || name.startsWith("world/dimensions/minecraft/overworld/region/")
+                        || name.startsWith("world/dimensions/minecraft/overworld/entities/"))) {
                     continue;
                 }
                 byte[] region;
@@ -385,7 +386,7 @@ final class FamilyForwardChecks {
             return (metadata < 2 ? SandContent.slab : SandContent.redSlab).defaultBlockState()
                     .setValue(zone.moddev.mc.skysterrainsmoother.content.SandSlabBlock.TYPE, (metadata & 1) == 0 ? SlabType.TOP : SlabType.BOTTOM);
         }
-        BlockState state = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getValue(Identifier.parse(id)).defaultBlockState();
+        BlockState state = BuiltInRegistries.BLOCK.getValue(Identifier.parse(id)).defaultBlockState();
         return state.hasProperty(SlabBlock.TYPE)
                 ? state.setValue(SlabBlock.TYPE, (metadata & 1) == 0 ? SlabType.TOP : SlabType.BOTTOM) : state;
     }

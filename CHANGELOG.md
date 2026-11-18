@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.3.2602002
+
+- Use the core material settings for BOP soil and stone.
+- Match coarse-soil slabs to snowy terraces.
+- Remove overlapping recipes while keeping distinct cuts and combinations.
+
 ## 0.1.0.2602002
 
 - Updated the add-on for Minecraft 26.2 and Biomes O' Plenty 26.2.0.0.28.

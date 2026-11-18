@@ -1,5 +1,6 @@
 package zone.moddev.mc.skysterrainsmootherbop.probe;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SlabBlock;
@@ -25,16 +26,18 @@ final class CoarseSlabChecks {
         ServerPlayer player = ProbeItems.player(world, new com.mojang.authlib.GameProfile(java.util.UUID.fromString("adcb6240-23dd-4444-bba9-c3b6d4e106a1"), "CoarseSlabTest"));
         player.getAbilities().instabuild = false;
         BlockPos position = new BlockPos(40008, 220, 40008);
-        world.getChunkAt(position);
+        var warm = world.registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.BIOME)
+                .getOrThrow(net.minecraft.world.level.biome.Biomes.PLAINS);
+        world.getChunkAt(position).fillBiomesFromNoise((quartX, quartY, quartZ, sampler) -> warm, world.getChunkSource().randomState().sampler());
         world.setBlock(position.below(), Blocks.STONE.defaultBlockState(), 18);
         for (SlabType half : new SlabType[] { SlabType.BOTTOM, SlabType.TOP }) {
             world.setBlock(position, CoarseDirtSlab.BLOCK.defaultBlockState().setValue(SlabBlock.TYPE, half), 18);
             ItemStack held = Pieces.stack(world.getBlockState(position), 2);
-            RuntimeProbe.require(net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(held.getItem()).toString().equals("skysterrainsmootherbop:coarse_dirt_slab"),
+            RuntimeProbe.require(BuiltInRegistries.ITEM.getKey(held.getItem()).toString().equals("skysterrainsmootherbop:coarse_dirt_slab"),
                     "The coarse slab uses its flat playable item, not the hidden carrier");
             RuntimeProbe.require(CoarseDirtSlab.BLOCK.asItem() == held.getItem(),
                     "Coarse slab item identity is stable after registry reload: block="
-                            + net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(CoarseDirtSlab.BLOCK.asItem()) + " held=" + net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(held.getItem()));
+                            + BuiltInRegistries.ITEM.getKey(CoarseDirtSlab.BLOCK.asItem()) + " held=" + BuiltInRegistries.ITEM.getKey(held.getItem()));
             player.setItemInHand(InteractionHand.MAIN_HAND, held);
             Direction face = half == SlabType.BOTTOM ? Direction.UP : Direction.DOWN;
             InteractionResult used = held.useOn(new UseOnContext(player, InteractionHand.MAIN_HAND,
@@ -58,9 +61,30 @@ final class CoarseSlabChecks {
                     Blocks.SNOW_BLOCK.defaultBlockState(), world.getRandom());
             RuntimeProbe.require(snowy.getValue(BlockStateProperties.SNOWY), "Coarse slabs keep calculated snow caps");
             world.setBlock(position.east(), Blocks.AIR.defaultBlockState(), 18);
+            world.setBlock(position.east(), Blocks.STONE.defaultBlockState(), 18);
+            world.setBlock(position.east().above(), Blocks.SNOW.defaultBlockState(), 18);
+            world.setBlock(position, dry, 18);
+            world.getBlockState(position).randomTick(world, position, net.minecraft.util.RandomSource.create(1));
+            RuntimeProbe.require(world.getBlockState(position).getValue(BlockStateProperties.SNOWY),
+                    "Coarse slabs pick up higher terrace snow during ordinary random ticks");
+            world.setBlock(position.east().above(), Blocks.AIR.defaultBlockState(), 18);
+            world.setBlock(position.east(), Blocks.AIR.defaultBlockState(), 18);
+            world.getBlockState(position).randomTick(world, position, net.minecraft.util.RandomSource.create(1));
+            RuntimeProbe.require(!world.getBlockState(position).getValue(BlockStateProperties.SNOWY),
+                    "Warm coarse slabs clear their snow cap when the neighbouring snow is removed");
+            var plant = Blocks.OAK_SAPLING.defaultBlockState();
+            RuntimeProbe.require((CoarseDirtSlab.BLOCK.canSustainPlant(dry, world, position, Direction.UP, plant)
+                            == net.minecraft.util.TriState.TRUE) == (half == SlabType.TOP)
+                            && CoarseDirtSlab.BLOCK.canSustainPlant(dry, world, position, Direction.EAST, plant)
+                            == net.minecraft.util.TriState.FALSE,
+                    "Only a complete dry upper face supports a plant");
+            RuntimeProbe.require(CoarseDirtSlab.BLOCK.canSustainPlant(dry.setValue(SlabBlock.WATERLOGGED, true),
+                            world, position, Direction.UP, plant) == net.minecraft.util.TriState.FALSE,
+                    "Waterlogged coarse slabs reject dry-land plants");
+
         }
         world.setBlock(position, Blocks.AIR.defaultBlockState(), 18);
-        zone.moddev.mc.skysterrainsmoother.SkysTerrainSmoother.logger.info("TERRAIN_BOP_COARSE_SLAB_PASS halves=2 combines=2 waterlogging=2 snow=2");
-        return 10;
+        zone.moddev.mc.skysterrainsmoother.SkysTerrainSmoother.logger.info("TERRAIN_BOP_COARSE_SLAB_PASS halves=2 combines=2 waterlogging=2 snow=2 random_tick_snow=4 plant_faces=4 wet_plants=2");
+        return 22;
     }
 }

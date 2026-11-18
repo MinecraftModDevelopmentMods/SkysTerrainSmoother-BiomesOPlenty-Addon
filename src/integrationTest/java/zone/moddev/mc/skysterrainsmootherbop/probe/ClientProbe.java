@@ -61,7 +61,8 @@ public final class ClientProbe extends ProbeProxy {
                     return;
                 }
                 RecipePreviewModels.check(minecraft, recipeDisplays);
-                // Forge binds item components when the world registries open.
+                RecipeBookGroupChecks.run(minecraft, recipeDisplays);
+                // Item components become available when the world registries open.
                 var coarse = zone.moddev.mc.skysterrainsmootherbop.CoarseDirtSlab.BLOCK.asItem();
                 RecipePreviewModels.checkModel(minecraft, new net.minecraft.world.item.ItemStack(coarse));
                 zone.moddev.mc.skysterrainsmoother.SkysTerrainSmoother.logger.info(

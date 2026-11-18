@@ -18,7 +18,7 @@ concurrency:
 
 jobs:
   cold-neoforge-bootstrap:
-    name: Cold Forge bootstrap
+    name: Cold NeoForge bootstrap
     runs-on: ubuntu-latest
     timeout-minutes: 60
 
@@ -87,15 +87,14 @@ jobs:
       - name: Build development dependencies
         run: |
           set -euo pipefail
-          chmod +x dependencies/*/gradlew
-          (cd dependencies/grass && ./gradlew assemble --no-daemon --stacktrace)
+          (cd dependencies/grass && bash ./gradlew assemble --no-daemon --stacktrace)
           grass="$(sed -n 's/^grass.version=//p' gradle/content-dependencies.properties)"
           grass_jar="$GITHUB_WORKSPACE/dependencies/grass/build/libs/SkysGrassSlabs-$grass.jar"
           export ORG_GRADLE_PROJECT_grassSlabsMainJar="$grass_jar"
           export ORG_GRADLE_PROJECT_grassSlabsDeobfJar="$grass_jar"
-          (cd dependencies/pieces && ./gradlew assemble --no-daemon --stacktrace)
-          (cd dependencies/terrain && ./gradlew assemble -PgrassSlabsDirectory=../grass -PbuildingPiecesDirectory=../pieces --no-daemon --stacktrace)
-          (cd dependencies/bopPieces && ./gradlew assemble verifyNativeBopDependencies -PbuildingPiecesCoreDir=../pieces --no-daemon --stacktrace)
+          (cd dependencies/pieces && bash ./gradlew assemble --no-daemon --stacktrace)
+          (cd dependencies/terrain && bash ./gradlew assemble -PgrassSlabsDirectory=../grass -PbuildingPiecesDirectory=../pieces --no-daemon --stacktrace)
+          (cd dependencies/bopPieces && bash ./gradlew assemble verifyNativeBopDependencies -PbuildingPiecesCoreDir=../pieces --no-daemon --stacktrace)
 
       - name: Bootstrap NeoForge from an empty cache
         shell: bash
@@ -210,24 +209,25 @@ jobs:
       - name: Build development dependencies
         run: |
           set -euo pipefail
-          chmod +x dependencies/*/gradlew
-          (cd dependencies/grass && ./gradlew assemble --no-daemon --stacktrace)
+          (cd dependencies/grass && bash ./gradlew assemble --no-daemon --stacktrace)
           grass="$(sed -n 's/^grass.version=//p' gradle/content-dependencies.properties)"
           grass_jar="$GITHUB_WORKSPACE/dependencies/grass/build/libs/SkysGrassSlabs-$grass.jar"
           export ORG_GRADLE_PROJECT_grassSlabsMainJar="$grass_jar"
           export ORG_GRADLE_PROJECT_grassSlabsDeobfJar="$grass_jar"
-          (cd dependencies/pieces && ./gradlew assemble --no-daemon --stacktrace)
-          (cd dependencies/terrain && ./gradlew assemble -PgrassSlabsDirectory=../grass -PbuildingPiecesDirectory=../pieces --no-daemon --stacktrace)
-          (cd dependencies/bopPieces && ./gradlew assemble verifyNativeBopDependencies -PbuildingPiecesCoreDir=../pieces --no-daemon --stacktrace)
+          (cd dependencies/pieces && bash ./gradlew assemble --no-daemon --stacktrace)
+          (cd dependencies/terrain && bash ./gradlew assemble -PgrassSlabsDirectory=../grass -PbuildingPiecesDirectory=../pieces --no-daemon --stacktrace)
+          (cd dependencies/bopPieces && bash ./gradlew assemble verifyNativeBopDependencies -PbuildingPiecesCoreDir=../pieces --no-daemon --stacktrace)
 
       - name: Make the wrapper executable
         run: chmod +x ./gradlew
 
       - name: Build, test, and audit release artifacts
-        run: >-
+        run: |
+          set -euo pipefail
           ./gradlew clean --no-daemon --stacktrace
-          ./gradlew check build javadoc preparePackagedIntegrationProbe verifyReleaseArtifacts writeReleaseChecksums
-          verifyEclipseProductionClasspath -PgrassSlabsDirectory=dependencies/grass -PbuildingPiecesDirectory=dependencies/pieces -PterrainDirectory=dependencies/terrain -PbuildingPiecesBopDirectory=dependencies/bopPieces --no-daemon --stacktrace
+          ./gradlew check build javadoc preparePackagedIntegrationProbe verifyReleaseArtifacts writeReleaseChecksums \
+            verifyEclipseProductionClasspath -Declipse.application=org.eclipse.ui.ide.workbench \
+            -PgrassSlabsDirectory=dependencies/grass -PbuildingPiecesDirectory=dependencies/pieces -PterrainDirectory=dependencies/terrain -PbuildingPiecesBopDirectory=dependencies/bopPieces --no-daemon --stacktrace
 
       - name: Replay artifact checks offline
         run: >-
