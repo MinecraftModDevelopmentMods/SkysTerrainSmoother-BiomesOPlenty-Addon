@@ -1,20 +1,58 @@
-# Sky's Terrain Smoother - Biomes O Plenty
+# Sky's Terrain Smoother - Biomes O' Plenty
 
-For Minecraft 1.10.2, Forge 12.18.3.2511 and Java 8.
-Requires Biomes O Plenty 5.0, Sky's Grass Slabs 1.1 and Sky's Terrain Smoother 0.1
-(which also requires Sky's Building Pieces 0.3).
+This add-on keeps Terrain Smoother working with supported Biomes O' Plenty
+worlds and building pieces. Choose slabs, steps or corners in Terrain Smoother's
+configuration. Only new, dry terrain is smoothed, including suitable cave floors.
+Existing chunks are left alone.
 
-Adds matching slabs, steps and corners for BOP grass and soil surfaces. New
-Overworld chunks use them at the smoothing level selected in Terrain Smoother.
-Existing terrain is never retrofitted. BOP grass keeps its own texture, tint,
-soil relationship and spreading behaviour. Native full blocks are reused.
+## Minecraft 26.1.2
 
-The Building Pieces BOP add-on is optional; when present, its existing natural
-rock pieces are reused. No BOP textures are bundled. Back up worlds before
-adding or removing mods that provide blocks.
+Use Forge 64.0.9 and Java 25 with these matching mods on both client and server:
 
-See [Gameplay](docs/GAMEPLAY.md) and [Building](docs/BUILDING.md).
+- Biomes O' Plenty 26.1.2.0.22.
+- TerraBlender 26.1.2.0.3 and GlitchCore 26.1.2.0.2, required by BOP.
+- Sky's Grass Slabs 1.2.1.2601021.
+- Sky's Building Pieces 0.3.10.2601021.
+- Sky's Building Pieces BOP add-on 0.2.7.2601021.
+- Sky's Terrain Smoother 0.1.3.2601021.
 
-[Release preparation](docs/RELEASING.md) covers the CI checks and publication safeguards.
+BOP now uses vanilla grass and dirt for its ordinary ground. Terrain Smoother
+already handles those states in BOP biomes. This add-on also connects the
+remaining natural rock replacements supplied by Building Pieces BOP. Mineralogy
+is optional; its existing rock mapping takes priority when it provides the rock.
 
-Licensed under LGPL-2.1-only. See LICENSE and NOTICE.
+## Choosing materials
+
+Terrain Smoother's material settings apply in BOP biomes too. Coarse soil uses
+the soil setting, and natural rocks use the stone setting. Disabled groups stay
+unchanged. Snowy coarse-dirt slabs keep their snow appearance in cold terrain.
+
+## Upgrading an older BOP world
+
+Back up the world and keep both BOP add-ons installed during the upgrade.
+BOP removed its old grass, dirt and path families after Minecraft 1.12. Saved
+slabs, steps and corners become the closest available pieces while keeping
+their shape, orientation, stack counts and custom item data:
+
+- Loamy, sandy, silty, origin and daisy grass become ordinary grass pieces.
+- The ordinary dirt variants become dirt pieces. Coarse variants stay coarse dirt.
+- Paths become the matching vanilla-soil path pieces.
+- Spectral moss and overgrown stone become mossy cobblestone pieces.
+- Overgrown netherrack becomes netherrack pieces.
+
+The old registry IDs remain available as recovery entries for unopened chunks and
+mixed saves. Coarse dirt keeps its own slab under an existing palette ID; the
+other old entries are hidden. Replacement pieces use the recipes from Minecraft
+and the content mods. This add-on supplies the four recipes for making, cutting
+and combining coarse dirt slabs.
+
+This does not restore every block or feature removed from BOP. Keep BOP worlds
+on a supported Minecraft and loader route, and check a copy before upgrading.
+There is no retrogen.
+
+See [gameplay](docs/GAMEPLAY.md), [building from source](docs/BUILDING.md) and the
+[changelog](CHANGELOG.md).
+
+## Licence
+
+[LGPL-2.1-only](LICENSE). See [NOTICE](NOTICE). BOP textures are not bundled.
