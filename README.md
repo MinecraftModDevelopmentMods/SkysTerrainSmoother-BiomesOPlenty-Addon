@@ -18,8 +18,8 @@ Use NeoForge 21.1.247 and Java 21 with these matching mods on both client and se
 - TerraBlender 4.1.0.8 and GlitchCore 2.1.0.2, required by BOP.
 - Sky's Grass Slabs 1.2.1.121012.
 - Sky's Building Pieces 0.3.11.121012.
-- Sky's Building Pieces BOP add-on 0.2.6.121012.
-- Sky's Terrain Smoother 0.1.2.121012.
+- Sky's Building Pieces BOP add-on 0.2.7.121012.
+- Sky's Terrain Smoother 0.1.3.121012.
 
 BOP now uses vanilla grass and dirt for its ordinary ground. Terrain Smoother
 already handles those states in BOP biomes. This add-on also connects the
