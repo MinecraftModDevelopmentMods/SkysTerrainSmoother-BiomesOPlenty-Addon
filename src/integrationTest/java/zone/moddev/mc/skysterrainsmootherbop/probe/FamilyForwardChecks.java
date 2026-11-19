@@ -294,7 +294,7 @@ final class FamilyForwardChecks {
         RuntimeProbe.require(pieces.blocks == 29 && pieces.items == 31 && pieces.chunks == 7,
                 "Building Pieces counters remain unchanged");
         checkNoRetrogen(fixture);
-        if (fixture.get("source_minecraft").getAsString().equals("26.1.2")) {
+        if (fixture.has("source_minecraft") && fixture.get("source_minecraft").getAsString().equals("26.1.2")) {
             SkysTerrainSmoother.logger.info("TERRAIN_NATIVE_STATES_PASS source=26.1.2 states=4700");
         }
         zone.moddev.mc.skysterrainsmoother.SkysTerrainSmoother.logger.info("SKY_FAMILY_FORWARD_PASS blocks=" + fixture.getAsJsonArray("blocks").size()
@@ -318,7 +318,7 @@ final class FamilyForwardChecks {
                 // The same-version baseline already contains flattened blocks.
                 // Compare its complete native states instead of reinterpreting
                 // the older metadata manifest used to create the source world.
-                if (fixture.get("source_minecraft").getAsString().equals("26.1.2")) {
+                if (fixture.has("source_minecraft") && fixture.get("source_minecraft").getAsString().equals("26.1.2")) {
                     retained.put(position(row), net.minecraft.nbt.NbtUtils.readBlockState(
                             world.holderLookup(net.minecraft.core.registries.Registries.BLOCK), saved));
                 } else if (saved.getStringOr("Name", "").equals("skysbuildingpiecesbop:retired_rocks")) {
@@ -328,7 +328,7 @@ final class FamilyForwardChecks {
                 }
             }
         }
-        if (fixture.get("source_minecraft").getAsString().equals("26.1.2")) {
+        if (fixture.has("source_minecraft") && fixture.get("source_minecraft").getAsString().equals("26.1.2")) {
             RuntimeProbe.require(retained.size() == 4700, "Every same-version native state has an exact expectation");
         } else {
             RuntimeProbe.require(!retained.isEmpty(), "The native fixture includes fallback rock blocks");
