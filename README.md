@@ -5,16 +5,22 @@ worlds and building pieces. Choose slabs, steps or corners in Terrain Smoother's
 configuration. Only new, dry terrain is smoothed, including suitable cave floors.
 Existing chunks are left alone.
 
+The **Materials** page in Terrain Smoother's config also controls this add-on.
+**Dirt and grass** includes its coarse dirt, and **Stone and rocks** controls
+its rock mappings. You can turn stone smoothing off and keep grass and soil
+transitions. Mineralogy rocks also need Mineralogy support enabled. All groups
+are enabled by default. Save on the main config screen and restart Minecraft.
+
 ## Minecraft 26.1.2
 
 Use NeoForge 26.1.2.94 and Java 25 with these matching mods on both client and server:
 
 - Biomes O' Plenty 26.1.2.0.22.
 - TerraBlender 26.1.2.0.3 and GlitchCore 26.1.2.0.2, required by BOP.
-- Sky's Grass Slabs 1.2.0.2601022.
-- Sky's Building Pieces 0.3.9.2601022.
-- Sky's Building Pieces BOP add-on 0.2.5.2601022.
-- Sky's Terrain Smoother 0.1.0.2601022.
+- Sky's Grass Slabs 1.2.1.2601022.
+- Sky's Building Pieces 0.3.10.2601022.
+- Sky's Building Pieces BOP add-on 0.2.7.2601022.
+- Sky's Terrain Smoother 0.1.3.2601022.
 
 BOP now uses vanilla grass and dirt for its ordinary ground. Terrain Smoother
 already handles those states in BOP biomes. This add-on also connects the
@@ -36,8 +42,8 @@ their shape, orientation, stack counts and custom item data:
 
 The old registry IDs remain available as recovery entries for unopened chunks and
 mixed saves. Coarse dirt keeps its own slab under an existing palette ID; the
-other old entries are hidden. The original cutting and combining recipes now
-make the replacement pieces. The content mods keep their normal recipes and
+other old entries are hidden. The content mods supply the recipes for their replacement pieces. This add-on
+keeps the four recipes for making, cutting and combining coarse dirt slabs. The content mods keep their normal recipes and
 placement behaviour.
 
 This does not restore every block or feature removed from BOP. Keep BOP worlds

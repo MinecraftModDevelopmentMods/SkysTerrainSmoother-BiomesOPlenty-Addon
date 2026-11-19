@@ -1,5 +1,7 @@
 package zone.moddev.mc.skysterrainsmootherbop;
 
+import com.electronwill.nightconfig.core.UnmodifiableConfig;
+import com.electronwill.nightconfig.toml.TomlParser;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -10,8 +12,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
+import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
+import org.apache.maven.artifact.versioning.VersionRange;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -46,9 +51,9 @@ class NativeContractTest {
     }
 
     @Test
-    void everyOriginalRecipeIdentityHasOneNativeRecipeAndUnlock() throws Exception {
+    void onlyTheAddOnCoarseDirtSlabRecipesHaveTheirOwnUnlocks() throws Exception {
         JsonArray manifest = read(Paths.get("src/main/recipe-book/recipes.json")).getAsJsonArray();
-        assertEquals(84, manifest.size());
+        assertEquals(4, manifest.size());
         Set<String> ids = new HashSet<>();
         for (JsonElement row : manifest) {
             String id = row.getAsJsonObject().get("recipe").getAsString();
@@ -67,6 +72,19 @@ class NativeContractTest {
             assertFalse(recipe.toString().contains("biomesoplenty:"), "Removed native items are not recipe inputs");
             assertFalse(recipe.toString().contains("\"data\""), "Recipe ingredients use flat item identities");
             assertTrue(recipe.getAsJsonObject("result").get("count").getAsInt() > 0);
+        }
+
+        String recipePrefix = "skysterrainsmootherbop:dirt/coarse_loamy/";
+        assertEquals(Set.of(recipePrefix + "slab", recipePrefix + "full_block",
+                recipePrefix + "step", recipePrefix + "slab_from_steps"), ids);
+        Path recipeRoot = RESOURCES.resolve("data/skysterrainsmootherbop/recipe");
+        try (Stream<Path> files = Files.walk(recipeRoot)) {
+            Set<String> recipeFiles = new HashSet<>();
+            files.filter(path -> path.toString().endsWith(".json")).forEach(path -> {
+                String relative = recipeRoot.relativize(path).toString().replace('\\', '/');
+                recipeFiles.add("skysterrainsmootherbop:" + relative.substring(0, relative.length() - 5));
+            });
+            assertEquals(ids, recipeFiles);
         }
     }
 
@@ -130,7 +148,17 @@ class NativeContractTest {
                 "skysbuildingpiecesbop", "skysterrainsmoother", "biomesoplenty" }) {
             assertTrue(metadata.contains("modId=\"" + mod + "\""));
         }
-        assertTrue(metadata.contains("[26.1.2.0.22]"));
+        var parsed = new TomlParser().parse(
+                metadata.replace("${mod_id}", "skysterrainsmootherbop"));
+        List<UnmodifiableConfig> dependencies =
+                parsed.get(List.of("dependencies", "skysterrainsmootherbop"));
+        String bopRange = dependencies.stream().filter(entry -> "biomesoplenty".equals(entry.get("modId")))
+                .findFirst().orElseThrow().get("versionRange");
+        var accepted = VersionRange.createFromVersionSpec(bopRange);
+        var supportedBopBuild = new DefaultArtifactVersion("26.1.2.0.22");
+        var nextMinecraftBuild = new DefaultArtifactVersion("26.3.0.0.0");
+        assertTrue(accepted.containsVersion(supportedBopBuild));
+        assertFalse(accepted.containsVersion(nextMinecraftBuild));
         assertFalse(Files.exists(RESOURCES.resolve("META-INF/coremods.json")));
         assertFalse(Files.exists(RESOURCES.resolve("mcmod.info")));
     }

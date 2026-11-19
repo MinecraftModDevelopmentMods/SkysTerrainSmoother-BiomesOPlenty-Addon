@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.3.2601022
+
+BOP smoothing follows the current terrain engine and material settings, with one recipe-book entry for each distinct result.
+
+Existing terrain, saved content and configuration choices are retained.
+
 ## 0.1.0.2601022
 
 - Updated the BOP add-on for Minecraft 26.1.2 on NeoForge.

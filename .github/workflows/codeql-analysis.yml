@@ -93,15 +93,14 @@ jobs:
       - name: Build development dependencies
         run: |
           set -euo pipefail
-          chmod +x dependencies/*/gradlew
-          (cd dependencies/grass && ./gradlew assemble --no-daemon --stacktrace)
+          (cd dependencies/grass && bash ./gradlew assemble --no-daemon --stacktrace)
           grass="$(sed -n 's/^grass.version=//p' gradle/content-dependencies.properties)"
           grass_jar="$GITHUB_WORKSPACE/dependencies/grass/build/libs/SkysGrassSlabs-$grass.jar"
           export ORG_GRADLE_PROJECT_grassSlabsMainJar="$grass_jar"
           export ORG_GRADLE_PROJECT_grassSlabsDeobfJar="$grass_jar"
-          (cd dependencies/pieces && ./gradlew assemble --no-daemon --stacktrace)
-          (cd dependencies/terrain && ./gradlew assemble -PgrassSlabsDirectory=../grass -PbuildingPiecesDirectory=../pieces --no-daemon --stacktrace)
-          (cd dependencies/bopPieces && ./gradlew assemble verifyNativeBopDependencies -PbuildingPiecesCoreDir=../pieces --no-daemon --stacktrace)
+          (cd dependencies/pieces && bash ./gradlew assemble --no-daemon --stacktrace)
+          (cd dependencies/terrain && bash ./gradlew assemble -PgrassSlabsDirectory=../grass -PbuildingPiecesDirectory=../pieces --no-daemon --stacktrace)
+          (cd dependencies/bopPieces && bash ./gradlew assemble verifyNativeBopDependencies -PbuildingPiecesCoreDir=../pieces --no-daemon --stacktrace)
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@db488ddef3bf6cb639b32c2e9a7c0a7ea8271d28 # v4

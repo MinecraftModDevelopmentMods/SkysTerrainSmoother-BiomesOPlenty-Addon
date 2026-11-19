@@ -1,10 +1,7 @@
 package zone.moddev.mc.skysterrainsmootherbop;
 
-import net.neoforged.neoforge.common.ItemAbilities;
-import net.neoforged.neoforge.common.ItemAbility;
-import net.minecraft.util.TriState;
-import com.mojang.serialization.MapCodec;
 import net.minecraft.util.RandomSource;
+import net.minecraft.util.TriState;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
@@ -13,7 +10,6 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.SlabType;
@@ -27,14 +23,17 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.context.UseOnContext;
+import net.neoforged.neoforge.common.ItemAbility;
+import net.neoforged.neoforge.common.ItemAbilities;
+import com.mojang.serialization.MapCodec;
 import zone.moddev.mc.skysgrassslabs.init.ModBlocks;
 
 /** Retains the old coarse-soil slab without turning it into spreading dirt. */
 public final class CoarseDirtSlab extends SlabBlock {
     private static final MapCodec<CoarseDirtSlab> CODEC = simpleCodec(CoarseDirtSlab::new);
-
     public static final String BLOCK_ID = SkysTerrainSmootherBop.ID + ":dirt_slab_00";
-    // Forge creates block holders only while the block registry is open.
+    // Create the block while its registry is open.
     public static CoarseDirtSlab BLOCK;
     static Item item;
 
@@ -101,6 +100,11 @@ public final class CoarseDirtSlab extends SlabBlock {
     }
 
     @Override
+    public void randomTick(BlockState state, ServerLevel world, BlockPos position, RandomSource random) {
+        tick(state, world, position, random);
+    }
+
+    @Override
     public void tick(BlockState state, ServerLevel world, BlockPos position, RandomSource random) {
         if (!world.isClientSide()) {
             BlockState updated = state.setValue(BlockStateProperties.SNOWY, snowy(world, position));
@@ -113,7 +117,7 @@ public final class CoarseDirtSlab extends SlabBlock {
     @Override
     public TriState canSustainPlant(BlockState state, BlockGetter world, BlockPos position, Direction face,
             BlockState plant) {
-        if (state.getValue(TYPE) != SlabType.TOP || face != Direction.UP) {
+        if (state.getValue(WATERLOGGED) || state.getValue(TYPE) != SlabType.TOP || face != Direction.UP) {
             return TriState.FALSE;
         }
         BlockState coarseDirt = Blocks.COARSE_DIRT.defaultBlockState();
@@ -127,28 +131,28 @@ public final class CoarseDirtSlab extends SlabBlock {
     }
 
     private static boolean snowy(BlockGetter world, BlockPos position) {
-        for (Direction direction : new Direction[] {
-                Direction.UP, Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST }) {
+        if (readState(world, position.above()).is(net.minecraft.tags.BlockTags.SNOW)) {
+            return true;
+        }
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
             BlockPos neighbour = position.relative(direction);
-            Block block;
-            if (world instanceof ServerLevel) {
-                LevelChunk chunk = ((ServerLevel) world).getChunkSource()
-                        .getChunkNow(neighbour.getX() >> 4, neighbour.getZ() >> 4);
-                if (chunk == null) {
-                    continue;
-                }
-                block = chunk.getBlockState(neighbour).getBlock();
-            } else {
-                if (world instanceof LevelReader
-                        && !((LevelReader) world).hasChunk(neighbour.getX() >> 4, neighbour.getZ() >> 4)) {
-                    continue;
-                }
-                block = world.getBlockState(neighbour).getBlock();
-            }
-            if (block == Blocks.SNOW || block == Blocks.SNOW_BLOCK) {
+            BlockState state = readState(world, neighbour);
+            if (state.is(net.minecraft.tags.BlockTags.SNOW) || state.isCollisionShapeFullBlock(world, neighbour)
+                    && readState(world, neighbour.above()).is(net.minecraft.tags.BlockTags.SNOW)) {
                 return true;
             }
         }
-        return false;
+        return world instanceof LevelReader reader
+                && reader.getBiome(position).value().coldEnoughToSnow(position, reader.getSeaLevel())
+                && reader.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING,
+                        position.getX(), position.getZ()) <= position.getY() + 1
+                && reader.getBrightness(net.minecraft.world.level.LightLayer.BLOCK, position.above()) < 10;
+    }
+
+    private static BlockState readState(BlockGetter world, BlockPos position) {
+        if (world instanceof LevelReader reader && !reader.hasChunk(position.getX() >> 4, position.getZ() >> 4)) {
+            return Blocks.AIR.defaultBlockState();
+        }
+        return world.getBlockState(position);
     }
 }

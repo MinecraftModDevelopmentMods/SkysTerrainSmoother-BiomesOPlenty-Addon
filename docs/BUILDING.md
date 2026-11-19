@@ -27,3 +27,18 @@ Use `preparePackagedIntegrationProbe` to build the disposable runtime probe.
 The tools in `tools/` check native games and saved fixtures without changing
 the original worlds. Use a fresh directory under `build/` for each first
 load so older logs remain available.
+
+Disposable servers use Java networking (`use-native-transport=false`). This
+avoids host-specific Netty availability probes during log auditing.
+
+The NeoGradle BOP check retains the raw logs and audits a separate copy. With
+the exact pinned NeoForge and BOP dependencies, it recognises the single allay
+spawn-placement warning reproduced in a BOP-only development control. Changed
+messages, other entities, repeated notices and other errors still fail. The
+packaged-game audit has no such exception.
+
+The same-version upgrade checks also cover older NeoForge saves that still use palettes.
+`--native-state-reference` accepts the sealed canonical contract under
+`src/test/resources/fixtures`. Its flattened Forge capture was checked against the
+qualified stack. The runner checks both capture hashes, matching positions and
+shared state properties before comparing all 4,700 blocks. It never edits the source save.

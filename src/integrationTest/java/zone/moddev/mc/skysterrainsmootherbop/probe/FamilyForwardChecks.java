@@ -1,5 +1,6 @@
 package zone.moddev.mc.skysterrainsmootherbop.probe;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -76,11 +77,14 @@ final class FamilyForwardChecks {
             java.util.Enumeration<? extends java.util.zip.ZipEntry> entries = archive.entries();
             while (entries.hasMoreElements()) {
                 java.util.zip.ZipEntry entry = entries.nextElement();
-                String path = entry.getName();
-                String overworld = "world/dimensions/minecraft/overworld/";
-                if (!(path.startsWith("world/region/") || path.startsWith("world/entities/")
-                        || path.startsWith(overworld + "region/") || path.startsWith(overworld + "entities/"))
-                        || !path.endsWith(".mca")) {
+                // Older saves keep these folders at the world root. Current
+                // saves put Overworld storage under its namespaced dimension.
+                String name = entry.getName();
+                boolean overworldStorage = name.startsWith("world/region/")
+                        || name.startsWith("world/entities/")
+                        || name.startsWith("world/dimensions/minecraft/overworld/region/")
+                        || name.startsWith("world/dimensions/minecraft/overworld/entities/");
+                if (!overworldStorage || !name.endsWith(".mca")) {
                     continue;
                 }
                 byte[] region;
@@ -168,7 +172,7 @@ final class FamilyForwardChecks {
                 StandardCharsets.UTF_8)) {
             fixture = new JsonParser().parse(input).getAsJsonObject();
         }
-        java.util.Map<BlockPos, BlockState> retainedRocks = retainedNamedRocks(world, fixture);
+        java.util.Map<BlockPos, BlockState> retainedRocks = nativeExpectedStates(world, fixture);
         if (new File("source-native-biomes.json").isFile()) {
             NativeBiomeChecks.verify(world);
         }
@@ -289,13 +293,16 @@ final class FamilyForwardChecks {
         RuntimeProbe.require(pieces.blocks == 29 && pieces.items == 31 && pieces.chunks == 7,
                 "Building Pieces counters remain unchanged");
         checkNoRetrogen(fixture);
+        if (fixture.has("source_minecraft") && fixture.get("source_minecraft").getAsString().equals("26.1.2")) {
+            SkysTerrainSmoother.logger.info("TERRAIN_NATIVE_STATES_PASS source=26.1.2 states=4700");
+        }
         zone.moddev.mc.skysterrainsmoother.SkysTerrainSmoother.logger.info("SKY_FAMILY_FORWARD_PASS blocks=" + fixture.getAsJsonArray("blocks").size()
                 + " stacks=" + fixture.getAsJsonArray("stacks").size()
                 + " entities=" + fixture.getAsJsonArray("entities").size() + " players=1");
         return checked + 7;
     }
 
-    private static java.util.Map<BlockPos, BlockState> retainedNamedRocks(ServerLevel world, JsonObject fixture) throws Exception {
+    private static java.util.Map<BlockPos, BlockState> nativeExpectedStates(ServerLevel world, JsonObject fixture) throws Exception {
         java.util.Map<BlockPos, BlockState> retained = new java.util.HashMap<>();
         if (!fixture.has("native_sand_states")) {
             return retained;
@@ -304,18 +311,62 @@ final class FamilyForwardChecks {
                 StandardCharsets.UTF_8)) {
             com.google.gson.JsonArray states = new JsonParser().parse(input).getAsJsonArray();
             RuntimeProbe.require(states.size() == 4700, "Every preceding-version state was exported");
+            java.util.Map<BlockPos, CompoundTag> canonical = new java.util.HashMap<>();
+            var contractPath = java.nio.file.Path.of("canonical-native-contract.json");
+            if (java.nio.file.Files.isRegularFile(contractPath)) {
+                var contract = com.google.gson.JsonParser.parseString(java.nio.file.Files.readString(contractPath))
+                        .getAsJsonObject();
+                var canonicalPath = java.nio.file.Path.of("canonical-native-states.json");
+                String expectedHash = java.util.HexFormat.of().withUpperCase().formatHex(
+                        java.security.MessageDigest.getInstance("SHA-256").digest(java.nio.file.Files.readAllBytes(canonicalPath)));
+                String sourceHash = java.util.HexFormat.of().withUpperCase().formatHex(
+                        java.security.MessageDigest.getInstance("SHA-256").digest(java.nio.file.Files.readAllBytes(
+                                java.nio.file.Path.of("source-native-states.json"))));
+                RuntimeProbe.require(contract.get("sha256").getAsString().equals(expectedHash)
+                        && contract.getAsJsonArray("source_native_sha256").asList().stream()
+                                .anyMatch(hash -> hash.getAsString().equals(sourceHash)),
+                        "The independent native reference belongs to these exact source captures");
+                for (JsonElement expected : com.google.gson.JsonParser.parseString(
+                        java.nio.file.Files.readString(canonicalPath)).getAsJsonArray()) {
+                    JsonObject row = expected.getAsJsonObject();
+                    RuntimeProbe.require(canonical.put(position(row), TagParser.parseCompoundFully(
+                            row.get("state").getAsString())) == null, "Duplicate canonical position");
+                }
+                RuntimeProbe.require(canonical.size() == 4700, "The canonical capture covers every source position");
+            }
             for (JsonElement element : states) {
                 JsonObject row = element.getAsJsonObject();
                 CompoundTag saved = TagParser.parseCompoundFully(row.get("state").getAsString());
-                // Adding Mineralogy keeps named fallback rocks. Their bridge recipe is the explicit conversion.
-                if (saved.getStringOr("Name", "").equals("skysbuildingpiecesbop:retired_rocks")) {
+                // Older NeoForge saves still have palettes. The qualified Forge capture supplies
+                // independent flattened expectations at the same material and orientation positions.
+                if (!canonical.isEmpty()) {
+                    CompoundTag expected = canonical.get(position(row));
+                    RuntimeProbe.require(expected != null, "Every source position has a canonical expectation");
+                    CompoundTag before = saved.getCompoundOrEmpty("Properties");
+                    CompoundTag after = expected.getCompoundOrEmpty("Properties");
+                    for (String property : before.keySet()) {
+                        if (after.contains(property)) {
+                            RuntimeProbe.require(before.get(property).equals(after.get(property)),
+                                    "The reference preserves shared state property " + property + " at " + position(row));
+                        }
+                    }
+                    saved = expected;
+                }
+                if (fixture.has("source_minecraft") && fixture.get("source_minecraft").getAsString().equals("26.1.2")) {
+                    retained.put(position(row), net.minecraft.nbt.NbtUtils.readBlockState(
+                            world.holderLookup(net.minecraft.core.registries.Registries.BLOCK), saved));
+                } else if (saved.getStringOr("Name", "").equals("skysbuildingpiecesbop:retired_rocks")) {
                     CompoundTag properties = saved.getCompoundOrEmpty("Properties");
                     int slot = properties.contains("variant") ? Integer.parseInt(properties.getStringOr("variant", "")) : 0;
                     retained.put(position(row), zone.moddev.mc.skysbuildingpiecesbop.RetiredRocks.state(slot));
                 }
             }
         }
-        RuntimeProbe.require(!retained.isEmpty(), "The native fixture includes fallback rock blocks");
+        if (fixture.has("source_minecraft") && fixture.get("source_minecraft").getAsString().equals("26.1.2")) {
+            RuntimeProbe.require(retained.size() == 4700, "Every same-version native state has an exact expectation");
+        } else {
+            RuntimeProbe.require(!retained.isEmpty(), "The native fixture includes fallback rock blocks");
+        }
         return retained;
     }
 
@@ -385,7 +436,7 @@ final class FamilyForwardChecks {
             return (metadata < 2 ? SandContent.slab : SandContent.redSlab).defaultBlockState()
                     .setValue(zone.moddev.mc.skysterrainsmoother.content.SandSlabBlock.TYPE, (metadata & 1) == 0 ? SlabType.TOP : SlabType.BOTTOM);
         }
-        BlockState state = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getValue(Identifier.parse(id)).defaultBlockState();
+        BlockState state = BuiltInRegistries.BLOCK.getValue(Identifier.parse(id)).defaultBlockState();
         return state.hasProperty(SlabBlock.TYPE)
                 ? state.setValue(SlabBlock.TYPE, (metadata & 1) == 0 ? SlabType.TOP : SlabType.BOTTOM) : state;
     }
