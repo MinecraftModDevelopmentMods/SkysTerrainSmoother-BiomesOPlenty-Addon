@@ -560,6 +560,10 @@ public final class RuntimeProbe {
                     world.getPlayerChunkMap().tick();
                     world.getChunkProvider().tick();
                 }
+                // Player tracking schedules owner repairs; finish those ticks before inspecting supports.
+                ProbeWorld.post(world, new net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent(
+                        net.minecraftforge.fml.relauncher.Side.SERVER,
+                        net.minecraftforge.fml.common.gameevent.TickEvent.Phase.END, world));
                 for (int blockZ = chunkZ - 4; blockZ <= chunkZ + 4; blockZ++) {
                     for (int blockX = chunkX - 4; blockX <= chunkX + 4; blockX++) {
                         Chunk chunk = world.getChunkProvider().getLoadedChunk(blockX, blockZ);
@@ -592,7 +596,7 @@ public final class RuntimeProbe {
 
                                             require(material.sources.contains(support)
                                                     || support.equals(material.supportAfterPlacement),
-                                                    "generated BOP piece retains correct support");
+                                                    "generated BOP piece retains correct support at " + pos + ": " + state + " on " + support);
                                             found++;
                                             nativeSoilPieces++;
                                         }
