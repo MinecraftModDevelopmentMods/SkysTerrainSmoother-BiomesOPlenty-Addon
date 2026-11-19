@@ -22,7 +22,7 @@ import zone.moddev.mc.skysbuildingpieces.api.BuildingPiecesApi;
 @Mod(SkysTerrainSmootherBop.ID)
 public final class SkysTerrainSmootherBop {
     public static final String ID = "skysterrainsmootherbop";
-    public static final String VERSION = "0.1.0.2601021";
+    public static final String VERSION = "0.1.3.2601021";
 
     public SkysTerrainSmootherBop(FMLJavaModLoadingContext context) {
         BusGroup modBus = context.getModBusGroup();
@@ -32,6 +32,7 @@ public final class SkysTerrainSmootherBop {
     }
 
     private void setup(FMLCommonSetupEvent event) {
+        zone.moddev.mc.skysterrainsmoother.internal.BuiltInMaterials.ensureRegistered();
         NativeTerrain.register();
     }
 

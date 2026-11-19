@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.3.2601021
+
+Uses the updated smoothing engine and material settings, with clearer crafting entries and the existing BOP materials.
+
 ## 0.1.0.2601021
 
 - Added Forge support for Minecraft 26.1.2. Update Terrain Smoother and both BOP add-ons together.
