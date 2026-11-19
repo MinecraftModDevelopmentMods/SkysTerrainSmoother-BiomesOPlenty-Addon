@@ -6,7 +6,8 @@ import os
 from pathlib import Path
 import subprocess
 
-from run_packaged_checks import audit, digest, prepare
+from run_packaged_checks import digest, prepare
+from development_bop_notice import audit_development
 
 
 def main():
@@ -49,7 +50,7 @@ def main():
     console = directory / (options.phase + "-console.log")
     with console.open("x", encoding="utf-8") as output:
         subprocess.run(command, check=True, stdout=output, stderr=subprocess.STDOUT, timeout=600)
-    audit(directory, options.phase, options.mode, no_early_display=options.no_early_display)
+    audit_development(directory, options.phase, options.mode, options.no_early_display)
     print("NEOFORGE_TERRAIN_BOP_DEVELOPMENT_PASS", options.mode, options.phase)
 
 

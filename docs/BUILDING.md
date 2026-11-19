@@ -30,3 +30,9 @@ load so older logs remain available.
 
 Disposable servers use Java networking (`use-native-transport=false`). This
 avoids host-specific Netty availability probes during log auditing.
+
+The NeoGradle BOP check retains the raw logs and audits a separate copy. With
+the exact pinned NeoForge and BOP dependencies, it recognises the single allay
+spawn-placement warning reproduced in a BOP-only development control. Changed
+messages, other entities, repeated notices and other errors still fail. The
+packaged-game audit has no such exception.

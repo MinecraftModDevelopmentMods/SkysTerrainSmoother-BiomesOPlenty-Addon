@@ -15,8 +15,8 @@ are enabled by default. Save on the main config screen and restart Minecraft.
 
 Use NeoForge 26.2.0.45-beta and Java 25 with these matching mods on both client and server:
 
-- Biomes O' Plenty 26.2.0.0.16.
-- TerraBlender 26.2.0.0.9 and GlitchCore 26.2.0.0.5, required by BOP.
+- Biomes O' Plenty 26.2.0.0.28.
+- TerraBlender 26.2.0.0.2 and GlitchCore 26.2.0.0.0, required by BOP.
 - Sky's Grass Slabs 1.2.1.2602002.
 - Sky's Building Pieces 0.3.10.2602002.
 - Sky's Building Pieces BOP add-on 0.2.7.2602002.
@@ -42,8 +42,8 @@ their shape, orientation, stack counts and custom item data:
 
 The old registry IDs remain available as recovery entries for unopened chunks and
 mixed saves. Coarse dirt keeps its own slab under an existing palette ID; the
-other old entries are hidden. The original cutting and combining recipes now
-make the replacement pieces. The content mods keep their normal recipes and
+other old entries are hidden. The content mods supply the recipes for their replacement pieces. This add-on
+keeps the four recipes for making, cutting and combining coarse dirt slabs. The content mods keep their normal recipes and
 placement behaviour.
 
 This does not restore every block or feature removed from BOP. Keep BOP worlds
