@@ -100,7 +100,7 @@ final class BackportChecks {
                 slope(world, position, source);
                 zone.moddev.mc.skysterrainsmoother.SkysTerrainSmoother.engine.smooth(world, world.getChunk(position), 3);
                 RuntimeProbe.require(world.isAirBlock(position.up()), "disabled BOP family is not placed");
-                zone.moddev.mc.skysterrainsmoother.SkysTerrainSmoother.engine.afterDecoration(
+                ProbeWorld.post(world,
                         new net.minecraftforge.event.terraingen.DecorateBiomeEvent.Post(world, new java.util.Random(1),
                                 new BlockPos(position.getX() & ~15, 0, position.getZ() & ~15)));
                 RuntimeProbe.require(world.isAirBlock(position.up()), "late decoration respects the same family switch");
