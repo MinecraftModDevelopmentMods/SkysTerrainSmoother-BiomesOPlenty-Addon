@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "skysterrainsmootherbop/step",
+  "pattern": [
+    "X ",
+    " X"
+  ],
+  "key": {
+    "X": "skysterrainsmootherbop:coarse_dirt_slab"
+  },
+  "result": {
+    "id": "skysbuildingpieces:dirt_coarse_horizontal_step",
+    "count": 4
+  }
+}
