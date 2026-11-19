@@ -28,10 +28,21 @@ final class ProbeWorld {
     }
 
     static void repair(Level world, BlockPos origin) {
+        repair(world, origin, origin);
+    }
+
+    static void repair(Level world, BlockPos origin, BlockPos affectedOwner) {
         ChunkLoadTrace.active = Boolean.getBoolean("skysterrainsmoother.traceChunkLoads");
         try {
             queue(world, origin.getX() >> 4, origin.getZ() >> 4);
-            NeoForge.EVENT_BUS.post(new LevelTickEvent.Post(() -> true, world));
+            // Wait for this owner through the production queue. Other owners may be ahead of it.
+            int attempts = 0;
+            do {
+                NeoForge.EVENT_BUS.post(new LevelTickEvent.Post(() -> true, world));
+            } while (SkysTerrainSmoother.engine.repairQueued(affectedOwner.getX() >> 4, affectedOwner.getZ() >> 4)
+                    && ++attempts < 4096);
+            RuntimeProbe.require(!SkysTerrainSmoother.engine.repairQueued(affectedOwner.getX() >> 4, affectedOwner.getZ() >> 4),
+                    "the fixture owner completes its queued late repair");
         } finally {
             ChunkLoadTrace.active = false;
         }
