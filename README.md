@@ -14,7 +14,7 @@ Use Forge 65.1.0 and Java 25 with these matching mods on both client and server:
 - Sky's Grass Slabs 1.2.1.2602001.
 - Sky's Building Pieces 0.3.10.2602001.
 - Sky's Building Pieces BOP add-on 0.2.7.2602001.
-- Sky's Terrain Smoother 0.1.3.2602001.
+- Sky's Terrain Smoother 0.1.4.2602001.
 
 BOP now uses vanilla grass and dirt for its ordinary ground. Terrain Smoother
 already handles those states in BOP biomes. This add-on also connects the
