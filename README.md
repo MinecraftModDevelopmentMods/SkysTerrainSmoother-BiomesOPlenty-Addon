@@ -34,7 +34,7 @@ For **Minecraft 1.12.2**, use **Forge 14.23.5.2859** and **Java 8**. Install
 this add-on together with:
 
 - **Biomes O' Plenty 7.0.1.2445**.
-- **Sky's Terrain Smoother 0.1.1.112021**.
+- **Sky's Terrain Smoother 0.1.2.112021**.
 - **Sky's Grass Slabs 1.2.0.112021**.
 - **Sky's Building Pieces 0.3.10.112021**.
 - **[Sky's Building Pieces BOP add-on](https://github.com/MinecraftModDevelopmentMods/SkysBuildingPieces-BiomesOPlenty-Addon) 0.2.6.112021**.

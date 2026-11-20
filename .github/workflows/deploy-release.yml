@@ -295,6 +295,9 @@ jobs:
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@9c971963bec38e04b3d30dcc455b5382be2fdbfb # v6
+        with:
+          # Rebuild mapped Minecraft artifacts instead of restoring cached artifacts from another Minecraft version.
+          cache-disabled: true
 
       - name: Read pinned dependency sources
         id: content
@@ -336,6 +339,9 @@ jobs:
           repository: SkyBlade1978/SkysBuildingPieces-BiomesOPlenty-Addon
           ref: ${{ steps.content.outputs.bopPieces }}
           path: dependencies/bopPieces
+      - name: Verify the legacy remapping tool
+        run: python3 tools/bootstrap_legacy_tools.py
+
       - name: Build development dependencies
         run: |
           set -euo pipefail
@@ -512,6 +518,9 @@ jobs:
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@9c971963bec38e04b3d30dcc455b5382be2fdbfb # v6
+        with:
+          # Rebuild mapped Minecraft artifacts instead of restoring cached artifacts from another Minecraft version.
+          cache-disabled: true
 
       - name: Read pinned dependency sources
         id: content
@@ -553,6 +562,9 @@ jobs:
           repository: SkyBlade1978/SkysBuildingPieces-BiomesOPlenty-Addon
           ref: ${{ steps.content.outputs.bopPieces }}
           path: dependencies/bopPieces
+      - name: Verify the legacy remapping tool
+        run: python3 tools/bootstrap_legacy_tools.py
+
       - name: Build development dependencies
         run: |
           set -euo pipefail
