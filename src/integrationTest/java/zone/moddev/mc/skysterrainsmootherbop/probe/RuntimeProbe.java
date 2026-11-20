@@ -366,7 +366,7 @@ public final class RuntimeProbe {
         ProbeWorld.repair(world, new BlockPos(lateOwner.getPos().x() << 4, 0, lateOwner.getPos().z() << 4));
         require(!world.isEmptyBlock(late.above()), "own Post retains supported generated piece");
         world.setBlock(late, Blocks.SAND.defaultBlockState(), 2);
-        ProbeWorld.repair(world, new BlockPos((lateOwner.getPos().x() - 1) << 4, 0, lateOwner.getPos().z() << 4));
+        ProbeWorld.repair(world, new BlockPos((lateOwner.getPos().x() - 1) << 4, 0, lateOwner.getPos().z() << 4), late);
         require(world.getBlockState(late.above()).getBlock() == zone.moddev.mc.skysterrainsmoother.content.SandContent.slab
                 && world.getBlockState(late).getBlock() == Blocks.SAND,
                 "later neighbouring decoration retargets only its affected generated cap");
@@ -658,17 +658,24 @@ public final class RuntimeProbe {
     }
 
     private boolean trackingReady(ServerLevel world) {
+        require(System.nanoTime() - trackingStarted < java.util.concurrent.TimeUnit.SECONDS.toNanos(120),
+                "Normal player tracking and queued repairs complete the full 9x9 area; loaded="
+                        + world.getChunkSource().getLoadedChunksCount() + "; generation passes="
+                        + (SkysTerrainSmoother.engine.passes - generationBefore));
         if (allTrackedChunksLoaded(world, generationCenterX, generationCenterZ)) {
-            // Give the native world END tick one turn to process the final load notices.
+            // Wait for the inspected owners, while leaving unrelated unloaded boundary work deferred.
             boolean ready = trackedAreaWasReady;
             trackedAreaWasReady = true;
+            for (int chunkZ = generationCenterZ - 4; chunkZ <= generationCenterZ + 4; chunkZ++) {
+                for (int chunkX = generationCenterX - 4; chunkX <= generationCenterX + 4; chunkX++) {
+                    if (ProbeWorld.repairQueued(chunkX, chunkZ)) {
+                        return false;
+                    }
+                }
+            }
             return ready;
         }
         trackedAreaWasReady = false;
-        require(System.nanoTime() - trackingStarted < java.util.concurrent.TimeUnit.SECONDS.toNanos(60),
-                "Normal player tracking completes the full 9x9 area; loaded="
-                        + world.getChunkSource().getLoadedChunksCount() + "; generation passes="
-                        + (SkysTerrainSmoother.engine.passes - generationBefore));
         return false;
     }
 
