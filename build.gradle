@@ -159,7 +159,12 @@ def terrainVersion = contentLock.getProperty('terrain.version')
 def bopPiecesVersion = contentLock.getProperty('bopPieces.version')
 def terrainDevelopmentJar = new File(terrainDirectory,
         "build/libs/SkysTerrainSmoother-${terrainVersion}.jar")
-def bopPiecesDevelopmentJar = new File(bopPiecesDirectory,
+def releasedBopPiecesJar = file('.gradle/released-content/' + contentLock.getProperty('bopPieces.sha256') +
+        "/SkysBuildingPieces-BiomesOPlenty-Addon-${bopPiecesVersion}.jar")
+// Local source work may be ahead of the release used by this add-on.
+def useReleasedBopPiecesJar = System.getenv('CI') == null &&
+        contentLock.getProperty('bopPieces.kind') == 'release' && releasedBopPiecesJar.isFile()
+def bopPiecesDevelopmentJar = useReleasedBopPiecesJar ? releasedBopPiecesJar : new File(bopPiecesDirectory,
         "build/libs/SkysBuildingPieces-BiomesOPlenty-Addon-${bopPiecesVersion}.jar")
 // Use the checksum-locked official-name jars in both launch paths.
 repositories {
@@ -228,6 +233,15 @@ def verifyContentDependencies = tasks.register('verifyContentDependencies') {
                             override: false, artifact: 'SkysBuildingPieces-BiomesOPlenty-Addon']
         ]
         dependencies.each { name, selected ->
+            if (name == 'bopPieces' && useReleasedBopPiecesJar) {
+                String checksum = MessageDigest.getInstance('SHA-256').digest(releasedBopPiecesJar.bytes)
+                        .encodeHex().toString().toUpperCase(Locale.ROOT)
+                if (checksum != contentLock.getProperty('bopPieces.sha256') ||
+                        checksum != contentLock.getProperty('bopPieces.development.sha256')) {
+                    throw new GradleException('The retained Building Pieces BOP release does not match its lock')
+                }
+                return
+            }
             File directory = selected.directory
             Properties metadata = new Properties()
             new File(directory, 'gradle.properties').withInputStream { metadata.load(it) }
