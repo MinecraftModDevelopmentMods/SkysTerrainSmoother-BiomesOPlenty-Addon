@@ -28,12 +28,35 @@ final class ProbeWorld {
     }
 
     static void repair(Level world, BlockPos origin) {
+        repair(world, origin, origin);
+    }
+
+    static void repair(Level world, BlockPos origin, BlockPos affectedOwner) {
         ChunkLoadTrace.active = Boolean.getBoolean("skysterrainsmoother.traceChunkLoads");
         try {
             queue(world, origin.getX() >> 4, origin.getZ() >> 4);
-            TickEvent.LevelTickEvent.Post.BUS.post(new TickEvent.LevelTickEvent.Post(LogicalSide.SERVER, world, () -> true));
+            // Wait for this owner through the production queue. Other owners may be ahead of it.
+            int attempts = 0;
+            do {
+                TickEvent.LevelTickEvent.Post.BUS.post(new TickEvent.LevelTickEvent.Post(LogicalSide.SERVER, world, () -> true));
+            } while (repairQueued(affectedOwner.getX() >> 4, affectedOwner.getZ() >> 4)
+                    && ++attempts < 4096);
+            RuntimeProbe.require(!repairQueued(affectedOwner.getX() >> 4, affectedOwner.getZ() >> 4),
+                    "the fixture owner completes its queued late repair");
         } finally {
             ChunkLoadTrace.active = false;
+        }
+    }
+
+    static boolean repairQueued(int chunkX, int chunkZ) {
+        try {
+            return (Boolean) SkysTerrainSmoother.engine.getClass().getMethod("repairQueued", int.class, int.class)
+                    .invoke(SkysTerrainSmoother.engine, chunkX, chunkZ);
+        } catch (NoSuchMethodException olderRelease) {
+            // Older published cores complete this fixture synchronously.
+            return false;
+        } catch (ReflectiveOperationException failure) {
+            throw new IllegalStateException("Cannot inspect the fixture repair queue", failure);
         }
     }
 

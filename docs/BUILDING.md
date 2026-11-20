@@ -35,3 +35,12 @@ repeating a check.
 
 Development and packaged runs use the same public BOP, TerraBlender and GlitchCore jars. No dependency classes or textures are bundled in
 this mod.
+
+## Keeping a released content dependency
+
+A local Building Pieces BOP checkout may contain work for its next release.
+This branch can use the exact public 0.2.6.2603001 jar instead. Keep it under
+`.gradle/released-content/<SHA-256>/` with its original filename; the checksum
+in `gradle/content-dependencies.properties` selects and validates it.
+The public file is https://www.curseforge.com/projects/1755976/files/9578402.
+CI continues to build the released source commit in the lock.
