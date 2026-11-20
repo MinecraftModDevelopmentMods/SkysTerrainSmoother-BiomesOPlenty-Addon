@@ -276,7 +276,10 @@ dependencies {
 
 configurations { bopRelease; developmentMappings }
 repositories {
-    maven { url='https://cursemaven.com';content { includeGroup('curse.maven') } }
+    exclusiveContent {
+        forRepository { maven { url = 'https://cursemaven.com' } }
+        filter { includeGroup('curse.maven') }
+    }
     maven { url='https://maven.minecraftforge.net/';metadataSources { artifact() };content { includeModule('de.oceanlabs.mcp','mcp_stable') } }
 }
 dependencies {
