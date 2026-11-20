@@ -46,6 +46,9 @@ jobs:
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@9c971963bec38e04b3d30dcc455b5382be2fdbfb # v6
+        with:
+          # Rebuild mapped Minecraft artifacts instead of restoring another version\'s cache.
+          cache-disabled: true
 
       - name: Read pinned dependency sources
         id: content
