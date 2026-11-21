@@ -1,0 +1,112 @@
+package zone.moddev.mc.skysterrainsmootherbop.probe;
+
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.SectionPos;
+import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.DataLayer;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.neoforged.neoforge.event.level.ChunkEvent;
+
+import zone.moddev.mc.skysterrainsmoother.SkysTerrainSmoother;
+
+/** Native events and controlled fixture writes, used only by the runtime checks. */
+final class ProbeWorld {
+    static void clear(Level world, BlockPos position) {
+        // Fixture resets remove fluids too; World.removeBlock deliberately preserves them.
+        world.setBlock(position, Blocks.AIR.defaultBlockState(), 2);
+    }
+
+    static boolean generate(Level world, BlockPos origin) {
+        return SkysTerrainSmoother.engine.generate(world, origin.getX() >> 4, origin.getZ() >> 4);
+    }
+
+    static void queue(Level world, int chunkX, int chunkZ) {
+        NeoForge.EVENT_BUS.post(new ChunkEvent.Load(world.getChunk(chunkX, chunkZ), false));
+    }
+
+    static void repair(Level world, BlockPos origin) {
+        repair(world, origin, origin);
+    }
+
+    static void repair(Level world, BlockPos origin, BlockPos affectedOwner) {
+        ChunkLoadTrace.active = Boolean.getBoolean("skysterrainsmoother.traceChunkLoads");
+        try {
+            queue(world, origin.getX() >> 4, origin.getZ() >> 4);
+            // Wait for this owner through the production queue. Other owners may be ahead of it.
+            int attempts = 0;
+            do {
+                NeoForge.EVENT_BUS.post(new LevelTickEvent.Post(() -> true, world));
+            } while (repairQueued(affectedOwner.getX() >> 4, affectedOwner.getZ() >> 4)
+                    && ++attempts < 4096);
+            RuntimeProbe.require(!repairQueued(affectedOwner.getX() >> 4, affectedOwner.getZ() >> 4),
+                    "the fixture owner completes its queued late repair");
+        } finally {
+            ChunkLoadTrace.active = false;
+        }
+    }
+
+    static boolean repairQueued(int chunkX, int chunkZ) {
+        try {
+            return (Boolean) SkysTerrainSmoother.engine.getClass().getMethod("repairQueued", int.class, int.class)
+                    .invoke(SkysTerrainSmoother.engine, chunkX, chunkZ);
+        } catch (NoSuchMethodException olderRelease) {
+            // Older published cores complete this fixture synchronously.
+            return false;
+        } catch (ReflectiveOperationException failure) {
+            throw new IllegalStateException("Cannot inspect the fixture repair queue", failure);
+        }
+    }
+
+    static void light(Level world, LightLayer type, BlockPos position, int value) {
+        DataLayer data = new DataLayer();
+        java.util.Arrays.fill(data.getData(), (byte) (value | value << 4));
+        world.getChunkSource().getLightEngine().queueSectionData(type, SectionPos.of(position), data);
+        net.minecraft.server.level.ServerLevel serverWorld = (net.minecraft.server.level.ServerLevel) world;
+        net.minecraft.server.level.ThreadedLevelLightEngine light = serverWorld.getChunkSource().getLightEngine();
+        java.util.concurrent.CompletableFuture<?> barrier = light.lightChunk(world.getChunkAt(position), true);
+        long deadline = System.nanoTime() + java.util.concurrent.TimeUnit.SECONDS.toNanos(10);
+        serverWorld.getServer().managedBlock(() -> {
+            serverWorld.getChunkSource().pollTask();
+            light.tryScheduleUpdate();
+            return barrier.isDone() || System.nanoTime() >= deadline;
+        });
+        RuntimeProbe.require(barrier.isDone(), "Native lighting completed the fixture update");
+        barrier.join();
+    }
+
+    static void rebuildHeights(net.minecraft.world.level.chunk.ChunkAccess chunk) {
+        net.minecraft.world.level.levelgen.Heightmap.primeHeightmaps(chunk,
+                java.util.EnumSet.allOf(net.minecraft.world.level.levelgen.Heightmap.Types.class));
+    }
+
+    static void coldBiome(Level world, int firstChunkX, int firstChunkZ, int width) {
+        var biome = world.registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.BIOME)
+                .getOrThrow(net.minecraft.world.level.biome.Biomes.SNOWY_PLAINS);
+        var serverWorld = (net.minecraft.server.level.ServerLevel) world;
+        // Both traversal fixtures need the same climate, including the biome lookup's boundary halo.
+        for (int chunkZ = firstChunkZ - 1; chunkZ <= firstChunkZ + width; chunkZ++) {
+            for (int chunkX = firstChunkX - 1; chunkX <= firstChunkX + width; chunkX++) {
+                world.getChunk(chunkX, chunkZ).fillBiomesFromNoise((quartX, quartY, quartZ, sampler) -> biome, serverWorld.getChunkSource().randomState().sampler());
+            }
+        }
+    }
+
+    static boolean oreSupport(BlockState state) {
+        if (state.hasBlockEntity() || state.liquid()) {
+            return false;
+        }
+        return state.is(net.neoforged.neoforge.common.Tags.Blocks.ORES);
+    }
+
+    static net.minecraft.world.level.chunk.LevelChunkSection emptySection(Level world) {
+        return new net.minecraft.world.level.chunk.LevelChunkSection(
+                world.palettedContainerFactory());
+    }
+
+    private ProbeWorld() {
+    }
+}
