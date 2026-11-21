@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.3.120011 (unreleased)
+
+- Use the updated smoothing engine, including snowy slopes, gravel and frozen terrain.
+- Respect Terrain Smoother's soil and stone switches for the add-on's materials.
+- Let coarse dirt slabs pick up snow from higher terraces and retain their shovel and plant-support rules.
+- Remove duplicate soil recipes while keeping the four distinct coarse-dirt slab recipes.
+- Keep the checked dependency jars available for Eclipse launches.
+
 ## 0.1.0.120011 (unreleased)
 
 - Update to Minecraft 1.20.1 and Biomes O’ Plenty 19.

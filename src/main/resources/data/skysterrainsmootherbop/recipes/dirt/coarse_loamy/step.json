@@ -1,7 +1,7 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "building",
-  "group": "skysterrainsmootherbop/step",
+  "group": "skys/result/skysbuildingpieces/dirt_coarse_horizontal_step",
   "pattern": [
     "X ",
     " X"
@@ -12,7 +12,7 @@
     }
   },
   "result": {
-    "item": "skysbuildingpieces:dirt_coarse_horizontal_step",
-    "count": 4
+    "count": 4,
+    "item": "skysbuildingpieces:dirt_coarse_horizontal_step"
   }
 }

@@ -286,7 +286,7 @@ jobs:
           distribution: temurin
           java-version: ${{ needs.preflight.outputs.gradle_java_version }}
 
-      - name: Pin Java 8 dependency builds
+      - name: Pin Java 8 for dependency renaming
         if: needs.preflight.outputs.java_version == '8'
         run: |
           echo "SGS_JAVA8_HOME=$JAVA_HOME_8_X64" >> "$GITHUB_ENV"
