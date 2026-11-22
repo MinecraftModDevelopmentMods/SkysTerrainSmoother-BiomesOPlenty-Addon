@@ -1,6 +1,8 @@
 # Changelog
 
-## 0.1.3.120011 (unreleased)
+## 0.1.3.120011
+
+- Keep translated names and settings readable when building on Windows.
 
 - Use the updated smoothing engine, including snowy slopes, gravel and frozen terrain.
 - Respect Terrain Smoother's soil and stone switches for the add-on's materials.
