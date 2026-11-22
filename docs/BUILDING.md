@@ -1,15 +1,36 @@
 # Building from source
 
-Use the included Gradle 9.6.1 wrapper with Java 17 and a Java 8 toolchain.
-Build the matching Grass Slabs, Building Pieces and Terrain Smoother development
-jars first. Their default directories follow the sibling checkout convention;
-override grassSlabsDirectory, buildingPiecesDirectory and terrainDirectory if needed.
+Build with the Gradle 9.6.1 wrapper and Temurin 17.0.1+12. Set
+STS_JAVA17_HOME to that Java installation. Java 25 is needed by ForgeGradle's
+Mavenizer tool; Gradle, compilation and Minecraft use Java 17.
 
-Run tests, build, verifyReleaseArtifacts and writeReleaseChecksums. Run eclipse
-and genEclipseRuns for the Java 8 IDE setup. Production launches exclude tests.
-Publication is disabled for this local beta.
+Build the exact four clean source commits in gradle/content-dependencies.properties.
+Run assemble for Grass Slabs and Building Pieces, then Terrain Smoother and the
+Building Pieces BOP add-on. Also run the latter's bopDevelopmentJar task, which
+prepares BOP, TerraBlender and GlitchCore for development. The
+build verifies their commits, versions and main/development jar hashes. These
+dependencies are checked before compilation and development runs.
 
-CI builds the source commits in `gradle/content-dependencies.properties` before
-building this add-on. Each dependency is pinned to a full commit, not a moving
-branch. Tag checks do not publish anything. Publication remains disabled until
-this mod has its own CurseForge project.
+The default layout uses sibling version folders. Alternative locations use
+-PgrassSlabsDirectory, -PbuildingPiecesDirectory, -PterrainDirectory and
+-PbuildingPiecesBopDirectory. Normal client/server launches include only the
+production mod and these matching dependencies, not unit tests or runtime probes.
+
+Run clean separately, then check build javadoc genEclipseRuns eclipse
+verifyEclipseProductionClasspath verifyReleaseArtifacts writeReleaseChecksums.
+Packaged checks can load the sealed 1.12.2 and 1.14.4 through 1.19.4 family
+fixtures. They verify first load and reload, including saved biomes, states,
+counters and sidecars. Run tools/run_packaged_checks.py --help for the fixture
+and client/server options. Archive old disposable runtime evidence before
+repeating a check.
+
+Development uses mapped BOP bytes from the pinned Building Pieces BOP build,
+including mapped access rules for BOP and its two dependencies. Packaged runs use
+their unchanged public jars. No dependency classes or textures are bundled in
+this mod.
+
+The checked development and production jars are retained in this checkout's
+Gradle cache. Eclipse keeps the pinned versions when a sibling is rebuilt. The
+source commits, versions and both hashes still have to match the lock file.
+The Mineralogy profile uses the same checked optional jars in its own game folder.
+Use the same Gradle user home in Eclipse and at the command line.

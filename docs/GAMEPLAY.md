@@ -1,14 +1,16 @@
-# BOP terrain pieces
+# Pieces and smoothing
 
-All eight BOP grass variants and ordinary/coarse loamy, sandy and silty dirt
-have horizontal slabs, steps and corners. Snow caps are visual and grass uses
-the native BOP biome colours. Only a complete upper face supports plants.
+Current BOP versions use vanilla grass and dirt instead of its old soil families. Those
+surfaces use the normal Terrain Smoother rules at all three levels, in BOP
+biomes too. Existing terrain is left alone.
 
-Three full blocks in a row make six slabs. Two matching slabs in a horizontal
-row make their original full block. Two slabs placed diagonally in the grid
-make four steps; two steps side by side make four corners. Matching pieces can
-also combine in the world. Unlike materials do not combine.
+Saved BOP slabs, steps and corners are converted to the replacements listed
+in the README. They keep their orientation, and then follow the owning content
+mod's placement, joining, snow, grass, shovel and drop behaviour. Decorative
+moss and overgrown rock become rock pieces and do not spread grass.
 
-The smoother affects only new dry Overworld surfaces and cave floors. The three levels use
-slabs, then steps, then corners. Soil identities and metadata are preserved.
-Special moss/overgrown grass does not acquire ordinary grass spreading.
+Use the content mods' normal recipes for replacement pieces. This add-on supplies only the distinct coarse-dirt slab recipes.
+Two matching corners in a vertical pair make a step; two matching steps make a
+slab; two slabs side by side make their full block. Unlike materials do not join.
+
+Terrain Smoother's Materials page controls coarse dirt as soil and the retired natural rocks as stone. Restart after changing these settings; existing pieces stay in place.

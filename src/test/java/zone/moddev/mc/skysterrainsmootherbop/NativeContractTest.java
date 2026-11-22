@@ -1,0 +1,161 @@
+package zone.moddev.mc.skysterrainsmootherbop;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.security.MessageDigest;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Stream;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+class NativeContractTest {
+    private static final Path RESOURCES = Paths.get("src/main/resources");
+
+    @Test
+    void permanentPalettesCoverEveryAssignedSlotAndReserveTheRest() {
+        assertEquals(21, LegacySoils.PALETTES.size());
+        int assigned = 0;
+        for (LegacySoils.Palette palette : LegacySoils.PALETTES.values()) {
+            assertTrue(palette.id.startsWith("skysterrainsmootherbop:"));
+            assertFalse(palette.valid(-1));
+            assertFalse(palette.valid(16));
+            for (int metadata = 0; metadata < 16; metadata++) {
+                assertEquals(metadata < palette.count * palette.orientations, palette.valid(metadata));
+                if (palette.valid(metadata)) {
+                    assertTrue(palette.material(metadata).startsWith("minecraft:"));
+                    assigned++;
+                }
+            }
+        }
+        assertEquals(306, assigned);
+    }
+
+    @Test
+    void playableCoarseDirtSlabsUseTheNativeShovelTag() throws Exception {
+        JsonArray values = read(RESOURCES.resolve("data/minecraft/tags/blocks/mineable/shovel.json"))
+                .getAsJsonObject().getAsJsonArray("values");
+        assertEquals(1, values.size());
+        assertEquals("skysterrainsmootherbop:dirt_slab_00", values.get(0).getAsString());
+    }
+
+    @Test
+    void onlyDistinctCoarseSlabRecipesHaveTheirOwnUnlocks() throws Exception {
+        JsonArray manifest = read(Paths.get("src/main/recipe-book/recipes.json")).getAsJsonArray();
+        assertEquals(4, manifest.size());
+        Set<String> ids = new HashSet<>();
+        for (JsonElement row : manifest) {
+            String id = row.getAsJsonObject().get("recipe").getAsString();
+            assertTrue(ids.add(id));
+            Path path = RESOURCES.resolve("data/skysterrainsmootherbop/recipes/"
+                    + id.substring(id.indexOf(':') + 1) + ".json");
+            JsonObject recipe = read(path).getAsJsonObject();
+            assertEquals("minecraft:crafting_shaped", recipe.get("type").getAsString());
+            assertFalse(recipe.toString().contains("biomesoplenty:"), "Removed native items are not recipe inputs");
+            assertFalse(recipe.toString().contains("\"data\""), "Recipe ingredients use flat item identities");
+            assertTrue(recipe.getAsJsonObject("result").get("count").getAsInt() > 0);
+        }
+        String prefix = "skysterrainsmootherbop:dirt/coarse_loamy/";
+        assertEquals(Set.of(prefix + "slab", prefix + "full_block", prefix + "step", prefix + "slab_from_steps"), ids);
+        Path recipes = RESOURCES.resolve("data/skysterrainsmootherbop/recipes");
+        try (Stream<Path> files = Files.walk(recipes)) {
+            Set<String> actual = new HashSet<>();
+            files.filter(path -> path.toString().endsWith(".json")).forEach(path ->
+                    actual.add("skysterrainsmootherbop:"
+                            + recipes.relativize(path).toString().replace('\\', '/').replace(".json", "")));
+            assertEquals(ids, actual, "Removed soil aliases must not return as extra recipe files");
+        }
+    }
+
+    @Test
+    void eighteenUtf8LanguagesAndEveryHiddenModelRemainAvailable() throws Exception {
+        Path assets = RESOURCES.resolve("assets/skysterrainsmootherbop");
+        try (Stream<Path> languages = Files.list(assets.resolve("lang"))) {
+            Path[] paths = languages.toArray(Path[]::new);
+            assertEquals(18, paths.length);
+            for (Path path : paths) {
+                assertTrue(path.toString().endsWith(".json"));
+                assertFalse(read(path).getAsJsonObject().entrySet().isEmpty());
+                assertFalse(text(path).contains("\uFFFD"));
+            }
+        }
+        for (String id : LegacySoils.PALETTES.keySet()) {
+            String name = id.substring(id.indexOf(':') + 1);
+            assertTrue(Files.isRegularFile(assets.resolve("blockstates/" + name + ".json")));
+            assertTrue(Files.isRegularFile(assets.resolve("models/item/" + name + ".json")));
+        }
+        JsonObject pack = read(RESOURCES.resolve("pack.mcmeta")).getAsJsonObject().getAsJsonObject("pack");
+        assertEquals(15, pack.get("pack_format").getAsInt());
+        assertEquals(15, pack.get("forge:resource_pack_format").getAsInt());
+        assertEquals(15, pack.get("forge:data_pack_format").getAsInt());
+    }
+
+    @Test
+    void genuineFullFamilyFixtureIsSealedAndContainsAllOldTerrainPieces() throws Exception {
+        Path fixture = Paths.get("src/test/resources/fixtures/forward-1.12.2-family");
+        String expected = text(fixture.resolve("SHA256SUMS")).split("\\s+")[0];
+        StringBuilder actual = new StringBuilder();
+        for (byte value : MessageDigest.getInstance("SHA-256").digest(Files.readAllBytes(fixture.resolve("world.zip")))) {
+            actual.append(String.format(java.util.Locale.ROOT, "%02X", value & 255));
+        }
+        assertEquals(expected, actual.toString());
+        JsonObject source = read(fixture.resolve("source-family-fixture.json")).getAsJsonObject();
+        assertEquals(4688, source.getAsJsonArray("blocks").size());
+        assertEquals(4688, source.getAsJsonArray("stacks").size());
+        int soils = 0;
+        for (JsonElement value : source.getAsJsonArray("blocks")) {
+            JsonObject block = value.getAsJsonObject();
+            LegacySoils.Palette palette = LegacySoils.PALETTES.get(block.get("id").getAsString());
+            if (palette != null) {
+                assertTrue(palette.valid(block.get("meta").getAsInt()));
+                soils++;
+            }
+        }
+        assertEquals(306, soils);
+        assertEquals(5, source.getAsJsonArray("entities").size());
+        assertEquals(7, read(fixture.resolve("source-artifacts.json")).getAsJsonArray().size());
+    }
+
+    @Test
+    void nativeMetadataKeepsAllRequiredDependenciesAndNoExtraTransformer() throws Exception {
+        String metadata = text(RESOURCES.resolve("META-INF/mods.toml"));
+        for (String mod : new String[] { "forge", "minecraft", "skysgrassslabs", "skysbuildingpieces",
+                "skysbuildingpiecesbop", "skysterrainsmoother", "biomesoplenty" }) {
+            assertTrue(metadata.contains("modId=\"" + mod + "\""));
+        }
+        assertTrue(metadata.contains("[19.0.0.96]"));
+        assertFalse(Files.exists(RESOURCES.resolve("META-INF/coremods.json")));
+        assertFalse(Files.exists(RESOURCES.resolve("mcmod.info")));
+    }
+
+    @Test
+    void developmentLaunchesKeepAllMappedDependenciesAndTheirAccessRules() throws Exception {
+        String build = text(Paths.get("build.gradle"));
+        assertTrue(build.contains("systemProperty 'mixin.env.disableRefMap', 'true'"));
+        assertTrue(build.contains("accessTransformers.from(mappedAccessRules)"));
+        assertTrue(build.contains("bopPiecesDevelopmentJar, bopDevelopmentJar, terraBlenderDevelopmentJar, glitchCoreDevelopmentJar"));
+        String launcher = text(Paths.get("tools/run_packaged_checks.py"));
+        assertFalse(launcher.contains("mixin.env.disableRefMap"), "Public jars retain their own refmaps");
+        java.util.Properties lock = new java.util.Properties();
+        lock.load(new java.io.StringReader(text(Paths.get("gradle/content-dependencies.properties"))));
+        for (String name : new String[] { "bop", "terrablender", "glitchcore" }) {
+            assertTrue(lock.getProperty(name + ".sha256").matches("[0-9A-F]{64}"));
+            assertTrue(lock.getProperty(name + ".development.sha256").matches("[0-9A-F]{64}"));
+        }
+    }
+
+
+    private static JsonElement read(Path path) throws Exception {
+        return new JsonParser().parse(text(path));
+    }
+
+    private static String text(Path path) throws Exception {
+        return new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+    }
+}
