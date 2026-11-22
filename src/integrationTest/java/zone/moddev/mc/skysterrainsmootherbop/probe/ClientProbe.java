@@ -32,6 +32,7 @@ public final class ClientProbe extends ProbeProxy {
                     && minecraft.getConnection() != null
                     && !minecraft.getConnection().getRecipeManager().getRecipes().isEmpty()) {
                 if (++settledWorldTicks < 20) return;
+                PowderSnowClientProbe.run(minecraft);
                 RecipePreviewModels.check(minecraft);
                 checkBiomeTints(minecraft);
                 zone.moddev.mc.skysterrainsmoother.SkysTerrainSmoother.logger.info("TERRAIN_SMOOTHER_CLIENT_WORLD_PASS");
@@ -49,8 +50,8 @@ public final class ClientProbe extends ProbeProxy {
             if (!resourcesChecked) {
                 MineralogyProbe.run();
                 FineGrassModelProbe.run(minecraft);
-                checkModel(minecraft, RuntimeProbe.probeOre.defaultBlockState());
                 checkRecoveredSoilModels(minecraft);
+                checkModel(minecraft, RuntimeProbe.probeOre.defaultBlockState());
 
                 for (net.minecraft.world.level.block.Block block : new net.minecraft.world.level.block.Block[] {
                         zone.moddev.mc.skysterrainsmoother.content.SandContent.slab,

@@ -128,8 +128,14 @@ if (localGrassVersion.isPresent() &&
 def grassVersion = localGrassVersion.getOrElse(contentLock.getProperty('grass.version'))
 
 
-def grassSlabsDevelopmentJar = new File(grassSlabsDirectory,
-        "build/libs-dev/SkysGrassSlabs-${grassVersion}-deobf.jar")
+def pinnedContentArtifact = { File directory, String relative, boolean override ->
+    File sibling = new File(directory, 'build/' + relative)
+    File retained = file('.gradle/qualification-dependencies/' + sibling.name)
+    !override && retained.isFile() ? retained : sibling
+}
+
+def grassSlabsDevelopmentJar = pinnedContentArtifact(grassSlabsDirectory,
+        "libs-dev/SkysGrassSlabs-${grassVersion}-deobf.jar", localGrassVersion.isPresent())
 
 def localPiecesVersion = providers.gradleProperty('buildingPiecesCoreVersion')
 if (localPiecesVersion.isPresent() &&
@@ -137,8 +143,8 @@ if (localPiecesVersion.isPresent() &&
     throw new GradleException('A local core-version override needs an explicit core directory and is not allowed in CI.')
 }
 def piecesVersion = localPiecesVersion.getOrElse(contentLock.getProperty('pieces.version'))
-def buildingPiecesDevelopmentJar = new File(buildingPiecesDirectory,
-        "build/libs-dev/SkysBuildingPieces-${piecesVersion}-deobf.jar")
+def buildingPiecesDevelopmentJar = pinnedContentArtifact(buildingPiecesDirectory,
+        "libs-dev/SkysBuildingPieces-${piecesVersion}-deobf.jar", localPiecesVersion.isPresent())
 
 def terrainDirectory = file(providers.gradleProperty('terrainDirectory')
         .getOrElse('../../SkysTerrainSmoother1201NEO/SkysTerrainSmoother'))
@@ -146,12 +152,12 @@ def bopPiecesDirectory = file(providers.gradleProperty('buildingPiecesBopDirecto
         .getOrElse('../../SkysBuildingPiecesBOP1201NEO/SkysBuildingPieces-BiomesOPlenty-Addon'))
 def terrainVersion = contentLock.getProperty('terrain.version')
 def bopPiecesVersion = contentLock.getProperty('bopPieces.version')
-def terrainDevelopmentJar = new File(terrainDirectory,
-        "build/libs-dev/SkysTerrainSmoother-${terrainVersion}-deobf.jar")
-def bopPiecesDevelopmentJar = new File(bopPiecesDirectory,
-        "build/libs-dev/SkysBuildingPieces-BiomesOPlenty-Addon-${bopPiecesVersion}-deobf.jar")
-def bopDevelopmentJar = new File(bopPiecesDirectory, 'build/development-dependencies/biomesoplenty-official.jar')
-def terraBlenderDevelopmentJar = new File(bopPiecesDirectory, 'build/development-dependencies/terrablender-official.jar')
+def terrainDevelopmentJar = pinnedContentArtifact(terrainDirectory,
+        "libs-dev/SkysTerrainSmoother-${terrainVersion}-deobf.jar", false)
+def bopPiecesDevelopmentJar = pinnedContentArtifact(bopPiecesDirectory,
+        "libs-dev/SkysBuildingPieces-BiomesOPlenty-Addon-${bopPiecesVersion}-deobf.jar", false)
+def bopDevelopmentJar = pinnedContentArtifact(bopPiecesDirectory, 'development-dependencies/biomesoplenty-official.jar', false)
+def terraBlenderDevelopmentJar = pinnedContentArtifact(bopPiecesDirectory, 'development-dependencies/terrablender-official.jar', false)
 
 def biomeDevelopmentJars = [bop: bopDevelopmentJar, terrablender: terraBlenderDevelopmentJar]
 
@@ -214,7 +220,7 @@ def verifyContentDependencies = tasks.register('verifyContentDependencies') {
                         [path: "build/libs/${selected.artifact}-${selected.version}.jar", key: '.sha256'],
                         [path: "build/libs-dev/${selected.artifact}-${selected.version}-deobf.jar", key: '.development.sha256']
                 ].each { artifact ->
-                    File jar = new File(directory, artifact.path)
+                    File jar = pinnedContentArtifact(directory, artifact.path.substring("build/".length()), selected.override)
                     if (!jar.isFile()) {
                         throw new GradleException('Build the pinned content dependency first: ' + jar)
                     }
@@ -260,6 +266,7 @@ tasks.withType(Javadoc).configureEach {
 }
 
 tasks.withType(AbstractArchiveTask).configureEach {
+    filteringCharset = 'UTF-8'
     includeEmptyDirs = false
     preserveFileTimestamps = false
     reproducibleFileOrder = true
@@ -287,9 +294,9 @@ def prepareContentDevelopmentRun = tasks.register('prepareContentDevelopmentRun'
     dependsOn verifyContentDependencies
     doLast {
         File mods = new File(file(developmentRunDirectory), 'mods')
-        Set<String> expected = [grassSlabsDevelopmentJar.name, buildingPiecesDevelopmentJar.name] as Set<String>
+        Set<String> expected = [grassSlabsDevelopmentJar.name, buildingPiecesDevelopmentJar.name, terrainDevelopmentJar.name, bopPiecesDevelopmentJar.name] as Set<String>
         fileTree(mods).matching { include '*.jar' }.each { existing ->
-            if (existing.name ==~ /Skys(?:GrassSlabs|BuildingPieces)-[0-9].*\.jar/ && !expected.contains(existing.name)) {
+            if (existing.name ==~ /Skys(?:GrassSlabs|BuildingPieces|TerrainSmoother|BuildingPieces-BiomesOPlenty-Addon)-[0-9].*\.jar/ && !expected.contains(existing.name)) {
                 throw new GradleException('An older content jar is already in the development profile: ' + existing)
             }
             if (existing.name.contains('integration-test') || existing.name.contains('native-checks')) {
@@ -381,6 +388,9 @@ def configureFromForgeRun = { JavaExec process, String runTaskName ->
             run.args(process.args)
             run.jvmArgs(process.jvmArgs)
             run.systemProperties(process.systemProperties)
+            if (!run.systemProperties.containsKey('log4j.configurationFile')) {
+                run.systemProperty('log4j.configurationFile', file('src/bootstrapTest/native-log4j2.xml').toURI())
+            }
             run.environment(process.environment)
             run.environment('MOD_CLASSES',
                     "${mod_id}%%${forgeRunModClassesDirectory}${File.pathSeparator}" +
@@ -639,7 +649,7 @@ tasks.named('jar', Jar) {
                 'Implementation-Title': base.archivesName.get(),
                 'Implementation-Version': project.version,
                 'Implementation-Vendor': project.mod_authors,
-                'Built-On-Java': '8',
+                'Built-On-Java': '17',
                 'Built-On': "${project.minecraft_version}-${project.forge_version}"
         ])
     }
@@ -731,7 +741,7 @@ tasks.register('verifyReleaseArtifacts') {
                     byte[] auditBytes = zip.getInputStream(entry).bytes
                     if (entry.name.endsWith('.class') &&
                             (((auditBytes[6] & 255) << 8) | (auditBytes[7] & 255)) != 61) {
-                        throw new GradleException("Non-Java-16 production class: ${entry.name}")
+                        throw new GradleException("Non-Java-17 production class: ${entry.name}")
                     }
                     String content = new String(zip.getInputStream(entry).bytes,
                             StandardCharsets.ISO_8859_1).toLowerCase(Locale.ROOT)
@@ -1139,3 +1149,7 @@ tasks.register('integrationForwardTest') {
 }
 
 tasks.named('check') { dependsOn tasks.named('integrationForwardTest') }
+
+apply from: 'gradle/resource-outputs.gradle'
+
+apply from: 'gradle/archive-encoding.gradle'

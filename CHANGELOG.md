@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.3.120012 (unreleased)
+
+- Use the updated smoothing engine, snow rules and material settings.
+- Keep only distinct coarse-dirt recipes and retain this version’s BOP materials and recovery mappings.
+
 ## 0.1.0.120012 (unreleased)
 
 - Add a NeoForge 1.20.1 build for Biomes O’ Plenty 18.

@@ -28,3 +28,9 @@ Development uses mapped BOP bytes from the pinned Building Pieces BOP build,
 including mapped access rules for BOP and TerraBlender. Packaged runs use
 their unchanged public jars. No dependency classes or textures are bundled in
 this mod.
+
+The checked development and production jars are retained in this checkout's
+Gradle cache. Eclipse keeps the pinned versions when a sibling is rebuilt. The
+source commits, versions and both hashes still have to match the lock file.
+The Mineralogy profile uses the same checked optional jars in its own game folder.
+Use the same Gradle user home in Eclipse and at the command line.
