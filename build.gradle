@@ -127,8 +127,14 @@ if (localGrassVersion.isPresent() &&
 def grassVersion = localGrassVersion.getOrElse(contentLock.getProperty('grass.version'))
 
 
-def grassSlabsDevelopmentJar = new File(grassSlabsDirectory,
-        "build/libs/SkysGrassSlabs-${grassVersion}.jar")
+def pinnedContentArtifact = { File directory, String relative, boolean override ->
+    File sibling = new File(directory, 'build/' + relative)
+    File retained = file('.gradle/qualification-dependencies/' + sibling.name)
+    !override && retained.isFile() ? retained : sibling
+}
+
+def grassSlabsDevelopmentJar = pinnedContentArtifact(grassSlabsDirectory,
+        "libs/SkysGrassSlabs-${grassVersion}.jar", localGrassVersion.isPresent())
 
 def localPiecesVersion = providers.gradleProperty('buildingPiecesCoreVersion')
 if (localPiecesVersion.isPresent() &&
@@ -136,8 +142,8 @@ if (localPiecesVersion.isPresent() &&
     throw new GradleException('A local core-version override needs an explicit core directory and is not allowed in CI.')
 }
 def piecesVersion = localPiecesVersion.getOrElse(contentLock.getProperty('pieces.version'))
-def buildingPiecesDevelopmentJar = new File(buildingPiecesDirectory,
-        "build/libs/SkysBuildingPieces-${piecesVersion}.jar")
+def buildingPiecesDevelopmentJar = pinnedContentArtifact(buildingPiecesDirectory,
+        "libs/SkysBuildingPieces-${piecesVersion}.jar", localPiecesVersion.isPresent())
 
 def terrainDirectory = file(providers.gradleProperty('terrainDirectory')
         .getOrElse('../../SkysTerrainSmoother1211/SkysTerrainSmoother'))
@@ -145,10 +151,10 @@ def bopPiecesDirectory = file(providers.gradleProperty('buildingPiecesBopDirecto
         .getOrElse('../../SkysBuildingPiecesBOP1211/SkysBuildingPieces-BiomesOPlenty-Addon'))
 def terrainVersion = contentLock.getProperty('terrain.version')
 def bopPiecesVersion = contentLock.getProperty('bopPieces.version')
-def terrainDevelopmentJar = new File(terrainDirectory,
-        "build/libs/SkysTerrainSmoother-${terrainVersion}.jar")
-def bopPiecesDevelopmentJar = new File(bopPiecesDirectory,
-        "build/libs/SkysBuildingPieces-BiomesOPlenty-Addon-${bopPiecesVersion}.jar")
+def terrainDevelopmentJar = pinnedContentArtifact(terrainDirectory,
+        "libs/SkysTerrainSmoother-${terrainVersion}.jar", false)
+def bopPiecesDevelopmentJar = pinnedContentArtifact(bopPiecesDirectory,
+        "libs/SkysBuildingPieces-BiomesOPlenty-Addon-${bopPiecesVersion}.jar", false)
 // Use the checksum-locked official-name jars in both launch paths.
 repositories {
     minecraft.mavenizer(it)
@@ -186,6 +192,8 @@ def localBiomeJars = biomeJarProperties.findAll { name, property -> providers.gr
 def biomeDevelopmentJars = modrinthIds.collectEntries { name, projectId ->
     if (localBiomeJars.containsKey(name)) return [(name): localBiomeJars[name]]
     String version = contentLock.getProperty(name + '.modrinth.version')
+    File retained = file(".gradle/qualification-dependencies/${projectId}-${version}.jar")
+    if (retained.isFile()) return [(name): retained]
     def dependency = dependencies.create("maven.modrinth:${projectId}:${version}") {
         transitive = false
     }
@@ -239,7 +247,7 @@ def verifyContentDependencies = tasks.register('verifyContentDependencies') {
                         [path: "build/libs/${selected.artifact}-${selected.version}.jar", key: '.sha256'],
                         [path: "build/libs/${selected.artifact}-${selected.version}.jar", key: '.development.sha256']
                 ].each { artifact ->
-                    File jar = new File(directory, artifact.path)
+                    File jar = pinnedContentArtifact(directory, artifact.path.substring("build/".length()), selected.override)
                     if (!jar.isFile()) {
                         throw new GradleException('Build the pinned content dependency first: ' + jar)
                     }
@@ -285,6 +293,7 @@ tasks.withType(Javadoc).configureEach {
 }
 
 tasks.withType(AbstractArchiveTask).configureEach {
+    filteringCharset = 'UTF-8'
     includeEmptyDirs = false
     preserveFileTimestamps = false
     reproducibleFileOrder = true
@@ -312,9 +321,9 @@ def prepareContentDevelopmentRun = tasks.register('prepareContentDevelopmentRun'
     dependsOn verifyContentDependencies
     doLast {
         File mods = new File(file(developmentRunDirectory), 'mods')
-        Set<String> expected = [grassSlabsDevelopmentJar.name, buildingPiecesDevelopmentJar.name] as Set<String>
+        Set<String> expected = [grassSlabsDevelopmentJar.name, buildingPiecesDevelopmentJar.name, terrainDevelopmentJar.name, bopPiecesDevelopmentJar.name] as Set<String>
         fileTree(mods).matching { include '*.jar' }.each { existing ->
-            if (existing.name ==~ /Skys(?:GrassSlabs|BuildingPieces)-[0-9].*\.jar/ && !expected.contains(existing.name)) {
+            if (existing.name ==~ /Skys(?:GrassSlabs|BuildingPieces|TerrainSmoother|BuildingPieces-BiomesOPlenty-Addon)-[0-9].*\.jar/ && !expected.contains(existing.name)) {
                 throw new GradleException('An older content jar is already in the development profile: ' + existing)
             }
             if (existing.name.contains('integration-test') || existing.name.contains('native-checks')) {
@@ -408,6 +417,9 @@ def configureFromForgeRun = { JavaExec process, String runTaskName, boolean incl
             run.args(process.args)
             run.jvmArgs(process.jvmArgs)
             run.systemProperties(process.systemProperties)
+            if (!run.systemProperties.containsKey('log4j.configurationFile')) {
+                run.systemProperty('log4j.configurationFile', file('src/bootstrapTest/native-log4j2.xml').toURI())
+            }
             run.environment(process.environment)
             String modClasses = includeMain ? "${mod_id}%%${forgeRunModClassesDirectory}" : ''
             // Ordinary runs already point at the merged production output.
@@ -1135,3 +1147,7 @@ tasks.register('integrationForwardTest') {
 }
 
 tasks.named('check') { dependsOn tasks.named('integrationForwardTest') }
+
+apply from: 'gradle/resource-outputs.gradle'
+
+apply from: 'gradle/archive-encoding.gradle'

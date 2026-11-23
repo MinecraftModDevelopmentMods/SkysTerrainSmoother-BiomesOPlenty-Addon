@@ -88,6 +88,26 @@ class PublicationContractTest {
         assertTrue(ciWorkflow.contains("--offline"));
     }
 
+    @Test
+    void everyReleaseBuildUsesTheCheckedOutContentDirectories() throws Exception {
+        String workflow = text(".github/workflows/deploy-release.yml");
+        String build = workflow.split("      - name: Build, test, and audit once", 2)[1]
+                .split("\\n      - name:", 2)[0];
+        int commands = 0;
+
+        for (String line : build.split("\\n")) {
+            if (line.trim().startsWith("./gradlew ")) {
+                assertTrue(line.contains("-PgrassSlabsDirectory=dependencies/grass"), line);
+                assertTrue(line.contains("-PbuildingPiecesDirectory=dependencies/pieces"), line);
+                assertTrue(line.contains("-PterrainDirectory=dependencies/terrain"), line);
+                assertTrue(line.contains("-PbuildingPiecesBopDirectory=dependencies/bopPieces"), line);
+                commands++;
+            }
+        }
+
+        assertEquals(3, commands, "Clean and both loader builds must use the pinned content");
+    }
+
     private String text(String path) throws Exception {
         return new String(Files.readAllBytes(Paths.get(path)), StandardCharsets.UTF_8).replace("\r\n", "\n");
     }

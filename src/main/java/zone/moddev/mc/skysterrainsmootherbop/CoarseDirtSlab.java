@@ -19,11 +19,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.chunk.LevelChunk;
+import zone.moddev.mc.skysgrassslabs.init.ModBlocks;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
-import zone.moddev.mc.skysgrassslabs.init.ModBlocks;
 
 /** Retains the old coarse-soil slab without turning it into spreading dirt. */
 public final class CoarseDirtSlab extends SlabBlock {
@@ -91,7 +90,12 @@ public final class CoarseDirtSlab extends SlabBlock {
     public BlockState updateShape(BlockState state, Direction facing, BlockState neighbour,
             LevelAccessor world, BlockPos position, BlockPos neighbourPosition) {
         return super.updateShape(state, facing, neighbour, world, position, neighbourPosition)
-                .setValue(SnowyDirtBlock.SNOWY, snowy(world, position));
+                .setValue(SnowyDirtBlock.SNOWY, snowy(world, position, facing, neighbour, neighbourPosition));
+    }
+
+    @Override
+    public void randomTick(BlockState state, ServerLevel world, BlockPos position, RandomSource random) {
+        tick(state, world, position, random);
     }
 
     @Override
@@ -108,33 +112,18 @@ public final class CoarseDirtSlab extends SlabBlock {
     public boolean canSustainPlant(BlockState state, BlockGetter world, BlockPos position, Direction face,
             net.minecraftforge.common.IPlantable plant) {
         BlockState full = Blocks.COARSE_DIRT.defaultBlockState();
-        return state.getValue(TYPE) == SlabType.TOP && face == Direction.UP
+        return state.getValue(TYPE) == SlabType.TOP && !state.getValue(WATERLOGGED) && face == Direction.UP
                 && full.getBlock().canSustainPlant(full, world, position, face, plant);
     }
 
-    private static boolean snowy(BlockGetter world, BlockPos position) {
-        for (Direction direction : new Direction[] {
-                Direction.UP, Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST }) {
-            BlockPos neighbour = position.relative(direction);
-            Block block;
-            if (world instanceof ServerLevel) {
-                LevelChunk chunk = ((ServerLevel) world).getChunkSource()
-                        .getChunkNow(neighbour.getX() >> 4, neighbour.getZ() >> 4);
-                if (chunk == null) {
-                    continue;
-                }
-                block = chunk.getBlockState(neighbour).getBlock();
-            } else {
-                if (world instanceof LevelReader
-                        && !((LevelReader) world).hasChunk(neighbour.getX() >> 4, neighbour.getZ() >> 4)) {
-                    continue;
-                }
-                block = world.getBlockState(neighbour).getBlock();
-            }
-            if (block == Blocks.SNOW || block == Blocks.SNOW_BLOCK) {
-                return true;
-            }
-        }
-        return false;
+    private static boolean snowy(LevelAccessor world, BlockPos position) {
+        return snowy(world, position, Direction.UP, world.getBlockState(position.above()), position.above());
+    }
+
+    private static boolean snowy(LevelAccessor world, BlockPos position, Direction side, BlockState neighbour,
+            BlockPos neighbourPosition) {
+        // Share the dirt slab's snow calculation without giving coarse soil a grass-spreading tick.
+        return ModBlocks.DIRT_SLAB.get().defaultBlockState()
+                .updateShape(side, neighbour, world, position, neighbourPosition).getValue(SnowyDirtBlock.SNOWY);
     }
 }

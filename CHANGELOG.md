@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.3.121011 (unreleased)
+
+- Coarse dirt slabs update their snow caps during normal random ticks.
+- Coarse dirt and retired rocks follow Terrain Smoother's material settings.
+- Matching grass and soil pieces pick up nearby snow during generation.
+- The recipe book keeps the distinct coarse-dirt slab recipes without repeating the content mods' recipes.
+- Eclipse keeps its checked dependency jars when sibling projects are rebuilt.
+
 ## 0.1.0.121011 (unreleased)
 
 - Bring Biomes O' Plenty terrain smoothing to Minecraft 1.21.1 on Forge.

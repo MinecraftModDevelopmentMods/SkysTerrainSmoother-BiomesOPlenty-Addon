@@ -1,6 +1,5 @@
 package zone.moddev.mc.skysterrainsmootherbop.probe;
 
-import net.minecraftforge.registries.ForgeRegistries;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -53,7 +52,7 @@ final class RecipePreviewModels {
             throw new AssertionError("Empty recipe preview: " + recipe);
         }
 
-        String label = recipe + " -> " + ForgeRegistries.ITEMS.getKey(stack.getItem());
+        String label = recipe + " -> " + net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(stack.getItem());
         BakedModel model = minecraft.getItemRenderer().getModel(stack, null, null, 0);
         BakedModel missing = minecraft.getBlockRenderer().getBlockModelShaper().getModelManager()
                 .getMissingModel();

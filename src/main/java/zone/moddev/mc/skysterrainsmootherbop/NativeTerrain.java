@@ -9,6 +9,7 @@ import zone.moddev.mc.skysbuildingpieces.api.BuildingPiecesApi;
 import zone.moddev.mc.skysbuildingpieces.catalogue.Catalogue;
 import zone.moddev.mc.skysbuildingpieces.content.Pieces;
 import zone.moddev.mc.skysterrainsmoother.api.TerrainMaterial;
+import zone.moddev.mc.skysterrainsmoother.api.MaterialGroup;
 import zone.moddev.mc.skysterrainsmoother.api.TerrainSmoothingApi;
 
 /** Ordinary BOP ground now uses vanilla states; only retired natural rocks need extra mappings. */
@@ -30,7 +31,7 @@ final class NativeTerrain {
             }
             TerrainSmoothingApi.registerMaterial(new TerrainMaterial(coarseId,
                     Collections.singleton(net.minecraft.world.level.block.Blocks.COARSE_DIRT.defaultBlockState()),
-                    CoarseDirtSlab.BLOCK.defaultBlockState(), steps, corners, false, null));
+                    CoarseDirtSlab.BLOCK.defaultBlockState(), steps, corners, false, null, MaterialGroup.SOIL));
         }
         for (String rock : new String[] { "crag_rock", "limestone", "shale", "siltstone" }) {
             String material = "biomesoplenty:" + rock;
@@ -50,7 +51,7 @@ final class NativeTerrain {
             }
             TerrainSmoothingApi.registerMaterial(new TerrainMaterial(ResourceLocation.parse(material),
                     Collections.singleton(full), BuildingPiecesApi.bottomPiece(material,
-                            BuildingPiecesApi.TerrainShape.SLAB, Direction.NORTH), steps, corners, false, null));
+                            BuildingPiecesApi.TerrainShape.SLAB, Direction.NORTH), steps, corners, false, null, MaterialGroup.STONE));
         }
     }
 }
