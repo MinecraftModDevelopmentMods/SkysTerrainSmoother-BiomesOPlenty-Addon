@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.3.120012 (unreleased)
+## 0.1.3.120012
 
 - Use the updated smoothing engine, snow rules and material settings.
 - Keep only distinct coarse-dirt recipes and retain this version’s BOP materials and recovery mappings.
