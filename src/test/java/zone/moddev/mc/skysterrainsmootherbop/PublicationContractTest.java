@@ -24,7 +24,8 @@ class PublicationContractTest {
         }
         String ci = text(".github/workflows/ci.yml");
         assertTrue(ci.contains("java-version: '17.0.1+12'"));
-        assertTrue(ci.contains("Bootstrap Forge from an empty cache"));
+        assertEquals("neoforge", metadata.getProperty("loader_name"));
+        assertTrue(ci.contains("Bootstrap NeoForge from an empty cache"));
         assertTrue(ci.contains("-PterrainDirectory=dependencies/terrain"));
         assertTrue(ci.contains("-PbuildingPiecesBopDirectory=dependencies/bopPieces"));
     }
@@ -86,6 +87,26 @@ class PublicationContractTest {
         assertTrue(ciWorkflow.contains("if-no-files-found: error"));
         assertTrue(ciWorkflow.contains("integrationTest"));
         assertTrue(ciWorkflow.contains("--offline"));
+    }
+
+    @Test
+    void everyReleaseBuildUsesTheCheckedOutContentDirectories() throws Exception {
+        String workflow = text(".github/workflows/deploy-release.yml");
+        String build = workflow.split("      - name: Build, test, and audit once", 2)[1]
+                .split("\\n      - name:", 2)[0];
+        int commands = 0;
+
+        for (String line : build.split("\\n")) {
+            if (line.contains("./gradlew") && line.contains("check build javadoc")) {
+                assertTrue(line.contains("-PgrassSlabsDirectory=dependencies/grass"), line);
+                assertTrue(line.contains("-PbuildingPiecesDirectory=dependencies/pieces"), line);
+                assertTrue(line.contains("-PterrainDirectory=dependencies/terrain"), line);
+                assertTrue(line.contains("-PbuildingPiecesBopDirectory=dependencies/bopPieces"), line);
+                commands++;
+            }
+        }
+
+        assertEquals(2, commands, "Both loader paths must build the pinned content");
     }
 
     private String text(String path) throws Exception {

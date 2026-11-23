@@ -1,8 +1,13 @@
 # Changelog
 
-## 0.1.0.120011 (unreleased)
+## 0.1.3.120012
 
-- Update to Minecraft 1.20.1 and Biomes O’ Plenty 19.
+- Use the updated smoothing engine, snow rules and material settings.
+- Keep only distinct coarse-dirt recipes and retain this version’s BOP materials and recovery mappings.
+
+## 0.1.0.120012 (unreleased)
+
+- Add a NeoForge 1.20.1 build for Biomes O’ Plenty 18.
 
 ## 0.1.0.119041 (unreleased)
 

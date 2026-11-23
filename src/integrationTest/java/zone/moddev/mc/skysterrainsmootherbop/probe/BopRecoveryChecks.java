@@ -151,6 +151,8 @@ final class BopRecoveryChecks {
             RuntimeProbe.require(rejected && invalid.equals(unchanged),
                     "A count outside the saved-byte range stops without changing the stack");
         }
+        CoarseRecipeChecks.run(world);
+        RecipeBookChecks.run(world);
         int recipes = 0;
         for (net.minecraft.world.item.crafting.Recipe<?> recipe : world.getRecipeManager().getRecipes()) {
             if (!recipe.getId().getNamespace().equals("skysterrainsmootherbop")) {
@@ -163,7 +165,7 @@ final class BopRecoveryChecks {
                     "Replacement recipes expose native book ingredients");
             recipes++;
         }
-        RuntimeProbe.require(recipes == 84, "All original recipe identities load with available ingredients");
+        RuntimeProbe.require(recipes == 4, "Only distinct coarse-dirt recipes belong to the add-on");
         zone.moddev.mc.skysterrainsmoother.SkysTerrainSmoother.logger.info("TERRAIN_BOP_RECOVERY_PASS states=" + states + " checks=" + checked);
         return checked + 2;
     }

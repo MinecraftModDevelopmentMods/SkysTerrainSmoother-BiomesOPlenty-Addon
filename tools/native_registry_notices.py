@@ -39,7 +39,8 @@ def profile_for(directory):
             raise ValueError("The complete biome proof does not match this fixture")
     registry_proofs = [(target, profile[key]) for target, key in
                        (("Forge 45.4.0", "forge45_registry_proof"),
-                        ("Forge 47.4.10", "forge47_registry_proof")) if key in profile]
+                        ("Forge 47.4.10", "forge47_registry_proof"),
+                        ("NeoForge 47.1.106", "neo47_registry_proof")) if key in profile]
     if len(registry_proofs) != 1:
         raise ValueError("Exactly one native registry notice proof is required")
     for target, registry_proof in registry_proofs:
@@ -59,6 +60,21 @@ def profile_for(directory):
                 or receipt["native_renamed_cells"] != proof["renamed_cells"]
                 or not 0 <= receipt["noticed_biome_cells"] <= proof["checked_cells"]):
             raise ValueError("The " + target + " registry notice proof does not match the saved fixture")
+        if target == "NeoForge 47.1.106":
+            lock = dict(line.split("=", 1) for line in
+                        (root / "gradle/content-dependencies.properties").read_text(encoding="utf-8").splitlines()
+                        if line and not line.startswith("#"))
+            pinned_bop = lock["bop.sha256"]
+            runtime_inputs = json.loads((Path(directory) / "artifact-inputs.json").read_text(encoding="utf-8"))
+            added = receipt["added_live_bop_biomes"]
+            biome_mapping = profile["mappings"]["minecraft:worldgen/biome"]
+            if (receipt["target_bop_jar_sha256"] != pinned_bop
+                    or not any(row["sha256"] == pinned_bop for row in runtime_inputs)
+                    or not added or any(name not in biome_mapping or not name.startswith("biomesoplenty:")
+                                        for name in added)
+                    or set(added).intersection(data["source_names"].values())
+                    or receipt["added_biome_saved_cells"] != 0):
+                raise ValueError("The NeoForge biome notice is not bound to the saved fixture and BOP jar")
     if source.get("mode") == "client":
         control = profile.get("client")
         if control is None:
