@@ -97,7 +97,7 @@ class PublicationContractTest {
         int commands = 0;
 
         for (String line : build.split("\\n")) {
-            if (line.contains("./gradlew") && line.contains("check build javadoc")) {
+            if (line.trim().startsWith("./gradlew ")) {
                 assertTrue(line.contains("-PgrassSlabsDirectory=dependencies/grass"), line);
                 assertTrue(line.contains("-PbuildingPiecesDirectory=dependencies/pieces"), line);
                 assertTrue(line.contains("-PterrainDirectory=dependencies/terrain"), line);
@@ -106,7 +106,7 @@ class PublicationContractTest {
             }
         }
 
-        assertEquals(2, commands, "Both loader paths must build the pinned content");
+        assertEquals(3, commands, "Clean and both loader builds must use the pinned content");
     }
 
     private String text(String path) throws Exception {
