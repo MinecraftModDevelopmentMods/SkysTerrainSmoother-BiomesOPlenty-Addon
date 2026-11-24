@@ -38,7 +38,7 @@ this add-on together with:
 - **Biomes O' Plenty 5.0.0.2236**.
 - **Sky's Terrain Smoother 0.1.2.110021**.
 - **Sky's Grass Slabs 1.2.0.110021**.
-- **Sky's Building Pieces 0.3.9.110021**.
+- **Sky's Building Pieces 0.3.10.110021**.
 - **[Sky's Building Pieces BOP add-on](https://github.com/MinecraftModDevelopmentMods/SkysBuildingPieces-BiomesOPlenty-Addon) 0.1.3.110021**.
 
 All six main jars are needed on both the client and server.
