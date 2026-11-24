@@ -18,6 +18,7 @@ out
 build
 .gradle
 .gradle-verify-cache
+/gradle/local-content-dependencies.properties
 
 # other
 eclipse

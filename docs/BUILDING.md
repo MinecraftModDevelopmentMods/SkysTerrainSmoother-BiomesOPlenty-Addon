@@ -13,6 +13,21 @@ By default the checkouts sit in sibling version folders. To use a different
 layout, pass `-PgrassSlabsDirectory`, `-PbuildingPiecesDirectory`,
 `-PbuildingPiecesBopDirectory` and `-PterrainDirectory` with their paths.
 
+To test an unreleased Building Pieces jar, create
+`gradle/local-content-dependencies.properties` with these three entries:
+
+```properties
+pieces.directory=../../SkysBuildingPieces1211NEO/SkysBuildingPieces
+pieces.version=<candidate version>
+pieces.sha256=<SHA-256 of the candidate main jar>
+```
+
+This file is ignored by Git and applies to Gradle sync and the normal client
+and Mineralogy launches, without extra launch arguments. The build checks the
+selected source version and jar checksum. Conflicting saved launch arguments
+stop with an explanation. CI rejects the local file; remove it to return to the
+published dependency pins before preparing a release.
+
 ```text
 gradlew check build javadoc verifyReleaseArtifacts writeReleaseChecksums
 gradlew verifyEclipseProductionClasspath

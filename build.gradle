@@ -117,9 +117,44 @@ def normalizeArchiveLineEndings = { details ->
 
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 def grassSlabsDirectory = file(providers.gradleProperty('grassSlabsDirectory').getOrElse('../..' + '/SkysGrassSlabs1211NEO/SkysGrassSlabs'))
-def buildingPiecesDirectory = file(providers.gradleProperty('buildingPiecesDirectory').getOrElse('../..' + '/SkysBuildingPieces1211NEO/SkysBuildingPieces'))
 def contentLock=new Properties()
 file('gradle/content-dependencies.properties').withInputStream { contentLock.load(it) }
+
+// Saved Eclipse launches can override project arguments. Keep an explicit local
+// candidate in the project so every Gradle entry point makes the same choice.
+File localContentFile = file('gradle/local-content-dependencies.properties')
+Properties localContent = new Properties()
+if (localContentFile.isFile()) {
+    if (System.getenv('CI') != null) {
+        throw new GradleException('Local content settings are not allowed in CI; remove ' +
+                'gradle/local-content-dependencies.properties.')
+    }
+    localContentFile.withReader('UTF-8') { localContent.load(it) }
+    Set<String> requiredKeys = ['pieces.directory', 'pieces.version', 'pieces.sha256'] as Set
+    if (localContent.stringPropertyNames() != requiredKeys ||
+            requiredKeys.any { localContent.getProperty(it).trim().isEmpty() }) {
+        throw new GradleException('Local content settings need exactly pieces.directory, ' +
+                'pieces.version and pieces.sha256.')
+    }
+    if (!(localContent.getProperty('pieces.version') ==~ /[A-Za-z0-9][A-Za-z0-9._+\-]*/) ||
+            !(localContent.getProperty('pieces.sha256') ==~ /(?i)[0-9a-f]{64}/)) {
+        throw new GradleException('Local content settings need a valid version and SHA-256 checksum.')
+    }
+    Map<String, String> propertyKeys = [buildingPiecesDirectory: 'pieces.directory',
+                                        buildingPiecesCoreVersion: 'pieces.version']
+    propertyKeys.each { argument, key ->
+        def requested = providers.gradleProperty(argument)
+        if (requested.isPresent()) {
+            boolean matches = key == 'pieces.directory'
+                    ? file(requested.get()).canonicalFile == file(localContent.getProperty(key)).canonicalFile
+                    : requested.get() == localContent.getProperty(key)
+            if (!matches) {
+                throw new GradleException("Local content settings disagree with -P${argument}; " +
+                        'update or remove the saved launch argument.')
+            }
+        }
+    }
+}
 
 def localGrassVersion = providers.gradleProperty('grassSlabsVersion')
 if (localGrassVersion.isPresent() &&
@@ -132,14 +167,23 @@ def grassVersion = localGrassVersion.getOrElse(contentLock.getProperty('grass.ve
 def grassSlabsDevelopmentJar = new File(grassSlabsDirectory,
         "build/libs/SkysGrassSlabs-${grassVersion}.jar")
 
+def localPiecesDirectory = providers.gradleProperty('buildingPiecesDirectory')
+        .orElse(providers.provider { localContent.getProperty('pieces.directory') })
+def buildingPiecesDirectory = file(localPiecesDirectory
+        .getOrElse('../../SkysBuildingPieces1211NEO/SkysBuildingPieces'))
 def localPiecesVersion = providers.gradleProperty('buildingPiecesCoreVersion')
+        .orElse(providers.provider { localContent.getProperty('pieces.version') })
 if (localPiecesVersion.isPresent() &&
-        (System.getenv('CI') != null || !providers.gradleProperty('buildingPiecesDirectory').isPresent())) {
+        (System.getenv('CI') != null || !localPiecesDirectory.isPresent())) {
     throw new GradleException('A local core-version override needs an explicit core directory and is not allowed in CI.')
 }
 def piecesVersion = localPiecesVersion.getOrElse(contentLock.getProperty('pieces.version'))
 def buildingPiecesDevelopmentJar = new File(buildingPiecesDirectory,
         "build/libs/SkysBuildingPieces-${piecesVersion}.jar")
+
+if (localContentFile.isFile()) {
+    logger.lifecycle("Local Building Pieces: ${piecesVersion} (checksum-locked development candidate)")
+}
 
 def terrainDirectory = file(providers.gradleProperty('terrainDirectory')
         .getOrElse('../../SkysTerrainSmoother1211NEO/SkysTerrainSmoother'))
@@ -199,6 +243,15 @@ def verifyContentDependencies = tasks.register('verifyContentDependencies') {
             if (metadata.mod_version != selected.version) {
                 throw new GradleException("Content dependency version does not match its lock: ${name}" +
                         " (expected ${selected.version}, found ${metadata.mod_version}).")
+            }
+            if (name == 'pieces' && localContentFile.isFile()) {
+                // Local source may contain the fix being tested, but its jar must
+                // still be the exact candidate chosen for this play session.
+                if (!buildingPiecesDevelopmentJar.isFile() ||
+                        !sha256Of(buildingPiecesDevelopmentJar).equalsIgnoreCase(localContent.getProperty('pieces.sha256'))) {
+                    throw new GradleException('Local Building Pieces artifact does not match its checksum: ' +
+                            buildingPiecesDevelopmentJar.name)
+                }
             }
             if (!selected.override) {
                 Process revision = new ProcessBuilder('git', '-C', directory.path, 'rev-parse', 'HEAD').start()
@@ -550,7 +603,7 @@ def configureEclipseBuildship = tasks.register('configureEclipseBuildship') {
         arguments.add('-PbuildingPiecesDirectory=' + relativePath(buildingPiecesDirectory))
         arguments.add('-PterrainDirectory=' + relativePath(terrainDirectory))
         arguments.add('-PbuildingPiecesBopDirectory=' + relativePath(bopPiecesDirectory))
-        if (localPiecesVersion.isPresent()) {
+        if (localPiecesVersion.isPresent() && !localContentFile.isFile()) {
             arguments.add('-PbuildingPiecesCoreVersion=' + piecesVersion)
         }
         preferences.setProperty('arguments', arguments.join(' '))
@@ -661,7 +714,9 @@ def verifyEclipseConfiguration = tasks.register('verifyEclipseConfiguration') {
             throw new GradleException('Eclipse Buildship lost the selected content checkouts')
         }
         List<String> overrides = arguments.findAll { it.startsWith('-PbuildingPiecesCoreVersion=') }
-        if (overrides != (localPiecesVersion.isPresent() ? ['-PbuildingPiecesCoreVersion=' + piecesVersion] : [])) {
+        List<String> expectedOverrides = localPiecesVersion.isPresent() && !localContentFile.isFile()
+                ? ['-PbuildingPiecesCoreVersion=' + piecesVersion] : []
+        if (overrides != expectedOverrides) {
             throw new GradleException('Eclipse Buildship retained an incorrect Building Pieces version override')
         }
         Set<File> runLaunches = fileTree(file('.eclipse/configurations')) {
