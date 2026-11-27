@@ -11,8 +11,8 @@ class PublicationContractTest {
     void hostedBuildsPinTheDeclaredProductionToolchainBeforeStartingGradle() throws Exception {
         java.util.Properties metadata = new java.util.Properties();
         metadata.load(new java.io.StringReader(text("gradle.properties")));
-        assertEquals("17.0.1+12", metadata.getProperty("java_toolchain_version"));
-        assertEquals("17.0.1+12", metadata.getProperty("gradle_java_toolchain_version"));
+        assertEquals("21.0.7+6", metadata.getProperty("java_toolchain_version"));
+        assertEquals("21.0.7+6", metadata.getProperty("gradle_java_toolchain_version"));
         for (String name : new String[] { "ci.yml", "codeql-analysis.yml" }) {
             String workflow = text(".github/workflows/" + name);
             int install = workflow.indexOf("- name: Install target Java toolchain");
@@ -20,10 +20,10 @@ class PublicationContractTest {
             int gradle = workflow.indexOf("- name: Install Java for Gradle", pin);
             assertTrue(install >= 0 && install < pin && pin < gradle, name);
             assertTrue(workflow.substring(install, pin).contains("steps.target.outputs.java_setup_version"));
-            assertTrue(workflow.substring(pin, gradle).contains("STS_JAVA17_HOME=$JAVA_HOME"));
+            assertTrue(workflow.substring(pin, gradle).contains("STS_JAVA21_HOME=$JAVA_HOME"));
         }
         String ci = text(".github/workflows/ci.yml");
-        assertTrue(ci.contains("java-version: '17.0.1+12'"));
+        assertTrue(ci.contains("java-version: '21.0.7+6.0.LTS'"));
         assertTrue(ci.contains("Bootstrap Forge from an empty cache"));
         assertTrue(ci.contains("-PterrainDirectory=dependencies/terrain"));
         assertTrue(ci.contains("-PbuildingPiecesBopDirectory=dependencies/bopPieces"));
@@ -86,6 +86,26 @@ class PublicationContractTest {
         assertTrue(ciWorkflow.contains("if-no-files-found: error"));
         assertTrue(ciWorkflow.contains("integrationTest"));
         assertTrue(ciWorkflow.contains("--offline"));
+    }
+
+    @Test
+    void everyReleaseBuildUsesTheCheckedOutContentDirectories() throws Exception {
+        String workflow = text(".github/workflows/deploy-release.yml");
+        String build = workflow.split("      - name: Build, test, and audit once", 2)[1]
+                .split("\\n      - name:", 2)[0];
+        int commands = 0;
+
+        for (String line : build.split("\\n")) {
+            if (line.trim().startsWith("./gradlew ")) {
+                assertTrue(line.contains("-PgrassSlabsDirectory=dependencies/grass"), line);
+                assertTrue(line.contains("-PbuildingPiecesDirectory=dependencies/pieces"), line);
+                assertTrue(line.contains("-PterrainDirectory=dependencies/terrain"), line);
+                assertTrue(line.contains("-PbuildingPiecesBopDirectory=dependencies/bopPieces"), line);
+                commands++;
+            }
+        }
+
+        assertEquals(3, commands, "Clean and both loader builds must use the pinned content");
     }
 
     private String text(String path) throws Exception {

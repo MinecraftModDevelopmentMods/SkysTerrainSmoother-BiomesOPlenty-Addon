@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "skys/result/biomesoplenty/white_sand",
+  "pattern": [
+    "SS"
+  ],
+  "key": {
+    "S": {
+      "item": "skysterrainsmootherbop:white_sand_slab"
+    }
+  },
+  "result": {
+    "id": "biomesoplenty:white_sand"
+  }
+}

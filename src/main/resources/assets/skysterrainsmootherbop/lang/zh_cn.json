@@ -1,5 +1,9 @@
 {
   "pieces.skysterrainsmootherbop.slab": "%s台阶",
   "pieces.skysterrainsmootherbop.step": "%s四分之一方块",
-  "pieces.skysterrainsmootherbop.corner": "%s角块"
+  "pieces.skysterrainsmootherbop.corner": "%s角块",
+  "block.skysterrainsmootherbop.white_sand_slab": "白沙台阶",
+  "block.skysterrainsmootherbop.orange_sand_slab": "橙沙台阶",
+  "block.skysterrainsmootherbop.black_sand_slab": "黑沙台阶",
+  "block.skysterrainsmootherbop.mossy_black_sand_slab": "Mossy Black Sand台阶"
 }

@@ -32,6 +32,7 @@ public final class ClientProbe extends ProbeProxy {
                     && minecraft.getConnection() != null
                     && !minecraft.getConnection().getRecipeManager().getRecipes().isEmpty()) {
                 if (++settledWorldTicks < 20) return;
+                PowderSnowClientProbe.run(minecraft);
                 RecipePreviewModels.check(minecraft);
                 checkBiomeTints(minecraft);
                 zone.moddev.mc.skysterrainsmoother.SkysTerrainSmoother.logger.info("TERRAIN_SMOOTHER_CLIENT_WORLD_PASS");
@@ -49,8 +50,8 @@ public final class ClientProbe extends ProbeProxy {
             if (!resourcesChecked) {
                 MineralogyProbe.run();
                 FineGrassModelProbe.run(minecraft);
-                checkModel(minecraft, RuntimeProbe.probeOre.defaultBlockState());
                 checkRecoveredSoilModels(minecraft);
+                checkModel(minecraft, RuntimeProbe.probeOre.defaultBlockState());
 
                 for (net.minecraft.world.level.block.Block block : new net.minecraft.world.level.block.Block[] {
                         zone.moddev.mc.skysterrainsmoother.content.SandContent.slab,
@@ -59,7 +60,7 @@ public final class ClientProbe extends ProbeProxy {
                         checkModel(minecraft, state);
                     }
                 }
-                for (net.minecraft.world.level.block.state.BlockState state : zone.moddev.mc.skysgrassslabs.init.ModBlocks.GRASS_SLAB
+                for (net.minecraft.world.level.block.state.BlockState state : zone.moddev.mc.skysgrassslabs.init.ModBlocks.GRASS_SLAB.get()
                         .getStateDefinition().getPossibleStates()) {
                     checkModel(minecraft, state);
                 }
@@ -86,8 +87,8 @@ public final class ClientProbe extends ProbeProxy {
         if (System.getProperty("skysterrainsmoother.integrationPhase", "").startsWith("client-")) {
             integrated = true;
             if (new File(minecraft.gameDirectory, "saves/terrain-smoother-world/level.dat").isFile()) {
-                minecraft.createWorldOpenFlows().loadLevel(new net.minecraft.client.gui.screens.TitleScreen(),
-                        "terrain-smoother-world");
+                minecraft.createWorldOpenFlows().openWorld("terrain-smoother-world",
+                        () -> minecraft.setScreen(new net.minecraft.client.gui.screens.TitleScreen()));
             } else {
                 net.minecraft.world.level.LevelSettings settings = new net.minecraft.world.level.LevelSettings(
                         "Terrain Smoother Test", net.minecraft.world.level.GameType.CREATIVE, false,
@@ -95,7 +96,7 @@ public final class ClientProbe extends ProbeProxy {
                         net.minecraft.world.level.WorldDataConfiguration.DEFAULT);
                 minecraft.createWorldOpenFlows().createFreshLevel("terrain-smoother-world", settings,
                         new net.minecraft.world.level.levelgen.WorldOptions(4815162342L, false, false),
-                        net.minecraft.world.level.levelgen.presets.WorldPresets::createNormalWorldDimensions);
+                        net.minecraft.world.level.levelgen.presets.WorldPresets::createNormalWorldDimensions, minecraft.screen);
             }
         } else {
             minecraft.stop();
@@ -151,7 +152,7 @@ public final class ClientProbe extends ProbeProxy {
         }
         RuntimeProbe.require(count > 0, "Grass pieces reached the colour checks");
         RuntimeProbe.require(client.getBlockColors().getColor(
-                        zone.moddev.mc.skysgrassslabs.init.ModBlocks.GRASS_SLAB.defaultBlockState(), client.level, sample, 0)
+                        zone.moddev.mc.skysgrassslabs.init.ModBlocks.GRASS_SLAB.get().defaultBlockState(), client.level, sample, 0)
                         == expected, "Grass slabs retain the actual client biome tint");
         zone.moddev.mc.skysterrainsmoother.SkysTerrainSmoother.logger.info("TERRAIN_SMOOTHER_CLIENT_TINT_PASS palettes=" + count);
     }
@@ -160,14 +161,14 @@ public final class ClientProbe extends ProbeProxy {
         int states = 0;
         for (String name : zone.moddev.mc.skysterrainsmootherbop.LegacySoils.PALETTES.keySet()) {
             net.minecraft.world.level.block.Block block = net.minecraftforge.registries.ForgeRegistries.BLOCKS
-                    .getValue(new net.minecraft.resources.ResourceLocation(name));
+                    .getValue(net.minecraft.resources.ResourceLocation.parse(name));
             RuntimeProbe.require(block != null, "The saved soil palette remains registered: " + name);
             for (net.minecraft.world.level.block.state.BlockState state : block.getStateDefinition().getPossibleStates()) {
                 checkModel(client, state);
                 states++;
             }
         }
-        net.minecraft.world.item.Item coarse = zone.moddev.mc.skysterrainsmootherbop.CoarseDirtSlab.BLOCK.asItem();
+        net.minecraft.world.item.Item coarse = zone.moddev.mc.skysterrainsmoother.content.CoarseDirtSlab.registeredBlock().asItem();
         net.minecraft.client.resources.model.BakedModel itemModel = client.getItemRenderer().getItemModelShaper()
                 .getItemModel(new net.minecraft.world.item.ItemStack(coarse));
         RuntimeProbe.require(itemModel != client.getModelManager().getMissingModel(),

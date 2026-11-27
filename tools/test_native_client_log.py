@@ -1,4 +1,4 @@
-"""Negative controls for the exact Forge 40 native log classification."""
+"""Negative controls for the exact Forge 47 native log classification."""
 
 import unittest
 import json
@@ -124,7 +124,7 @@ class NativeClientFilesTest(unittest.TestCase):
         (self.directory / "logs").mkdir()
         (self.directory / "logs/latest.log").write_text("\n".join((
             START, LOGIN,
-            "FORGE40_CLIENT_CONTROL_PASS joined=true sky_mods=false")), encoding="utf-8")
+            "FORGE47_CLIENT_CONTROL_PASS joined=true sky_mods=false")), encoding="utf-8")
 
     def test_native_defaults_with_different_order_and_comments(self):
         client = self.directory / "config/forge-client.toml"
@@ -164,8 +164,8 @@ class NativeRegistryProfileTest(unittest.TestCase):
         from native_registry_notices import profile_for
 
         root = Path(__file__).resolve().parent.parent
-        policy = json.loads((root / "tools/forge-45-log-profiles.json").read_text(encoding="utf-8"))
-        profile = policy["profiles"]["BA2421F2A9D2E746401DF3FDA2AAB524E8E8A2537F6332815C9AA913BD72E161"]
+        policy = json.loads((root / "tools/forge-52-registry-notices.json").read_text(encoding="utf-8"))
+        profile = policy["AC610FA3D1420FE7DBE5BA98C6870B56A9BB737AE1919998F50E394345AFD275"]
         with tempfile.TemporaryDirectory() as temporary:
             directory = Path(temporary)
             manifest = directory / "source-inputs.json"

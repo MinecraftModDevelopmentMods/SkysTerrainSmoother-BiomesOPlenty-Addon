@@ -38,28 +38,43 @@ class NativeContractTest {
     }
 
     @Test
-    void playableCoarseDirtSlabsUseTheNativeShovelTag() throws Exception {
-        JsonArray values = read(RESOURCES.resolve("data/minecraft/tags/blocks/mineable/shovel.json"))
+    void playableSandSlabsUseTheNativeShovelTag() throws Exception {
+        JsonArray values = read(RESOURCES.resolve("data/minecraft/tags/block/mineable/shovel.json"))
                 .getAsJsonObject().getAsJsonArray("values");
-        assertEquals(1, values.size());
-        assertEquals("skysterrainsmootherbop:dirt_slab_00", values.get(0).getAsString());
+        assertEquals(4, values.size());
+        for (String colour : new String[] { "white", "orange", "black", "mossy_black" }) {
+            assertTrue(values.contains(new com.google.gson.JsonPrimitive("skysterrainsmootherbop:" + colour + "_sand_slab")));
+        }
     }
 
     @Test
-    void everyOriginalRecipeIdentityHasOneNativeRecipeAndUnlock() throws Exception {
+    void eachSandHasItsOwnCutAndRecombineUnlocks() throws Exception {
         JsonArray manifest = read(Paths.get("src/main/recipe-book/recipes.json")).getAsJsonArray();
-        assertEquals(84, manifest.size());
+        assertEquals(8, manifest.size());
         Set<String> ids = new HashSet<>();
         for (JsonElement row : manifest) {
             String id = row.getAsJsonObject().get("recipe").getAsString();
             assertTrue(ids.add(id));
-            Path path = RESOURCES.resolve("data/skysterrainsmootherbop/recipes/"
+            Path path = RESOURCES.resolve("data/skysterrainsmootherbop/recipe/"
                     + id.substring(id.indexOf(':') + 1) + ".json");
             JsonObject recipe = read(path).getAsJsonObject();
             assertEquals("minecraft:crafting_shaped", recipe.get("type").getAsString());
-            assertFalse(recipe.toString().contains("biomesoplenty:"), "Removed native items are not recipe inputs");
+            assertTrue(recipe.toString().contains("biomesoplenty:"), "Use the exact BoP sand");
             assertFalse(recipe.toString().contains("\"data\""), "Recipe ingredients use flat item identities");
-            assertTrue(recipe.getAsJsonObject("result").get("count").getAsInt() > 0);
+            assertTrue(recipe.getAsJsonObject("result").get("id").getAsString().endsWith("_sand_slab")
+                    || recipe.getAsJsonObject("result").get("id").getAsString().endsWith("_sand"));
+        }
+        for (String colour : new String[] { "white", "orange", "black", "mossy_black" }) {
+            assertTrue(ids.contains("skysterrainsmootherbop:" + colour + "_sand_slab"));
+            assertTrue(ids.contains("skysterrainsmootherbop:" + colour + "_sand_from_slabs"));
+        }
+        Path recipes = RESOURCES.resolve("data/skysterrainsmootherbop/recipe");
+        try (Stream<Path> files = Files.walk(recipes)) {
+            Set<String> actual = new HashSet<>();
+            files.filter(path -> path.toString().endsWith(".json")).forEach(path ->
+                    actual.add("skysterrainsmootherbop:"
+                            + recipes.relativize(path).toString().replace('\\', '/').replace(".json", "")));
+            assertEquals(ids, actual, "Removed soil aliases must not return as extra recipe files");
         }
     }
 
@@ -81,9 +96,10 @@ class NativeContractTest {
             assertTrue(Files.isRegularFile(assets.resolve("models/item/" + name + ".json")));
         }
         JsonObject pack = read(RESOURCES.resolve("pack.mcmeta")).getAsJsonObject().getAsJsonObject("pack");
-        assertEquals(15, pack.get("pack_format").getAsInt());
-        assertEquals(15, pack.get("forge:resource_pack_format").getAsInt());
-        assertEquals(15, pack.get("forge:data_pack_format").getAsInt());
+        assertEquals(48, pack.get("pack_format").getAsInt());
+        JsonObject formats = pack.getAsJsonObject("supported_formats");
+        assertEquals(34, formats.get("min_inclusive").getAsInt());
+        assertEquals(48, formats.get("max_inclusive").getAsInt());
     }
 
     @Test
@@ -119,16 +135,16 @@ class NativeContractTest {
                 "skysbuildingpiecesbop", "skysterrainsmoother", "biomesoplenty" }) {
             assertTrue(metadata.contains("modId=\"" + mod + "\""));
         }
-        assertTrue(metadata.contains("[19.0.0.96]"));
+        assertTrue(metadata.contains("[21.1.0.14]"));
         assertFalse(Files.exists(RESOURCES.resolve("META-INF/coremods.json")));
         assertFalse(Files.exists(RESOURCES.resolve("mcmod.info")));
     }
 
     @Test
-    void developmentLaunchesKeepAllMappedDependenciesAndTheirAccessRules() throws Exception {
+    void developmentLaunchesUseTheSamePinnedBopJarsAsPackagedGames() throws Exception {
         String build = text(Paths.get("build.gradle"));
-        assertTrue(build.contains("systemProperty 'mixin.env.disableRefMap', 'true'"));
-        assertTrue(build.contains("accessTransformers.from(mappedAccessRules)"));
+        assertFalse(build.contains("mixin.env.disableRefMap"));
+        assertFalse(build.contains("mappedAccessRules"));
         assertTrue(build.contains("bopPiecesDevelopmentJar, bopDevelopmentJar, terraBlenderDevelopmentJar, glitchCoreDevelopmentJar"));
         String launcher = text(Paths.get("tools/run_packaged_checks.py"));
         assertFalse(launcher.contains("mixin.env.disableRefMap"), "Public jars retain their own refmaps");
@@ -136,7 +152,7 @@ class NativeContractTest {
         lock.load(new java.io.StringReader(text(Paths.get("gradle/content-dependencies.properties"))));
         for (String name : new String[] { "bop", "terrablender", "glitchcore" }) {
             assertTrue(lock.getProperty(name + ".sha256").matches("[0-9A-F]{64}"));
-            assertTrue(lock.getProperty(name + ".development.sha256").matches("[0-9A-F]{64}"));
+            assertEquals(lock.getProperty(name + ".sha256"), lock.getProperty(name + ".development.sha256"));
         }
     }
 

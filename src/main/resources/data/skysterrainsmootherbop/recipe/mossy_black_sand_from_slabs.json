@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "skys/result/biomesoplenty/mossy_black_sand",
+  "pattern": [
+    "SS"
+  ],
+  "key": {
+    "S": {
+      "item": "skysterrainsmootherbop:mossy_black_sand_slab"
+    }
+  },
+  "result": {
+    "id": "biomesoplenty:mossy_black_sand"
+  }
+}

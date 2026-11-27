@@ -4,6 +4,10 @@ Current BOP versions use vanilla grass and dirt instead of its old soil families
 surfaces use the normal Terrain Smoother rules at all three levels, in BOP
 biomes too. Existing terrain is left alone.
 
+Origin grass and the three natural sandstone colours have matching pieces at
+all three levels. White, orange, black and mossy black sand use falling slabs. Craft six
+slabs from three blocks of the same sand, or combine two slabs into a full block.
+
 Saved BOP slabs, steps and corners are converted to the replacements listed
 in the README. They keep their orientation, and then follow the owning content
 mod's placement, joining, snow, grass, shovel and drop behaviour. Decorative

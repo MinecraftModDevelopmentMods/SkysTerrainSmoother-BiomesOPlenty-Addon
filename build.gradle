@@ -10,7 +10,6 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id 'net.minecraftforge.renamer' version '1.1.5'
     id 'net.minecraftforge.gradle' version '7.0.34'
 }
 
@@ -36,15 +35,15 @@ def mavenizerLicense = mavenizerToolsDirectory.file('LICENSE-MAVENIZER.txt')
 def mavenizerReadme = mavenizerToolsDirectory.file('README.md')
 def mavenizerFixtureChecksums = [
         (mavenizerCompatibilityJar.asFile):
-                '416DCA4797BC55826F0DDCF03FDC405F1990FC15C2133FA27A1F143BF7976177',
+                '019032A4A26ECB473D403EF017054D5892CE59A9904E8831B452287CD756397E',
         (mavenizerRuleManifest.asFile):
-                '8945511DFF53B8F1A91EE44B14AF9EC7DB34C373617EA37A608C6958BFEEB22E',
+                '7F669F225520D0382E76991A8A3E5E4020840F0FA975F7DCB86681D7E7C3F766',
         (mavenizerSourcePatch.asFile):
-                'D856190DEF5574716C5E4F4379912C451B1F5952B0B111576651A98EECF58544',
+                '84FEA234619CC2D1931E609B22B6E5D96F59366F7D6C2783C3BEE0F726F3E876',
         (mavenizerLicense.asFile):
                 '20C17D8B8C48A600800DFD14F95D5CB9FF47066A9641DDEAB48DC54AEC96E331',
         (mavenizerReadme.asFile):
-                '177C1DDEDEF9704B9FDC8EA24B8DCDF4DDCC826DD0E253E7872A00DB2EA34518'
+                'C052261D6B7B4E238D32A5E7F4CBA4D44D48311CE0FA1E673D26806EDCD41E70'
 ]
 
 // ForgeGradle invokes Mavenizer while configuring the project. Verify the
@@ -89,34 +88,34 @@ if (versionParts[3] != expectedTargetVersion) {
 ext.functional_version = versionParts[0..2].join('.')
 ext.display_version = project.mod_version
 ext.release_tag = project.mod_version
-def pinnedJava17 = providers.environmentVariable('STS_JAVA17_HOME')
+def pinnedJava21 = providers.environmentVariable('STS_JAVA21_HOME')
 // Gradle 9.6.1's ordinary language-level selector prefers the newest cached
-// Java 17. This opt-in specific installation keeps local/CI qualification exact.
-def exactJava17Spec = pinnedJava17.isPresent() ?
+// Java 21. This opt-in specific installation keeps local/CI qualification exact.
+def exactJava21Spec = pinnedJava21.isPresent() ?
         org.gradle.jvm.toolchain.internal.SpecificInstallationToolchainSpec.fromJavaHome(
-                project.services.get(org.gradle.api.internal.provider.PropertyFactory), file(pinnedJava17.get())) : null
+                project.services.get(org.gradle.api.internal.provider.PropertyFactory), file(pinnedJava21.get())) : null
 
 java {
-    toolchain.languageVersion = JavaLanguageVersion.of(17)
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
     withSourcesJar()
     withJavadocJar()
 }
 
 tasks.withType(JavaCompile).configureEach {
     javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(21)
     }
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
     options.encoding = 'UTF-8'
     options.compilerArgs.addAll(['-Xmaxerrs', '1000'])
-    if (pinnedJava17.isPresent()) {
-        javaCompiler = javaToolchains.compilerFor(exactJava17Spec)
+    if (pinnedJava21.isPresent()) {
+        javaCompiler = javaToolchains.compilerFor(exactJava21Spec)
     }
 }
 
-def grassSlabsDirectory = file(providers.gradleProperty('grassSlabsDirectory').getOrElse('../..' + '/SkysGrassSlabs1201/SkysGrassSlabs'))
-def buildingPiecesDirectory = file(providers.gradleProperty('buildingPiecesDirectory').getOrElse('../..' + '/SkysBuildingPieces1201/SkysBuildingPieces'))
+def grassSlabsDirectory = file(providers.gradleProperty('grassSlabsDirectory').getOrElse('../..' + '/SkysGrassSlabs1211/SkysGrassSlabs'))
+def buildingPiecesDirectory = file(providers.gradleProperty('buildingPiecesDirectory').getOrElse('../..' + '/SkysBuildingPieces1211/SkysBuildingPieces'))
 def contentLock=new Properties()
 file('gradle/content-dependencies.properties').withInputStream { contentLock.load(it) }
 
@@ -128,8 +127,14 @@ if (localGrassVersion.isPresent() &&
 def grassVersion = localGrassVersion.getOrElse(contentLock.getProperty('grass.version'))
 
 
-def grassSlabsDevelopmentJar = new File(grassSlabsDirectory,
-        "build/libs-dev/SkysGrassSlabs-${grassVersion}-deobf.jar")
+def pinnedContentArtifact = { File directory, String relative, boolean override ->
+    File sibling = new File(directory, 'build/' + relative)
+    File retained = file('.gradle/qualification-dependencies/' + sibling.name)
+    !override && retained.isFile() ? retained : sibling
+}
+
+def grassSlabsDevelopmentJar = pinnedContentArtifact(grassSlabsDirectory,
+        "libs/SkysGrassSlabs-${grassVersion}.jar", localGrassVersion.isPresent())
 
 def localPiecesVersion = providers.gradleProperty('buildingPiecesCoreVersion')
 if (localPiecesVersion.isPresent() &&
@@ -137,49 +142,75 @@ if (localPiecesVersion.isPresent() &&
     throw new GradleException('A local core-version override needs an explicit core directory and is not allowed in CI.')
 }
 def piecesVersion = localPiecesVersion.getOrElse(contentLock.getProperty('pieces.version'))
-def buildingPiecesDevelopmentJar = new File(buildingPiecesDirectory,
-        "build/libs-dev/SkysBuildingPieces-${piecesVersion}-deobf.jar")
+def buildingPiecesDevelopmentJar = pinnedContentArtifact(buildingPiecesDirectory,
+        "libs/SkysBuildingPieces-${piecesVersion}.jar", localPiecesVersion.isPresent())
 
 def terrainDirectory = file(providers.gradleProperty('terrainDirectory')
-        .getOrElse('../../SkysTerrainSmoother1201/SkysTerrainSmoother'))
+        .getOrElse('../../SkysTerrainSmoother1211/SkysTerrainSmoother'))
 def bopPiecesDirectory = file(providers.gradleProperty('buildingPiecesBopDirectory')
-        .getOrElse('../../SkysBuildingPiecesBOP1201/SkysBuildingPieces-BiomesOPlenty-Addon'))
+        .getOrElse('../../SkysBuildingPiecesBOP1211/SkysBuildingPieces-BiomesOPlenty-Addon'))
 def terrainVersion = contentLock.getProperty('terrain.version')
 def bopPiecesVersion = contentLock.getProperty('bopPieces.version')
-def terrainDevelopmentJar = new File(terrainDirectory,
-        "build/libs-dev/SkysTerrainSmoother-${terrainVersion}-deobf.jar")
-def bopPiecesDevelopmentJar = new File(bopPiecesDirectory,
-        "build/libs-dev/SkysBuildingPieces-BiomesOPlenty-Addon-${bopPiecesVersion}-deobf.jar")
-def bopDevelopmentJar = new File(bopPiecesDirectory, 'build/development-dependencies/biomesoplenty-official.jar')
-def terraBlenderDevelopmentJar = new File(bopPiecesDirectory, 'build/development-dependencies/terrablender-official.jar')
-
-def glitchCoreDevelopmentJar = new File(bopPiecesDirectory, 'build/development-dependencies/glitchcore-official.jar')
-def biomeDevelopmentJars = [bop: bopDevelopmentJar, terrablender: terraBlenderDevelopmentJar,
-                           glitchcore: glitchCoreDevelopmentJar]
-
-def mappedAccessRules = biomeDevelopmentJars.collect { name, File jar ->
-    if (!jar.isFile()) {
-        throw new GradleException('Build the pinned Building Pieces BOP bopDevelopmentJar task first: ' + jar.name)
-    }
-    File rulesFile = file(".gradle/dependencies/${name}_at.cfg")
-    new ZipFile(jar).withCloseable { archive ->
-        def rules = archive.getEntry('META-INF/accesstransformer.cfg')
-        if (rules == null) throw new GradleException('Mapped access rules are missing: ' + jar.name)
-        rulesFile.parentFile.mkdirs()
-        archive.getInputStream(rules).withCloseable {
-            rulesFile.setText(it.getText('UTF-8'), 'UTF-8')
+def terrainDevelopmentJar = pinnedContentArtifact(terrainDirectory,
+        "libs/SkysTerrainSmoother-${terrainVersion}.jar", false)
+def bopPiecesDevelopmentJar = pinnedContentArtifact(bopPiecesDirectory,
+        "libs/SkysBuildingPieces-BiomesOPlenty-Addon-${bopPiecesVersion}.jar", false)
+// Use the checksum-locked official-name jars in both launch paths.
+repositories {
+    minecraft.mavenizer(it)
+    maven fg.forgeMaven
+    maven fg.minecraftLibsMaven
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = 'Sponge'
+                url = 'https://repo.spongepowered.org/repository/maven-public'
+            }
         }
+        filter { includeGroupAndSubgroups('org.spongepowered') }
     }
-    rulesFile
+    mavenCentral()
+    maven {
+        name = 'MinecraftLibraries'
+        url = 'https://libraries.minecraft.net/'
+    }
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = 'Modrinth'
+                url = 'https://api.modrinth.com/maven'
+            }
+        }
+        filter { includeGroup('maven.modrinth') }
+    }
 }
+def modrinthIds = [bop: 'HXF82T3G', terrablender: 'kkmrDlKT', glitchcore: 's3dmwKy5']
+def biomeJarProperties = [bop: 'biomesOPlentyMainJar', terrablender: 'terraBlenderMainJar',
+                          glitchcore: 'glitchCoreMainJar']
+def localBiomeJars = biomeJarProperties.findAll { name, property -> providers.gradleProperty(property).isPresent() }
+        .collectEntries { name, property -> [(name): file(providers.gradleProperty(property).get())] }
+def biomeDevelopmentJars = modrinthIds.collectEntries { name, projectId ->
+    if (localBiomeJars.containsKey(name)) return [(name): localBiomeJars[name]]
+    String version = contentLock.getProperty(name + '.modrinth.version')
+    File retained = file(".gradle/qualification-dependencies/${projectId}-${version}.jar")
+    if (retained.isFile()) return [(name): retained]
+    def dependency = dependencies.create("maven.modrinth:${projectId}:${version}") {
+        transitive = false
+    }
+    [(name): configurations.detachedConfiguration(dependency).singleFile]
+}
+def bopDevelopmentJar = biomeDevelopmentJars.bop
+def terraBlenderDevelopmentJar = biomeDevelopmentJars.terrablender
+def glitchCoreDevelopmentJar = biomeDevelopmentJars.glitchcore
 
 def verifyContentDependencies = tasks.register('verifyContentDependencies') {
     doLast {
         biomeDevelopmentJars.each { name, File jar ->
+            if (!jar.isFile()) throw new GradleException("Missing pinned dependency jar: " + jar)
             String checksum = MessageDigest.getInstance('SHA-256').digest(jar.bytes)
                     .encodeHex().toString().toUpperCase(Locale.ROOT)
             if (checksum != contentLock.getProperty(name + '.development.sha256')) {
-                throw new GradleException('Mapped dependency does not match its lock: ' + jar.name)
+                throw new GradleException('Native dependency does not match its lock: ' + jar.name)
             }
         }
         Map dependencies = [
@@ -214,9 +245,9 @@ def verifyContentDependencies = tasks.register('verifyContentDependencies') {
                 }
                 [
                         [path: "build/libs/${selected.artifact}-${selected.version}.jar", key: '.sha256'],
-                        [path: "build/libs-dev/${selected.artifact}-${selected.version}-deobf.jar", key: '.development.sha256']
+                        [path: "build/libs/${selected.artifact}-${selected.version}.jar", key: '.development.sha256']
                 ].each { artifact ->
-                    File jar = new File(directory, artifact.path)
+                    File jar = pinnedContentArtifact(directory, artifact.path.substring("build/".length()), selected.override)
                     if (!jar.isFile()) {
                         throw new GradleException('Build the pinned content dependency first: ' + jar)
                     }
@@ -247,14 +278,14 @@ tasks.named('compileTestJava', JavaCompile) {
 tasks.withType(Test).configureEach {
     useJUnitPlatform()
     workingDir = project.projectDir
-    if (pinnedJava17.isPresent()) javaLauncher = javaToolchains.launcherFor(exactJava17Spec)
+    if (pinnedJava21.isPresent()) javaLauncher = javaToolchains.launcherFor(exactJava21Spec)
 }
 tasks.withType(JavaExec).configureEach {
-    if (pinnedJava17.isPresent()) javaLauncher = javaToolchains.launcherFor(exactJava17Spec)
+    if (pinnedJava21.isPresent()) javaLauncher = javaToolchains.launcherFor(exactJava21Spec)
 }
 
 tasks.withType(Javadoc).configureEach {
-    if (pinnedJava17.isPresent()) javadocTool = javaToolchains.javadocToolFor(exactJava17Spec)
+    if (pinnedJava21.isPresent()) javadocTool = javaToolchains.javadocToolFor(exactJava21Spec)
     failOnError = true
     options.encoding = 'UTF-8'
     options.addStringOption('Xdoclint:none', '-quiet')
@@ -262,6 +293,7 @@ tasks.withType(Javadoc).configureEach {
 }
 
 tasks.withType(AbstractArchiveTask).configureEach {
+    filteringCharset = 'UTF-8'
     includeEmptyDirs = false
     preserveFileTimestamps = false
     reproducibleFileOrder = true
@@ -289,9 +321,9 @@ def prepareContentDevelopmentRun = tasks.register('prepareContentDevelopmentRun'
     dependsOn verifyContentDependencies
     doLast {
         File mods = new File(file(developmentRunDirectory), 'mods')
-        Set<String> expected = [grassSlabsDevelopmentJar.name, buildingPiecesDevelopmentJar.name] as Set<String>
+        Set<String> expected = [grassSlabsDevelopmentJar.name, buildingPiecesDevelopmentJar.name, terrainDevelopmentJar.name, bopPiecesDevelopmentJar.name] as Set<String>
         fileTree(mods).matching { include '*.jar' }.each { existing ->
-            if (existing.name ==~ /Skys(?:GrassSlabs|BuildingPieces)-[0-9].*\.jar/ && !expected.contains(existing.name)) {
+            if (existing.name ==~ /Skys(?:GrassSlabs|BuildingPieces|TerrainSmoother|BuildingPieces-BiomesOPlenty-Addon)-[0-9].*\.jar/ && !expected.contains(existing.name)) {
                 throw new GradleException('An older content jar is already in the development profile: ' + existing)
             }
             if (existing.name.contains('integration-test') || existing.name.contains('native-checks')) {
@@ -313,15 +345,12 @@ minecraft {
             workingDir.convention layout.projectDirectory.dir(developmentRunDirectory)
             systemProperty 'forge.logging.markers', 'REGISTRIES'
             systemProperty 'forge.logging.console.level', 'debug'
-            // The mapped development dependencies and their Mixin targets use official names.
-            systemProperty 'mixin.env.disableRefMap', 'true'
             mods { skysterrainsmootherbop { source sourceSets.main } }
             environment 'MOD_CLASSES',
-                    "${mod_id}%%${buildDir}/forge-run-mod-classes/main${File.pathSeparator}" +
-                            "${mod_id}%%${buildDir}/forge-run-mod-classes/main"
+                    "${mod_id}%%${buildDir}/forge-run-mod-classes/main"
             if (name.toLowerCase(Locale.ROOT).contains('client') &&
                     providers.gradleProperty('forgeClientAssets').isPresent()) {
-                environment 'assetIndex', '5'
+                environment 'assetIndex', '17'
                 environment 'assetDirectory', providers.gradleProperty('forgeClientAssets').get()
                 if (providers.gradleProperty('forgeClientNatives').isPresent()) {
                     environment 'nativesDirectory', providers.gradleProperty('forgeClientNatives').get()
@@ -341,22 +370,26 @@ def prepareForgeRunModClasses = tasks.register('prepareForgeRunModClasses', Sync
     into forgeRunModClassesDirectory
 }
 
-def configureForge40Run = { JavaExec runTask, String launchTarget ->
-    runTask.dependsOn prepareForgeRunModClasses
-    runTask.environment 'MOD_CLASSES', "${mod_id}%%${forgeRunModClassesDirectory}"
+def isolatedForgeClasspath = { FileCollection classpath, boolean includeMain ->
+    Set<File> splitOutputs = (sourceSets.main.output.files + [forgeRunModClassesDirectory])
+            .collect { it.canonicalFile } as Set<File>
+    FileCollection dependencies = classpath.filter { !splitOutputs.contains(it.canonicalFile) }
+    includeMain ? files(forgeRunModClassesDirectory, dependencies) : dependencies
 }
 tasks.withType(JavaExec).configureEach { JavaExec runTask ->
-    Map<String, String> targets = [runClient: 'fmluserdevclient', runServer: 'fmluserdevserver']
-    String launchTarget = targets.get(runTask.name)
-    if (launchTarget != null) {
-        configureForge40Run(runTask, launchTarget)
+    if (runTask.name in ['runClient', 'runServer']) {
+        runTask.dependsOn prepareForgeRunModClasses
+        runTask.doFirst {
+            runTask.classpath = isolatedForgeClasspath(runTask.classpath, true)
+            runTask.environment 'MOD_CLASSES', "${mod_id}%%${forgeRunModClassesDirectory}"
+        }
     }
 }
 
 // Clone ForgeGradle's generated launch at execution time so verification runs
-// use the same mappings and Java 17 runtime without exposing probe code to the
+// use the same mappings and Java 21 runtime without exposing probe code to the
 // ordinary client or server classpath.
-def configureFromForgeRun = { JavaExec process, String runTaskName ->
+def configureFromForgeRun = { JavaExec process, String runTaskName, boolean includeMain = true ->
     process.actions.clear()
     process.dependsOn {
         JavaExec run = tasks.getByName(runTaskName) as JavaExec
@@ -372,24 +405,31 @@ def configureFromForgeRun = { JavaExec process, String runTaskName ->
         List<String> originalJvmArgs = new ArrayList<>(run.jvmArgs)
         Map<String, Object> originalSystemProperties = new LinkedHashMap<>(run.systemProperties)
         Map<String, Object> originalEnvironment = new LinkedHashMap<>(run.environment)
+        Map<String, String> originalConfiguredEnvironment = includeMain ? null :
+                new LinkedHashMap<>(runOptions.environment.get())
         FileCollection originalClasspath = files(run.classpath.files)
         String originalMinHeap = run.minHeapSize
         String originalMaxHeap = run.maxHeapSize
         String originalMainClass = run.mainClass.orNull
         try {
-            run.maxHeapSize = '3g'
             runOptions.workingDir.set(process.workingDir)
             run.workingDir(process.workingDir)
             run.args(process.args)
             run.jvmArgs(process.jvmArgs)
             run.systemProperties(process.systemProperties)
+            if (!run.systemProperties.containsKey('log4j.configurationFile')) {
+                run.systemProperty('log4j.configurationFile', file('src/bootstrapTest/native-log4j2.xml').toURI())
+            }
             run.environment(process.environment)
-            run.environment('MOD_CLASSES',
-                    "${mod_id}%%${forgeRunModClassesDirectory}${File.pathSeparator}" +
-                            "${mod_id}%%${forgeRunModClassesDirectory}")
+            String modClasses = includeMain ? "${mod_id}%%${forgeRunModClassesDirectory}" : ''
+            // Ordinary runs already point at the merged production output.
+            if (!includeMain) runOptions.environment.put('MOD_CLASSES', modClasses)
+            run.setClasspath(isolatedForgeClasspath(originalClasspath, includeMain))
+            run.environment('MOD_CLASSES', modClasses)
             run.exec()
         } finally {
             runOptions.workingDir.set(originalConfiguredWorkingDir)
+            if (!includeMain) runOptions.environment.set(originalConfiguredEnvironment)
             run.workingDir(originalWorkingDir)
             run.setArgs(originalArgs)
             run.setJvmArgs(originalJvmArgs)
@@ -407,31 +447,12 @@ def configureFromForgeRun = { JavaExec process, String runTaskName ->
     }
 }
 
-repositories {
-    minecraft.mavenizer(it)
-    maven fg.forgeMaven
-    maven fg.minecraftLibsMaven
-    exclusiveContent {
-        forRepository {
-            maven {
-                name = 'Sponge'
-                url = 'https://repo.spongepowered.org/repository/maven-public'
-            }
-        }
-        filter { includeGroupAndSubgroups('org.spongepowered') }
-    }
-    mavenCentral()
-    maven {
-        name = 'MinecraftLibraries'
-        url = 'https://libraries.minecraft.net/'
-    }
-}
+
 
 dependencies {
     implementation files(grassSlabsDevelopmentJar, buildingPiecesDevelopmentJar, terrainDevelopmentJar, bopPiecesDevelopmentJar, bopDevelopmentJar, terraBlenderDevelopmentJar, glitchCoreDevelopmentJar)
     implementation minecraft.dependency(
             "net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}") {
-        accessTransformers.from(mappedAccessRules)
     }
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.10.2'
@@ -458,18 +479,10 @@ def integrationTestModJar = tasks.register('integrationTestModJar', Jar) {
     from('src/integrationTest/resources') { exclude 'log4j2.xml' }
 }
 
-def packagedIntegrationTestModJar = renamer.classes(integrationTestModJar) {
-    map.from minecraft.dependency.toSrgFile
-    libraries.from tasks.named('jar', Jar).flatMap { it.archiveFile }
-    libraries.from sourceSets.main.compileClasspath
-    output = layout.buildDirectory.file(
-            'integration-test-mod/skysterrainsmootherbop-integration-test-reobf.jar')
-}
-
 tasks.register('preparePackagedIntegrationProbe') {
     group = 'verification'
-    description = 'Builds the reobfuscated probe used only in disposable packaged runtimes.'
-    dependsOn packagedIntegrationTestModJar
+    description = 'Builds the native probe used only in disposable packaged runtimes.'
+    dependsOn integrationTestModJar
 }
 
 def integrationRunDirectory = layout.buildDirectory.dir('integration-test-run')
@@ -627,8 +640,6 @@ tasks.named('processResources', ProcessResources) {
 }
 
 tasks.named('jar', Jar) {
-    archiveClassifier = 'deobf'
-    destinationDirectory = layout.buildDirectory.dir('libs-dev')
     from(['LICENSE', 'LICENSE.spdx', 'NOTICE']) { into 'META-INF' }
     manifest {
         attributes([
@@ -636,19 +647,14 @@ tasks.named('jar', Jar) {
                 'Implementation-Title': base.archivesName.get(),
                 'Implementation-Version': project.version,
                 'Implementation-Vendor': project.mod_authors,
-                'Built-On-Java': '8',
+                'Built-On-Java': '21',
                 'Built-On': "${project.minecraft_version}-${project.forge_version}"
         ])
     }
     filesMatching(archiveTextPatterns, normalizeArchiveLineEndings)
 }
 
-def releaseJar = renamer.classes(tasks.named('jar', Jar)) {
-    map.from minecraft.dependency.toSrgFile
-    libraries.from sourceSets.main.compileClasspath
-    archiveClassifier = null
-    output = layout.buildDirectory.file("libs/${base.archivesName.get()}-${project.version}.jar")
-}
+def releaseJar = tasks.named('jar', Jar)
 
 tasks.named('sourcesJar', Jar) {
     from(['LICENSE', 'LICENSE.spdx', 'NOTICE']) { into 'META-INF' }
@@ -659,10 +665,6 @@ tasks.named('javadocJar', Jar) {
     filesMatching(archiveTextPatterns, normalizeArchiveLineEndings)
 }
 
-['apiElements', 'runtimeElements'].each { configurationName ->
-    configurations.named(configurationName) { artifacts.clear() }
-    artifacts { add(configurationName, releaseJar) }
-}
 tasks.named('assemble') {
     dependsOn releaseJar, tasks.named('sourcesJar'), tasks.named('javadocJar')
 }
@@ -678,12 +680,12 @@ def releaseFiles = provider {
 tasks.register('verifyReleaseMetadata') {
     group = 'verification'
     doLast {
-        if (project.minecraft_version != '1.20.1' || project.forge_version != '47.4.10' ||
-                project.mapping_channel != 'official' || project.mapping_version != '1.20.1' ||
+        if (project.minecraft_version != '1.21.1' || project.forge_version != '52.1.0' ||
+                project.mapping_channel != 'official' || project.mapping_version != '1.21.1' ||
                 project.loader_name != 'forge' || project.loader_code != '1' ||
-                project.java_version != '17' || project.java_toolchain_version != '17.0.1+12' ||
+                project.java_version != '21' || project.java_toolchain_version != '21.0.7+6' ||
                 project.mod_id != 'skysterrainsmootherbop') {
-            throw new GradleException('Unexpected 1.20.1 release metadata')
+            throw new GradleException('Unexpected 1.21.1 release metadata')
         }
     }
 }
@@ -727,8 +729,8 @@ tasks.register('verifyReleaseArtifacts') {
                 if (!entry.directory) {
                     byte[] auditBytes = zip.getInputStream(entry).bytes
                     if (entry.name.endsWith('.class') &&
-                            (((auditBytes[6] & 255) << 8) | (auditBytes[7] & 255)) != 61) {
-                        throw new GradleException("Non-Java-16 production class: ${entry.name}")
+                            (((auditBytes[6] & 255) << 8) | (auditBytes[7] & 255)) != 65) {
+                        throw new GradleException("Non-Java-21 production class: ${entry.name}")
                     }
                     String content = new String(zip.getInputStream(entry).bytes,
                             StandardCharsets.ISO_8859_1).toLowerCase(Locale.ROOT)
@@ -861,7 +863,8 @@ def configureEclipseBuildship = tasks.register('configureEclipseBuildship') {
                     it.startsWith('-PbuildingPiecesDirectory=') ||
                     it.startsWith('-PbuildingPiecesCoreVersion=') ||
                     it.startsWith('-PterrainDirectory=') ||
-                    it.startsWith('-PbuildingPiecesBopDirectory=')
+                    it.startsWith('-PbuildingPiecesBopDirectory=') ||
+                    biomeJarProperties.values().any { property -> it.startsWith("-P${property}=") }
         }
         arguments.add('-PgrassSlabsDirectory=' + relativePath(grassSlabsDirectory))
         if (localGrassVersion.isPresent()) arguments.add('-PgrassSlabsVersion=' + grassVersion)
@@ -871,6 +874,9 @@ def configureEclipseBuildship = tasks.register('configureEclipseBuildship') {
         }
         arguments.add('-PterrainDirectory=' + relativePath(terrainDirectory))
         arguments.add('-PbuildingPiecesBopDirectory=' + relativePath(bopPiecesDirectory))
+        localBiomeJars.each { name, jar ->
+            arguments.add("-P${biomeJarProperties[name]}=" + relativePath(jar))
+        }
         preferences.setProperty('arguments', arguments.join(' '))
         preferencesFile.parentFile.mkdirs()
         preferencesFile.withOutputStream { preferences.store(it, 'Generated Buildship configuration.') }
@@ -887,10 +893,7 @@ tasks.register('isolateEclipseProductionRuns') {
             String contents = launch.getText('UTF-8')
             boolean production = name in ['runClient.launch', 'runServer.launch']
             if (production) {
-                // Eclipse compiles into bin/main; use that same merged output
-                // for both of Forge 28's discovery passes, including fresh edits.
-                String roots = "${mod_id}%%${projectDir}/bin/main${File.pathSeparator}" +
-                        "${mod_id}%%${projectDir}/bin/main"
+                String roots = "${mod_id}%%${projectDir}/bin/main"
                 contents = contents.replaceAll(/key="MOD_CLASSES" value="[^"]*"/) {
                     'key="MOD_CLASSES" value="' + roots + '"'
                 }
@@ -946,6 +949,14 @@ tasks.register('verifyEclipseProductionClasspath') {
         if (overrides != expectedOverrides) {
             throw new GradleException('Eclipse Buildship retained an incorrect Building Pieces version override')
         }
+        biomeJarProperties.each { name, property ->
+            List<String> selected = arguments.findAll { it.startsWith("-P${property}=") }
+            List<String> expected = localBiomeJars.containsKey(name)
+                    ? ["-P${property}=" + relativePath(localBiomeJars[name])] : []
+            if (selected != expected) {
+                throw new GradleException('Eclipse Buildship lost the selected dependency jar: ' + name)
+            }
+        }
         File metadata = file('bin/main/META-INF/mods.toml')
         def eclipseClasspath = new groovy.xml.XmlSlurper().parse(file('.classpath'))
         // The add-on name starts with the core name. Match a version after each
@@ -985,8 +996,8 @@ tasks.register('verifyEclipseProductionClasspath') {
             if (contents.contains('${MC_VERSION}')) {
                 throw new GradleException("${name} retains ForgeGradle's unresolved MC_VERSION token")
             }
-            if (!contents.contains('--main cpw.mods.bootstraplauncher.BootstrapLauncher') ||
-                    !contents.contains("--fml.mcVersion ${project.minecraft_version} ")) {
+            if (!contents.contains('--main net.minecraftforge.bootstrap.ForgeBootstrap') ||
+                    !contents.contains("forge-${project.minecraft_version}-${project.forge_version}-metadata.zip")) {
                 throw new GradleException("${name} must use the native launcher and Minecraft ${project.minecraft_version}")
             }
         }
@@ -1001,9 +1012,9 @@ tasks.register('verifyEclipseProductionClasspath') {
                 it.@key == 'org.eclipse.debug.core.environmentVariables'
             }.mapEntry.find { it.@key == 'MOD_CLASSES' }.@value
             List<String> roots = modClasses.split(java.util.regex.Pattern.quote(File.pathSeparator)).toList()
-            if (roots.size() != 2 || roots[0] != roots[1] ||
+            if (roots.size() != 1 ||
                     roots[0].replace('\\', '/') != "${mod_id}%%${projectDir}/bin/main".replace('\\', '/')) {
-                throw new GradleException("${name} must repeat the merged production output in MOD_CLASSES")
+                throw new GradleException("${name} must have one merged production output in MOD_CLASSES")
             }
         }
     }
@@ -1136,3 +1147,7 @@ tasks.register('integrationForwardTest') {
 }
 
 tasks.named('check') { dependsOn tasks.named('integrationForwardTest') }
+
+apply from: 'gradle/resource-outputs.gradle'
+
+apply from: 'gradle/archive-encoding.gradle'

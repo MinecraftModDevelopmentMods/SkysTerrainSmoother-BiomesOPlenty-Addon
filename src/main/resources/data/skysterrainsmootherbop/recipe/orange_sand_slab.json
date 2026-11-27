@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "skys/result/skysterrainsmootherbop/orange_sand_slab",
+  "pattern": [
+    "SSS"
+  ],
+  "key": {
+    "S": {
+      "item": "biomesoplenty:orange_sand"
+    }
+  },
+  "result": {
+    "count": 6,
+    "id": "skysterrainsmootherbop:orange_sand_slab"
+  }
+}

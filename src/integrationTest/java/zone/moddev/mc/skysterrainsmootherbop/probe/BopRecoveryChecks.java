@@ -26,7 +26,7 @@ final class BopRecoveryChecks {
                     zone.moddev.mc.skysbuildingpieces.catalogue.Catalogue.INSTANCE.materials.get(material), "full");
             boolean mineralogyOwnsRock = ForgeRegistries.BLOCKS.getKey(full.getBlock()).getNamespace().equals("mineralogy");
             RuntimeProbe.require(zone.moddev.mc.skysterrainsmoother.api.TerrainSmoothingApi
-                            .hasMaterial(new net.minecraft.resources.ResourceLocation(material)) != mineralogyOwnsRock,
+                            .hasMaterial(net.minecraft.resources.ResourceLocation.parse(material)) != mineralogyOwnsRock,
                     "BOP rock mappings defer to Mineralogy without bypassing its configuration");
             checked++;
         }
@@ -52,7 +52,7 @@ final class BopRecoveryChecks {
                                 + palette.id + "/" + metadata + " actual=" + recovered);
                 RuntimeProbe.require(!target.hasBlockEntity() && target.getFluidState().isEmpty(),
                         "Recovered pieces are dry and have no block entity");
-                RuntimeProbe.require(target.getBlock() == zone.moddev.mc.skysterrainsmootherbop.CoarseDirtSlab.BLOCK
+                RuntimeProbe.require(target.getBlock() == zone.moddev.mc.skysterrainsmoother.content.CoarseDirtSlab.registeredBlock()
                                 || !ForgeRegistries.BLOCKS.getKey(target.getBlock()).getNamespace().equals("skysterrainsmootherbop"),
                         "A removed soil becomes an available playable piece");
                 int orientation = metadata % palette.orientations;
@@ -91,9 +91,11 @@ final class BopRecoveryChecks {
                 root.put("Items", nested);
                 LegacySoils.recover(root);
                 ItemStack expected = Pieces.stack(target, 23);
-                ItemStack actual = ItemStack.of(stack);
+                ItemStack actual = ProbeItems.readPreComponentStack(world, stack);
                 RuntimeProbe.require(actual.getItem() == expected.getItem() && actual.getCount() == 23,
                         "Nested inventory identity and count survive");
+                RuntimeProbe.require(ProbeItems.custom(actual).equals(custom),
+                        "Nested inventory custom data survives the native item conversion");
                 RuntimeProbe.require(stack.getByte("Slot") == 7 && stack.getCompound("tag").equals(custom),
                         "Inventory slot and unrelated custom NBT survive");
                 CompoundTag once = root.copy();
@@ -151,9 +153,12 @@ final class BopRecoveryChecks {
             RuntimeProbe.require(rejected && invalid.equals(unchanged),
                     "A count outside the saved-byte range stops without changing the stack");
         }
+        CoarseRecipeChecks.run(world);
+        RecipeBookChecks.run(world);
         int recipes = 0;
-        for (net.minecraft.world.item.crafting.Recipe<?> recipe : world.getRecipeManager().getRecipes()) {
-            if (!recipe.getId().getNamespace().equals("skysterrainsmootherbop")) {
+        for (var holder : world.getRecipeManager().getRecipes()) {
+            var recipe = holder.value();
+            if (!holder.id().getNamespace().equals("skysterrainsmootherbop")) {
                 continue;
             }
             RuntimeProbe.require(!recipe.isSpecial() && !recipe.getResultItem(world.registryAccess()).isEmpty(),
@@ -163,7 +168,7 @@ final class BopRecoveryChecks {
                     "Replacement recipes expose native book ingredients");
             recipes++;
         }
-        RuntimeProbe.require(recipes == 84, "All original recipe identities load with available ingredients");
+        RuntimeProbe.require(recipes == 12, "Keep the four original coarse-dirt recipes and two recipes for each sand");
         zone.moddev.mc.skysterrainsmoother.SkysTerrainSmoother.logger.info("TERRAIN_BOP_RECOVERY_PASS states=" + states + " checks=" + checked);
         return checked + 2;
     }

@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "type=top": {
+      "model": "skysterrainsmootherbop:block/orange_sand_slab_top"
+    },
+    "type=bottom": {
+      "model": "skysterrainsmootherbop:block/orange_sand_slab"
+    }
+  }
+}

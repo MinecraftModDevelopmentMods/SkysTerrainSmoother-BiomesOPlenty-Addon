@@ -45,13 +45,22 @@ class NativeRegistryNoticeProofTest {
         checkProfiles(profiles);
     }
 
+    @Test
+    void forge50NoticesAreBoundToTheirExactSavedWorlds() throws Exception {
+        JsonObject profiles = JsonParser.parseString(Files.readString(Paths.get("tools/forge-45-log-profiles.json")))
+                .getAsJsonObject().getAsJsonObject("forge50_profiles");
+        assertTrue(profiles.has("992B6A69E3586634B5C4EE10037BE045D63DECCE7295411D9B6DDE6629B228C6"));
+        checkProfiles(profiles);
+    }
+
     private static void checkProfiles(JsonObject profiles) throws Exception {
         for (java.util.Map.Entry<String, com.google.gson.JsonElement> entry : profiles.entrySet()) {
             JsonObject profile = entry.getValue().getAsJsonObject();
             JsonObject mappings = profile.getAsJsonObject("mappings");
             boolean forge47 = profile.has("forge47_registry_proof");
             boolean forge45 = profile.has("forge45_registry_proof");
-            boolean nativeProof = forge45 || forge47;
+            boolean forge50 = profile.has("forge50_registry_proof");
+            boolean nativeProof = forge45 || forge47 || forge50;
             Set<String> names = new HashSet<>();
             for (java.util.Map.Entry<String, com.google.gson.JsonElement> registry
                     : mappings.entrySet()) {
@@ -84,11 +93,14 @@ class NativeRegistryNoticeProofTest {
             assertEquals(biome.get("checked_cells"), contract.get("checked_cells"));
             assertEquals(0, contract.get("native_renamed_cells").getAsInt());
             if (nativeProof) {
-                JsonObject binding = profile.getAsJsonObject(forge47 ? "forge47_registry_proof" : "forge45_registry_proof");
+                String proofKey = forge50 ? "forge50_registry_proof"
+                        : forge47 ? "forge47_registry_proof" : "forge45_registry_proof";
+                JsonObject binding = profile.getAsJsonObject(proofKey);
                 byte[] proofBytes = Files.readAllBytes(Paths.get(binding.get("path").getAsString()));
                 assertEquals(binding.get("sha256").getAsString(), checksum(proofBytes));
                 JsonObject proof = new JsonParser().parse(new String(proofBytes, StandardCharsets.UTF_8)).getAsJsonObject();
-                assertEquals(forge47 ? "Forge 47.4.10" : "Forge 45.4.0", proof.get("target").getAsString());
+                String target = forge50 ? "Forge 50.2.0" : forge47 ? "Forge 47.4.10" : "Forge 45.4.0";
+                assertEquals(target, proof.get("target").getAsString());
                 assertEquals(mappings, proof.getAsJsonObject("snapshot_entries"));
                 assertEquals(profile.get("sha256"), proof.get("source_world_sha256"));
                 assertEquals(biome.get("sha256"), proof.get("native_biome_contract_sha256"));
@@ -110,7 +122,7 @@ class NativeRegistryNoticeProofTest {
                             byte[] bytes = readAll(input);
                             CompoundTag root;
                             if (bytes.length >= 2 && (bytes[0] & 255) == 31 && (bytes[1] & 255) == 139) {
-                                root = NbtIo.readCompressed(new ByteArrayInputStream(bytes));
+                                root = NbtIo.readCompressed(new ByteArrayInputStream(bytes), net.minecraft.nbt.NbtAccounter.unlimitedHeap());
                             } else {
                                 // Older forced-chunk data is native, uncompressed NBT.
                                 root = NbtIo.read(new DataInputStream(new ByteArrayInputStream(bytes)));
@@ -152,7 +164,7 @@ class NativeRegistryNoticeProofTest {
                                 root.remove("Blocks");
                             }
                             inspect(root, names, label);
-                            if (!forge45 || !label.endsWith(".dat_old")) {
+                            if ((!forge45 && !forge50) || !label.endsWith(".dat_old")) {
                                 records++;
                             }
                         } else if (label.endsWith(".mca")) {

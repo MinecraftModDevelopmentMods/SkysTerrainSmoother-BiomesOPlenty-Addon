@@ -1,5 +1,9 @@
 {
   "pieces.skysterrainsmootherbop.slab": "%s Stufe",
   "pieces.skysterrainsmootherbop.step": "%s Viertelblock",
-  "pieces.skysterrainsmootherbop.corner": "%s Eckstück"
+  "pieces.skysterrainsmootherbop.corner": "%s Eckstück",
+  "block.skysterrainsmootherbop.white_sand_slab": "Weißer Sand Stufe",
+  "block.skysterrainsmootherbop.orange_sand_slab": "Oranger Sand Stufe",
+  "block.skysterrainsmootherbop.black_sand_slab": "Schwarzer Sand Stufe",
+  "block.skysterrainsmootherbop.mossy_black_sand_slab": "Bemooster schwarzer Sand Stufe"
 }

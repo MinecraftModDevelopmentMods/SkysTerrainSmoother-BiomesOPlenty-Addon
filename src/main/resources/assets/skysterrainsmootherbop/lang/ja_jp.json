@@ -1,5 +1,9 @@
 {
   "pieces.skysterrainsmootherbop.slab": "%sのハーフブロック",
   "pieces.skysterrainsmootherbop.step": "%sの四分の一ブロック",
-  "pieces.skysterrainsmootherbop.corner": "%sの角ブロック"
+  "pieces.skysterrainsmootherbop.corner": "%sの角ブロック",
+  "block.skysterrainsmootherbop.white_sand_slab": "白い砂のハーフブロック",
+  "block.skysterrainsmootherbop.orange_sand_slab": "橙色の砂のハーフブロック",
+  "block.skysterrainsmootherbop.black_sand_slab": "黒い砂のハーフブロック",
+  "block.skysterrainsmootherbop.mossy_black_sand_slab": "苔むした黒い砂のハーフブロック"
 }

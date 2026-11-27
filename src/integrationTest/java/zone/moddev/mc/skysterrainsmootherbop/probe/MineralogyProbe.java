@@ -1,6 +1,5 @@
 package zone.moddev.mc.skysterrainsmootherbop.probe;
 
-import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.block.state.BlockState;
@@ -26,7 +25,7 @@ public final class MineralogyProbe {
             if (!material.mineralogy) {
                 continue;
             }
-            ResourceLocation slabId = new ResourceLocation("mineralogy", material.id.getPath() + "_slab");
+            ResourceLocation slabId = ResourceLocation.fromNamespaceAndPath("mineralogy", material.id.getPath() + "_slab");
             require(net.minecraftforge.registries.ForgeRegistries.BLOCKS.getValue(slabId) == material.slab.getBlock(), "native slab identity");
             boolean bottom = false;
             for (Property<?> property : material.slab.getProperties()) {
@@ -38,7 +37,7 @@ public final class MineralogyProbe {
             for (int direction = 0; direction < 4; direction++) {
                 require(material.step(direction) != null && material.corner(direction) != null,
                         "built-in steps and corners exist in every direction");
-                require(ForgeRegistries.BLOCKS.getKey(material.step(direction).getBlock()).toString()
+                require(net.minecraftforge.registries.ForgeRegistries.BLOCKS.getKey(material.step(direction).getBlock()).toString()
                                 .startsWith("skysbuildingpieces:mineralogy_"),
                         "the core owns the rock pieces");
             }
