@@ -368,7 +368,7 @@ jobs:
         run: |
           set -euo pipefail
           (cd dependencies/grass && bash ./gradlew assemble --no-daemon --stacktrace)
-          (cd dependencies/pieces && bash ./gradlew assemble -PgrassSlabsMainJar="$(realpath ../grass/build/libs/SkysGrassSlabs-1.2.1.121011.jar)" -PgrassSlabsDeobfJar="$(realpath ../grass/build/libs-dev/SkysGrassSlabs-1.2.1.121011-deobf.jar)" --no-daemon --stacktrace)
+          (cd dependencies/pieces && bash ./gradlew assemble -PgrassSlabsMainJar="$(realpath ../grass/build/libs/SkysGrassSlabs-1.2.1.121011.jar)" -PgrassSlabsDeobfJar="$(realpath ../grass/build/libs/SkysGrassSlabs-1.2.1.121011.jar)" --no-daemon --stacktrace)
           (cd dependencies/terrain && bash ./gradlew assemble -PgrassSlabsDirectory=../grass -PbuildingPiecesDirectory=../pieces --no-daemon --stacktrace)
           (cd dependencies/bopPieces && bash ./gradlew assemble bopDevelopmentJar -PbuildingPiecesCoreDir=../pieces --no-daemon --stacktrace)
 
@@ -613,7 +613,7 @@ jobs:
         run: |
           set -euo pipefail
           (cd dependencies/grass && bash ./gradlew assemble --no-daemon --stacktrace)
-          (cd dependencies/pieces && bash ./gradlew assemble -PgrassSlabsMainJar="$(realpath ../grass/build/libs/SkysGrassSlabs-1.2.1.121011.jar)" -PgrassSlabsDeobfJar="$(realpath ../grass/build/libs-dev/SkysGrassSlabs-1.2.1.121011-deobf.jar)" --no-daemon --stacktrace)
+          (cd dependencies/pieces && bash ./gradlew assemble -PgrassSlabsMainJar="$(realpath ../grass/build/libs/SkysGrassSlabs-1.2.1.121011.jar)" -PgrassSlabsDeobfJar="$(realpath ../grass/build/libs/SkysGrassSlabs-1.2.1.121011.jar)" --no-daemon --stacktrace)
           (cd dependencies/terrain && bash ./gradlew assemble -PgrassSlabsDirectory=../grass -PbuildingPiecesDirectory=../pieces --no-daemon --stacktrace)
           (cd dependencies/bopPieces && bash ./gradlew assemble bopDevelopmentJar -PbuildingPiecesCoreDir=../pieces --no-daemon --stacktrace)
 
