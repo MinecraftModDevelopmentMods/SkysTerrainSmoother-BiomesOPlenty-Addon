@@ -370,7 +370,7 @@ jobs:
           (cd dependencies/grass && bash ./gradlew assemble --no-daemon --stacktrace)
           (cd dependencies/pieces && bash ./gradlew assemble -PgrassSlabsMainJar="$(realpath ../grass/build/libs/SkysGrassSlabs-1.2.1.121011.jar)" -PgrassSlabsDeobfJar="$(realpath ../grass/build/libs/SkysGrassSlabs-1.2.1.121011.jar)" --no-daemon --stacktrace)
           (cd dependencies/terrain && bash ./gradlew assemble -PgrassSlabsDirectory=../grass -PbuildingPiecesDirectory=../pieces --no-daemon --stacktrace)
-          (cd dependencies/bopPieces && bash ./gradlew assemble bopDevelopmentJar -PbuildingPiecesCoreDir=../pieces --no-daemon --stacktrace)
+          (cd dependencies/bopPieces && bash ./gradlew assemble verifyNativeBopDependencies -PbuildingPiecesCoreDir=../pieces --no-daemon --stacktrace)
 
 
       - name: Build, test, and audit once
@@ -615,7 +615,7 @@ jobs:
           (cd dependencies/grass && bash ./gradlew assemble --no-daemon --stacktrace)
           (cd dependencies/pieces && bash ./gradlew assemble -PgrassSlabsMainJar="$(realpath ../grass/build/libs/SkysGrassSlabs-1.2.1.121011.jar)" -PgrassSlabsDeobfJar="$(realpath ../grass/build/libs/SkysGrassSlabs-1.2.1.121011.jar)" --no-daemon --stacktrace)
           (cd dependencies/terrain && bash ./gradlew assemble -PgrassSlabsDirectory=../grass -PbuildingPiecesDirectory=../pieces --no-daemon --stacktrace)
-          (cd dependencies/bopPieces && bash ./gradlew assemble bopDevelopmentJar -PbuildingPiecesCoreDir=../pieces --no-daemon --stacktrace)
+          (cd dependencies/bopPieces && bash ./gradlew assemble verifyNativeBopDependencies -PbuildingPiecesCoreDir=../pieces --no-daemon --stacktrace)
 
 
       - name: Download immutable release artifact
