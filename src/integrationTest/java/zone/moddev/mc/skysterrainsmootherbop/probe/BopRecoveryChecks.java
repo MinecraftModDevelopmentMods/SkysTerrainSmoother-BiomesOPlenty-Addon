@@ -52,7 +52,7 @@ final class BopRecoveryChecks {
                                 + palette.id + "/" + metadata + " actual=" + recovered);
                 RuntimeProbe.require(!target.hasBlockEntity() && target.getFluidState().isEmpty(),
                         "Recovered pieces are dry and have no block entity");
-                RuntimeProbe.require(target.getBlock() == zone.moddev.mc.skysterrainsmootherbop.CoarseDirtSlab.BLOCK
+                RuntimeProbe.require(target.getBlock() == zone.moddev.mc.skysterrainsmoother.content.CoarseDirtSlab.registeredBlock()
                                 || !ForgeRegistries.BLOCKS.getKey(target.getBlock()).getNamespace().equals("skysterrainsmootherbop"),
                         "A removed soil becomes an available playable piece");
                 int orientation = metadata % palette.orientations;
@@ -168,7 +168,7 @@ final class BopRecoveryChecks {
                     "Replacement recipes expose native book ingredients");
             recipes++;
         }
-        RuntimeProbe.require(recipes == 4, "Only distinct coarse-dirt recipes belong to the add-on");
+        RuntimeProbe.require(recipes == 12, "Keep the four original coarse-dirt recipes and two recipes for each sand");
         zone.moddev.mc.skysterrainsmoother.SkysTerrainSmoother.logger.info("TERRAIN_BOP_RECOVERY_PASS states=" + states + " checks=" + checked);
         return checked + 2;
     }

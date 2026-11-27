@@ -38,17 +38,19 @@ class NativeContractTest {
     }
 
     @Test
-    void playableCoarseDirtSlabsUseTheNativeShovelTag() throws Exception {
+    void playableSandSlabsUseTheNativeShovelTag() throws Exception {
         JsonArray values = read(RESOURCES.resolve("data/minecraft/tags/block/mineable/shovel.json"))
                 .getAsJsonObject().getAsJsonArray("values");
-        assertEquals(1, values.size());
-        assertEquals("skysterrainsmootherbop:dirt_slab_00", values.get(0).getAsString());
+        assertEquals(4, values.size());
+        for (String colour : new String[] { "white", "orange", "black", "mossy_black" }) {
+            assertTrue(values.contains(new com.google.gson.JsonPrimitive("skysterrainsmootherbop:" + colour + "_sand_slab")));
+        }
     }
 
     @Test
-    void onlyDistinctCoarseSlabRecipesHaveTheirOwnUnlocks() throws Exception {
+    void eachSandHasItsOwnCutAndRecombineUnlocks() throws Exception {
         JsonArray manifest = read(Paths.get("src/main/recipe-book/recipes.json")).getAsJsonArray();
-        assertEquals(4, manifest.size());
+        assertEquals(8, manifest.size());
         Set<String> ids = new HashSet<>();
         for (JsonElement row : manifest) {
             String id = row.getAsJsonObject().get("recipe").getAsString();
@@ -57,12 +59,15 @@ class NativeContractTest {
                     + id.substring(id.indexOf(':') + 1) + ".json");
             JsonObject recipe = read(path).getAsJsonObject();
             assertEquals("minecraft:crafting_shaped", recipe.get("type").getAsString());
-            assertFalse(recipe.toString().contains("biomesoplenty:"), "Removed native items are not recipe inputs");
+            assertTrue(recipe.toString().contains("biomesoplenty:"), "Use the exact BoP sand");
             assertFalse(recipe.toString().contains("\"data\""), "Recipe ingredients use flat item identities");
-            assertTrue(recipe.getAsJsonObject("result").get("count").getAsInt() > 0);
+            assertTrue(recipe.getAsJsonObject("result").get("id").getAsString().endsWith("_sand_slab")
+                    || recipe.getAsJsonObject("result").get("id").getAsString().endsWith("_sand"));
         }
-        String prefix = "skysterrainsmootherbop:dirt/coarse_loamy/";
-        assertEquals(Set.of(prefix + "slab", prefix + "full_block", prefix + "step", prefix + "slab_from_steps"), ids);
+        for (String colour : new String[] { "white", "orange", "black", "mossy_black" }) {
+            assertTrue(ids.contains("skysterrainsmootherbop:" + colour + "_sand_slab"));
+            assertTrue(ids.contains("skysterrainsmootherbop:" + colour + "_sand_from_slabs"));
+        }
         Path recipes = RESOURCES.resolve("data/skysterrainsmootherbop/recipe");
         try (Stream<Path> files = Files.walk(recipes)) {
             Set<String> actual = new HashSet<>();

@@ -1,5 +1,9 @@
 {
   "pieces.skysterrainsmootherbop.slab": "Losa de %s",
   "pieces.skysterrainsmootherbop.step": "Cuarto de bloque de %s",
-  "pieces.skysterrainsmootherbop.corner": "Esquina de %s"
+  "pieces.skysterrainsmootherbop.corner": "Esquina de %s",
+  "block.skysterrainsmootherbop.white_sand_slab": "Losa de Arena blanca",
+  "block.skysterrainsmootherbop.orange_sand_slab": "Losa de Arena naranja",
+  "block.skysterrainsmootherbop.black_sand_slab": "Losa de Arena Negra",
+  "block.skysterrainsmootherbop.mossy_black_sand_slab": "Losa de Arena negra musgosa"
 }

@@ -1,5 +1,9 @@
 {
   "pieces.skysterrainsmootherbop.slab": "Laje de %s",
   "pieces.skysterrainsmootherbop.step": "Quarto de bloco de %s",
-  "pieces.skysterrainsmootherbop.corner": "Canto de %s"
+  "pieces.skysterrainsmootherbop.corner": "Canto de %s",
+  "block.skysterrainsmootherbop.white_sand_slab": "Laje de Areia branca",
+  "block.skysterrainsmootherbop.orange_sand_slab": "Laje de Areia laranja",
+  "block.skysterrainsmootherbop.black_sand_slab": "Laje de Areia preta",
+  "block.skysterrainsmootherbop.mossy_black_sand_slab": "Laje de Mossy Black Sand"
 }

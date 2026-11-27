@@ -246,7 +246,8 @@ public final class RuntimeProbe {
                     require(SkysTerrainSmoother.level == Integer.getInteger("skysterrainsmoother.expectedLevel", 3),
                             "The native configuration selected the requested generation level");
                 } else {
-                    gameplay = CoarseSlabChecks.run(world) + SylvesterContentChecks.run(world) + BopRecoveryChecks.run(world) + MineralogyProbe.run() + FineGrassProbe.run(world) + OpportunityProbe.run(world)
+                    gameplay = CoarseSlabChecks.run(world) + NativeSurfaceChecks.run(world)
+                            + SylvesterContentChecks.run(world) + BopRecoveryChecks.run(world) + MineralogyProbe.run() + FineGrassProbe.run(world) + OpportunityProbe.run(world)
                             + GentleTerraceProbe.run(world) + TransitionProbe.run(world) + SnowTerrainProbe.run(world) + FrozenTerrainProbe.run(world) + FoliageProbe.run(world) + persistence(world)
                             + LateTerrainProbe.run(world) + CaveProbe.run(world) + decorationChanges(world)
                             + geometry(world) + grass(world) + sand(world) + generationOrder(world)

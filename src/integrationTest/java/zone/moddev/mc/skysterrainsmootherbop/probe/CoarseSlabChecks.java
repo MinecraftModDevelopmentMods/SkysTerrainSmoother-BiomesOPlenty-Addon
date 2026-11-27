@@ -20,7 +20,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.server.level.ServerLevel;
 import zone.moddev.mc.skysbuildingpieces.content.Pieces;
 import zone.moddev.mc.skysgrassslabs.init.ModBlocks;
-import zone.moddev.mc.skysterrainsmootherbop.CoarseDirtSlab;
+import zone.moddev.mc.skysterrainsmoother.content.CoarseDirtSlab;
 
 /** Real item placement and fluid checks for the retained coarse soil slab. */
 final class CoarseSlabChecks {
@@ -31,13 +31,13 @@ final class CoarseSlabChecks {
         world.getChunkAt(position);
         world.setBlock(position.below(), Blocks.STONE.defaultBlockState(), 18);
         for (SlabType half : new SlabType[] { SlabType.BOTTOM, SlabType.TOP }) {
-            world.setBlock(position, CoarseDirtSlab.BLOCK.defaultBlockState().setValue(SlabBlock.TYPE, half), 18);
+            world.setBlock(position, CoarseDirtSlab.registeredBlock().defaultBlockState().setValue(SlabBlock.TYPE, half), 18);
             ItemStack held = Pieces.stack(world.getBlockState(position), 2);
             RuntimeProbe.require(ForgeRegistries.ITEMS.getKey(held.getItem()).toString().equals("skysterrainsmootherbop:coarse_dirt_slab"),
                     "The coarse slab uses its flat playable item, not the hidden carrier");
-            RuntimeProbe.require(CoarseDirtSlab.BLOCK.asItem() == held.getItem(),
+            RuntimeProbe.require(CoarseDirtSlab.registeredBlock().asItem() == held.getItem(),
                     "Coarse slab item identity is stable after registry reload: block="
-                            + ForgeRegistries.ITEMS.getKey(CoarseDirtSlab.BLOCK.asItem()) + " held=" + ForgeRegistries.ITEMS.getKey(held.getItem()));
+                            + ForgeRegistries.ITEMS.getKey(CoarseDirtSlab.registeredBlock().asItem()) + " held=" + ForgeRegistries.ITEMS.getKey(held.getItem()));
             player.setItemInHand(InteractionHand.MAIN_HAND, held);
             Direction face = half == SlabType.BOTTOM ? Direction.UP : Direction.DOWN;
             InteractionResult used = held.useOn(new UseOnContext(player, InteractionHand.MAIN_HAND,
@@ -50,9 +50,9 @@ final class CoarseSlabChecks {
                             + " action=" + used + " remaining=" + held.getCount()
                             + " state=" + world.getBlockState(position));
 
-            BlockState dry = CoarseDirtSlab.BLOCK.defaultBlockState().setValue(SlabBlock.TYPE, half);
+            BlockState dry = CoarseDirtSlab.registeredBlock().defaultBlockState().setValue(SlabBlock.TYPE, half);
             world.setBlock(position, dry, 18);
-            RuntimeProbe.require(CoarseDirtSlab.BLOCK.placeLiquid(world, position, dry,
+            RuntimeProbe.require(CoarseDirtSlab.registeredBlock().placeLiquid(world, position, dry,
                     Fluids.WATER.getSource(false)), "Coarse slabs use native waterlogging");
             RuntimeProbe.require(world.getBlockState(position).getValue(SlabBlock.WATERLOGGED), "Water remains in the slab");
             checkFlattening(world, player, position, dry);
@@ -60,7 +60,7 @@ final class CoarseSlabChecks {
             checkPlantSupport(world, position, dry);
 
             world.setBlock(position.east(), Blocks.SNOW_BLOCK.defaultBlockState(), 18);
-            BlockState snowy = CoarseDirtSlab.BLOCK.updateShape(dry, Direction.EAST,
+            BlockState snowy = dry.updateShape(Direction.EAST,
                     Blocks.SNOW_BLOCK.defaultBlockState(), world, position, position.east());
             RuntimeProbe.require(snowy.getValue(SnowyDirtBlock.SNOWY), "Coarse slabs keep calculated snow caps");
             world.setBlock(position.east(), Blocks.AIR.defaultBlockState(), 18);

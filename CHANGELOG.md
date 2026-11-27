@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.4.121011 (unreleased)
+
+- Smooth origin grass and natural sandstone, and add falling slabs for coloured and mossy black sand.
+
 ## 0.1.3.121011 (unreleased)
 
 - Coarse dirt slabs update their snow caps during normal random ticks.

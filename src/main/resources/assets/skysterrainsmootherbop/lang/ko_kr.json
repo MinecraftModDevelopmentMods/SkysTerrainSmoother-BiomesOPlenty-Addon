@@ -1,5 +1,9 @@
 {
   "pieces.skysterrainsmootherbop.slab": "%s 반 블록",
   "pieces.skysterrainsmootherbop.step": "%s 사분의 일 블록",
-  "pieces.skysterrainsmootherbop.corner": "%s 모서리"
+  "pieces.skysterrainsmootherbop.corner": "%s 모서리",
+  "block.skysterrainsmootherbop.white_sand_slab": "하얀 모래 반 블록",
+  "block.skysterrainsmootherbop.orange_sand_slab": "주황 모래 반 블록",
+  "block.skysterrainsmootherbop.black_sand_slab": "검은 모래 반 블록",
+  "block.skysterrainsmootherbop.mossy_black_sand_slab": "이끼긴 검은 모래 반 블록"
 }

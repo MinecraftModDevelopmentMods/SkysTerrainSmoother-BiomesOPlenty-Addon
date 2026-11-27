@@ -1,5 +1,9 @@
 {
   "pieces.skysterrainsmootherbop.slab": "Dalle de %s",
   "pieces.skysterrainsmootherbop.step": "Quart de bloc de %s",
-  "pieces.skysterrainsmootherbop.corner": "Coin de %s"
+  "pieces.skysterrainsmootherbop.corner": "Coin de %s",
+  "block.skysterrainsmootherbop.white_sand_slab": "Dalle de Sable blanc",
+  "block.skysterrainsmootherbop.orange_sand_slab": "Dalle de Sable orange",
+  "block.skysterrainsmootherbop.black_sand_slab": "Dalle de Sable noir",
+  "block.skysterrainsmootherbop.mossy_black_sand_slab": "Dalle de Sable noir moussu"
 }

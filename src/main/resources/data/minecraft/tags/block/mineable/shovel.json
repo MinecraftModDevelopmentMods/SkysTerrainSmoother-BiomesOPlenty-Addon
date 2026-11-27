@@ -1,6 +1,9 @@
 {
   "replace": false,
   "values": [
-    "skysterrainsmootherbop:dirt_slab_00"
+    "skysterrainsmootherbop:white_sand_slab",
+    "skysterrainsmootherbop:orange_sand_slab",
+    "skysterrainsmootherbop:black_sand_slab",
+    "skysterrainsmootherbop:mossy_black_sand_slab"
   ]
 }

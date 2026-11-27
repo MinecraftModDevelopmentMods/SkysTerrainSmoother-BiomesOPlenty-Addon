@@ -31,21 +31,21 @@ side="BOTH"
 [[dependencies.${mod_id}]]
 modId="skysbuildingpieces"
 mandatory=true
-versionRange="[0.3.10.121011,0.4)"
+versionRange="[0.3.13.121011,0.4)"
 ordering="AFTER"
 side="BOTH"
 
 [[dependencies.${mod_id}]]
 modId="skysterrainsmoother"
 mandatory=true
-versionRange="[0.1.4.121011,0.2)"
+versionRange="[0.1.6.121011,0.2)"
 ordering="AFTER"
 side="BOTH"
 
 [[dependencies.${mod_id}]]
 modId="skysbuildingpiecesbop"
 mandatory=true
-versionRange="[0.2.7.121011,0.3)"
+versionRange="[0.2.8.121011,0.3)"
 ordering="AFTER"
 side="BOTH"
 

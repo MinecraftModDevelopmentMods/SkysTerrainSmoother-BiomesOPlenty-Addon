@@ -168,7 +168,7 @@ public final class ClientProbe extends ProbeProxy {
                 states++;
             }
         }
-        net.minecraft.world.item.Item coarse = zone.moddev.mc.skysterrainsmootherbop.CoarseDirtSlab.BLOCK.asItem();
+        net.minecraft.world.item.Item coarse = zone.moddev.mc.skysterrainsmoother.content.CoarseDirtSlab.registeredBlock().asItem();
         net.minecraft.client.resources.model.BakedModel itemModel = client.getItemRenderer().getItemModelShaper()
                 .getItemModel(new net.minecraft.world.item.ItemStack(coarse));
         RuntimeProbe.require(itemModel != client.getModelManager().getMissingModel(),

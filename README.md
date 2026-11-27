@@ -6,7 +6,8 @@ configuration. Only new, dry terrain is smoothed, including suitable cave floors
 Existing chunks are left alone.
 
 Terrain Smoother's **Materials** config page also controls this add-on. The soil switch
-covers its coarse dirt; the stone switch covers its rock mappings. Mineralogy rocks need
+covers origin grass. Sand and Gravel controls the coloured and mossy sands, and Stone covers
+the natural sandstones and rock mappings. Mineralogy rocks need
 both stone smoothing and Mineralogy support enabled. All groups start enabled. Save on
 the main config page and restart Minecraft; existing pieces and recipes are unaffected.
 
@@ -17,13 +18,16 @@ Use Forge 52.1.0 and Java 21 with these matching mods on both client and server:
 - Biomes O' Plenty 21.1.0.14.
 - TerraBlender 4.1.0.8 and GlitchCore 2.1.0.2, required by BOP.
 - Sky's Grass Slabs 1.2.1.121011.
-- Sky's Building Pieces 0.3.12.121011.
-- Sky's Building Pieces BOP add-on 0.2.7.121011.
-- Sky's Terrain Smoother 0.1.5.121011.
+- Sky's Building Pieces 0.3.13.121011.
+- Sky's Building Pieces BOP add-on 0.2.8.121011.
+- Sky's Terrain Smoother 0.1.6.121011.
 
 BOP now uses vanilla grass and dirt for its ordinary ground. Terrain Smoother
-already handles those states in BOP biomes. This add-on also connects the
-remaining natural rock replacements supplied by Building Pieces BOP. Mineralogy
+already handles those states in BOP biomes. The add-on smooths origin grass with
+its own slabs, steps and corners. White sand, orange sand, black sand and mossy
+black sand use falling slabs.
+Their natural sandstones use BOP's existing slabs and the matching steps and corners
+from Building Pieces BOP. The add-on also connects the older natural rock replacements. Mineralogy
 is optional; its existing rock mapping takes priority when it provides the rock.
 
 ## Upgrading an older BOP world
@@ -40,10 +44,9 @@ their shape, orientation, stack counts and custom item data:
 - Overgrown netherrack becomes netherrack pieces.
 
 The old registry IDs remain available as recovery entries for unopened chunks and
-mixed saves. Coarse dirt keeps its own slab under an existing palette ID; the
-other old entries are hidden. Replacement pieces use the recipes from Minecraft
-and the content mods. This add-on supplies the four recipes for making, cutting
-and combining coarse dirt slabs.
+mixed saves. Terrain Smoother now supplies coarse dirt slabs and their recipes
+under the same IDs, so previously placed slabs and saved items still load.
+Replacement pieces use the recipes from Minecraft and the content mods.
 
 This does not restore every block or feature removed from BOP. Keep BOP worlds
 on a supported Minecraft and loader route, and check a copy before upgrading.

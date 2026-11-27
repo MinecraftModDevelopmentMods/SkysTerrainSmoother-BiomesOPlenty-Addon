@@ -3,6 +3,7 @@ package zone.moddev.mc.skysterrainsmootherbop;
 import net.minecraftforge.registries.ForgeRegistries;
 import java.util.Collections;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import zone.moddev.mc.skysbuildingpieces.api.BuildingPiecesApi;
@@ -12,26 +13,18 @@ import zone.moddev.mc.skysterrainsmoother.api.TerrainMaterial;
 import zone.moddev.mc.skysterrainsmoother.api.MaterialGroup;
 import zone.moddev.mc.skysterrainsmoother.api.TerrainSmoothingApi;
 
-/** Ordinary BOP ground now uses vanilla states; only retired natural rocks need extra mappings. */
+/** Match BoP's natural ground and the surviving replacements for its older rocks. */
 final class NativeTerrain {
+    private static final Direction[] DIRECTIONS = { Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST };
+
     private NativeTerrain() {
     }
 
     static void register() {
-        Direction[] directions = { Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST };
-        ResourceLocation coarseId = ResourceLocation.parse("minecraft:coarse_dirt");
-        if (!TerrainSmoothingApi.hasMaterial(coarseId)) {
-            BlockState[] steps = new BlockState[4];
-            BlockState[] corners = new BlockState[4];
-            for (int direction = 0; direction < directions.length; direction++) {
-                steps[direction] = BuildingPiecesApi.bottomPiece("minecraft:dirt_coarse",
-                        BuildingPiecesApi.TerrainShape.STEP, directions[direction]);
-                corners[direction] = BuildingPiecesApi.bottomPiece("minecraft:dirt_coarse",
-                        BuildingPiecesApi.TerrainShape.CORNER, directions[direction]);
-            }
-            TerrainSmoothingApi.registerMaterial(new TerrainMaterial(coarseId,
-                    Collections.singleton(net.minecraft.world.level.block.Blocks.COARSE_DIRT.defaultBlockState()),
-                    CoarseDirtSlab.BLOCK.defaultBlockState(), steps, corners, false, null, MaterialGroup.SOIL));
+        BopSandContent.registerTerrain();
+        addNative("origin_grass_block", MaterialGroup.SOIL, Blocks.DIRT.defaultBlockState());
+        for (String colour : new String[] { "white", "orange", "black" }) {
+            addNative(colour + "_sandstone", MaterialGroup.STONE, null);
         }
         for (String rock : new String[] { "crag_rock", "limestone", "shale", "siltstone" }) {
             String material = "biomesoplenty:" + rock;
@@ -41,17 +34,24 @@ final class NativeTerrain {
             if (resolved.getNamespace().equals("mineralogy") || TerrainSmoothingApi.hasMaterial(resolved)) {
                 continue;
             }
-            BlockState[] steps = new BlockState[4];
-            BlockState[] corners = new BlockState[4];
-            for (int direction = 0; direction < directions.length; direction++) {
-                steps[direction] = BuildingPiecesApi.bottomPiece(material,
-                        BuildingPiecesApi.TerrainShape.STEP, directions[direction]);
-                corners[direction] = BuildingPiecesApi.bottomPiece(material,
-                        BuildingPiecesApi.TerrainShape.CORNER, directions[direction]);
-            }
-            TerrainSmoothingApi.registerMaterial(new TerrainMaterial(ResourceLocation.parse(material),
-                    Collections.singleton(full), BuildingPiecesApi.bottomPiece(material,
-                            BuildingPiecesApi.TerrainShape.SLAB, Direction.NORTH), steps, corners, false, null, MaterialGroup.STONE));
+            add(material, full, MaterialGroup.STONE, null);
         }
+    }
+
+    private static void addNative(String name, MaterialGroup group, BlockState supportAfterPlacement) {
+        String material = "biomesoplenty:" + name;
+        add(material, Pieces.nativeState(Catalogue.INSTANCE.materials.get(material), "full"), group, supportAfterPlacement);
+    }
+
+    private static void add(String material, BlockState full, MaterialGroup group, BlockState supportAfterPlacement) {
+        BlockState[] steps = new BlockState[4];
+        BlockState[] corners = new BlockState[4];
+        for (int direction = 0; direction < DIRECTIONS.length; direction++) {
+            steps[direction] = BuildingPiecesApi.bottomPiece(material, BuildingPiecesApi.TerrainShape.STEP, DIRECTIONS[direction]);
+            corners[direction] = BuildingPiecesApi.bottomPiece(material, BuildingPiecesApi.TerrainShape.CORNER, DIRECTIONS[direction]);
+        }
+        TerrainSmoothingApi.registerMaterial(new TerrainMaterial(ResourceLocation.parse(material), Collections.singleton(full),
+                BuildingPiecesApi.bottomPiece(material, BuildingPiecesApi.TerrainShape.SLAB, Direction.NORTH),
+                steps, corners, supportAfterPlacement != null, supportAfterPlacement, group));
     }
 }
